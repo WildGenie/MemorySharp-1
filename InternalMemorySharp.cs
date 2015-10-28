@@ -93,12 +93,15 @@ namespace MemorySharp
         public override T[] ReadArray<T>(IntPtr address, int count, bool isRelative = false)
         {
             if (isRelative)
+            {
                 address = ToAbsolute(address);
+            }
 
             var ret = new T[count];
             for (var i = 0; i < count; i++)
-                ret[i] = Read<T>(address + (MarshalType<T>.Size*i), isRelative);
-
+            {
+                ret[i] = Read<T>(address + MarshalType<T>.Size*i);
+            }
             return ret;
         }
 
