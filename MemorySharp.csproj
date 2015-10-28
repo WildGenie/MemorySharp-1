@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{755EE287-B0CE-49BF-9678-7CF59D17CFF3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MemorySharp</RootNamespace>
+    <AssemblyName>MemorySharp</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ExternalMemorySharp.cs" />
+    <Compile Include="Helpers\ApplicationFinder.cs" />
+    <Compile Include="Helpers\ArchitectureHelper.cs" />
+    <Compile Include="Helpers\HandleManipulator.cs" />
+    <Compile Include="Helpers\Randomizer.cs" />
+    <Compile Include="Helpers\SerializationHelper.cs" />
+    <Compile Include="Helpers\Singleton.cs" />
+    <Compile Include="InternalMemorySharp.cs" />
+    <Compile Include="Internals\IApplicableElement.cs" />
+    <Compile Include="Internals\IDisposableState.cs" />
+    <Compile Include="Internals\IFactory.cs" />
+    <Compile Include="Internals\IMarshalledValue.cs" />
+    <Compile Include="Internals\INamedElement.cs" />
+    <Compile Include="Memory\LocalUnmanagedMemory.cs" />
+    <Compile Include="Exceptions\MemorySharpException.cs" />
+    <Compile Include="Exceptions\MemoryReadException.cs" />
+    <Compile Include="Exceptions\MemoryWriteException.cs" />
+    <Compile Include="Helpers\Required.cs" />
+    <Compile Include="Extensions\IntPtrExtensions.cs" />
+    <Compile Include="Internals\Manager.cs" />
+    <Compile Include="Internals\MarshalType.cs" />
+    <Compile Include="Internals\MarshalValue.cs" />
+    <Compile Include="Memory\MemoryBase.cs" />
+    <Compile Include="Memory\MemoryFactory.cs" />
+    <Compile Include="Memory\MemoryProtection.cs" />
+    <Compile Include="Memory\RemoteAllocation.cs" />
+    <Compile Include="Memory\RemotePointer.cs" />
+    <Compile Include="Memory\RemoteRegion.cs" />
+    <Compile Include="Modules\InjectedModule.cs" />
+    <Compile Include="Modules\ModuleCore.cs" />
+    <Compile Include="Modules\ModuleFactory.cs" />
+    <Compile Include="Modules\RemoteFunction.cs" />
+    <Compile Include="Modules\RemoteModule.cs" />
+    <Compile Include="Native\Enumerations.cs" />
+    <Compile Include="Native\NativeMethods.cs" />
+    <Compile Include="Native\Structures.cs" />
+    <Compile Include="Patterns\Pattern.cs" />
+    <Compile Include="Patterns\PatternCore.cs" />
+    <Compile Include="Patterns\PatternFactory.cs" />
+    <Compile Include="Patterns\ScanResult.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Native\SafeMemoryHandle.cs" />
+    <Compile Include="Threads\Enumerations.cs" />
+    <Compile Include="Threads\FrozenThread.cs" />
+    <Compile Include="Threads\RemoteThread.cs" />
+    <Compile Include="Threads\ThreadCore.cs" />
+    <Compile Include="Threads\ThreadFactory.cs" />
+    <Compile Include="Windows\Keyboard\BaseKeyboard.cs" />
+    <Compile Include="Windows\Keyboard\MessageKeyboard.cs" />
+    <Compile Include="Windows\Mouse\BaseMouse.cs" />
+    <Compile Include="Windows\Mouse\SendInputMouse.cs" />
+    <Compile Include="Windows\RemoteWindow.cs" />
+    <Compile Include="Windows\WindowCore.cs" />
+    <Compile Include="Windows\WindowFactory.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
