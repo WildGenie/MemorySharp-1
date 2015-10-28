@@ -366,7 +366,8 @@ namespace MemorySharp.Memory
 
             // The first address must be lower than the second
             if (numberFrom >= numberTo)
-                throw new ArgumentException("The starting address must be lower than the ending address.", "addressFrom");
+                throw new ArgumentException("The starting address must be lower than the ending address.",
+                    nameof(addressFrom));
 
             // Create the variable storing the result of the call of VirtualQueryEx
             int ret;
@@ -601,7 +602,7 @@ namespace MemorySharp.Memory
         /// <param name="bytes">The bytes.</param>
         /// <param name="isRelative">if set to <c>true</c> [is relative].</param>
         /// <returns></returns>
-        public abstract void WriteBytes(IntPtr address, byte[] bytes, bool isRelative = false);
+        public abstract int WriteBytes(IntPtr address, byte[] bytes, bool isRelative = false);
 
         /// <summary>
         ///     Reads a value of the specified type at the specified address.

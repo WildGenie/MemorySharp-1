@@ -372,7 +372,7 @@ namespace MemorySharp.Windows
             }
             else
             {
-                throw new ArgumentException("The parameter cannot be null or empty.", "inputs");
+                throw new ArgumentException("The parameter cannot be null or empty.", nameof(inputs));
             }
         }
 

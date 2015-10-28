@@ -23,12 +23,18 @@ namespace MemorySharp
         public InternalMemorySharp(Process process) : base(process)
         {
             Disassembler = new Disassembler(this);
+            Detours = new DetourManager(this);
         }
 
         /// <summary>
         ///     The <see cref="Disassembly.Disassembler" /> Instance.
         /// </summary>
         public Disassembler Disassembler { get; }
+
+        /// <summary>
+        ///     A manager for detours. See <see cref="Detours" />
+        /// </summary>
+        public DetourManager Detours { get; }
 
         /// <summary>
         ///     Reads the specified amount of bytes from the specified address.
@@ -59,7 +65,7 @@ namespace MemorySharp
         /// <param name="address">The address.</param>
         /// <param name="bytes">The bytes.</param>
         /// <param name="isRelative">if set to <c>true</c> [is relative].</param>
-        public override unsafe void WriteBytes(IntPtr address, byte[] bytes, bool isRelative = false)
+        public override unsafe int WriteBytes(IntPtr address, byte[] bytes, bool isRelative = false)
         {
             if (isRelative)
             {
@@ -70,6 +76,7 @@ namespace MemorySharp
             {
                 pointer[i] = bytes[i];
             }
+            return bytes.Length;
         }
 
         /// <summary>

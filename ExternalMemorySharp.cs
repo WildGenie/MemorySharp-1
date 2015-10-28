@@ -42,9 +42,9 @@ namespace MemorySharp
         /// <param name="address">The address where the array is written.</param>
         /// <param name="bytes">The array of bytes to write.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public override void WriteBytes(IntPtr address, byte[] bytes, bool isRelative = false)
+        public override int WriteBytes(IntPtr address, byte[] bytes, bool isRelative = false)
         {
-            WriteProcessMemory(address, bytes, isRelative);
+            return WriteProcessMemory(address, bytes, isRelative);
         }
 
         /// <summary>

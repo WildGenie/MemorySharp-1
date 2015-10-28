@@ -51,10 +51,13 @@
     <Compile Include="Helpers\ApplicationFinder.cs" />
     <Compile Include="Helpers\ArchitectureHelper.cs" />
     <Compile Include="Helpers\HandleManipulator.cs" />
+    <Compile Include="Helpers\MissingAttributeException.cs" />
     <Compile Include="Helpers\Randomizer.cs" />
     <Compile Include="Helpers\SerializationHelper.cs" />
     <Compile Include="Helpers\Singleton.cs" />
+    <Compile Include="Helpers\AttributeHelper.cs" />
     <Compile Include="InternalMemorySharp.cs" />
+    <Compile Include="Internals\DetourManager.cs" />
     <Compile Include="Internals\Detour.cs" />
     <Compile Include="Internals\MemoryDetour.cs" />
     <Compile Include="Internals\IApplicableElement.cs" />

@@ -1,130 +1,131 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using MemorySharp.Extensions;
+using MemorySharp.Memory;
 
 namespace MemorySharp.Internals
 {
-    public class Detour<T> : IApplicableElement where T : class
+    /// <summary>
+    ///     A  class to handle function detours.
+    /// </summary>
+    public class Detour : INamedElement
     {
-        static Detour()
+        internal Detour(Delegate target, Delegate hook, string name, MemoryBase memory)
         {
-            if (!typeof (T).IsSubclassOf(typeof (Delegate)) ||
-                typeof (T).GetCustomAttributes(typeof (UnmanagedFunctionPointerAttribute), true).Length == 0)
-            {
-                throw new ArgumentException(
-                    "Type T must be a delegate type adorned with the UnmanagedFunctionPointer attribute");
-            }
+            Memory = memory;
+            Name = name;
+            TargetDelegate = target;
+            Target = Marshal.GetFunctionPointerForDelegate(target);
+            _hookDelegate = hook;
+            _hook = Marshal.GetFunctionPointerForDelegate(hook);
+
+            // Store the orginal bytes
+            Orginal = new List<byte>();
+            Orginal.AddRange(memory.ReadBytes(Target, 6));
+
+            // Setup the detour bytes
+            New = new List<byte> {0x68};
+            var bytes = BitConverter.GetBytes(_hook.ToInt32());
+            New.AddRange(bytes);
+            New.Add(0xC3);
+            IsDisposed = false;
+            MustBeDisposed = true;
         }
 
-        public Detour(InternalMemorySharp memorySharp, IntPtr targetAddr, T detourFunc)
+        [SuppressMessage("ReSharper", "PrivateFieldCanBeConvertedToLocalVariable")] private readonly IntPtr _hook;
+
+        /// <summary>
+        ///     This var is not used within the detour itself. It is only here
+        ///     to keep a reference, to avoid the GC from collecting the delegate instance!
+        /// </summary>
+        [SuppressMessage("ReSharper", "NotAccessedField.Local")] private readonly Delegate _hookDelegate;
+
+        private MemoryBase Memory { get; }
+        private List<byte> New { get; }
+        private List<byte> Orginal { get; }
+        private IntPtr Target { get; }
+        private Delegate TargetDelegate { get; }
+
+        /// <summary>
+        ///     Gets a value indicating whether the element is disposed.
+        /// </summary>
+        public bool IsDisposed { get; set; }
+
+        /// <summary>
+        ///     Gets a value indicating whether the element must be disposed when the Garbage Collector collects the object.
+        /// </summary>
+        public bool MustBeDisposed { get; }
+
+        /// <summary>
+        ///     States if the element is enabled.
+        /// </summary>
+        public bool IsEnabled { get; set; }
+
+        /// <summary>
+        ///     The name of the element.
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        ///     Calls the original function, and returns a return value.
+        /// </summary>
+        /// <param name="args">
+        ///     The arguments to pass. If it is a 'void' argument list,
+        ///     you MUST pass 'null'.
+        /// </param>
+        /// <returns>An object containing the original functions return value.</returns>
+        public object CallOriginal(params object[] args)
         {
-            JumpSize = IntPtr.Size == 4 ? 5 : 14;
-            Memory = memorySharp;
-            TargetAddr = targetAddr;
-            TargetDelegate = memorySharp.GetDelegate<T>(TargetAddr);
-            HookAddr = ((Delegate) (object) detourFunc).ToFunctionPointer();
-            // store the original function bytes
-            Original = new List<byte>(memorySharp.ReadArray<byte>(TargetAddr, JumpSize));
+            Disable();
+            var ret = TargetDelegate.DynamicInvoke(args);
+            Enable();
+            return ret;
         }
 
-        private IntPtr HookAddr { get; }
-        private int JumpSize { get; } // TODO: x64 support (14 bytes)
-        private InternalMemorySharp Memory { get; }
-        private List<byte> Original { get; }
-        private IntPtr TargetAddr { get; }
-        private T TargetDelegate { get; }
-        private IntPtr Trampoline { get; set; }
-        public bool IsEnabled { get; private set; }
-
-        public T CallOriginal
-        {
-            get
-            {
-                if (!IsEnabled) return TargetDelegate;
-                if (Trampoline == IntPtr.Zero)
-                    throw new InvalidOperationException("No trampoline has been allocated - something has gone wrong");
-
-                return Memory.GetDelegate<T>(Trampoline);
-            }
-        }
-
-        public bool IsDisposed { get; private set; }
-        public bool MustBeDisposed { get; } = true;
-
-        private void WriteJump(IntPtr pAddr, IntPtr pJmpTarget)
-        {
-            var jmpBytes = new List<byte> {0xE9};
-
-            // relocate address
-            var relocAddr = pJmpTarget.ToInt32() - pAddr.ToInt32() - 5;
-
-            jmpBytes.AddRange(BitConverter.GetBytes(relocAddr));
-
-            Memory.WriteArray(pAddr, jmpBytes.ToArray());
-        }
-
-        public void Enable()
-        {
-            if (IsEnabled)
-                return;
-            // TODO: handle this situation
-            if (Trampoline != IntPtr.Zero)
-                throw new InvalidOperationException("Trampoline was not correctly freed");
-            Trampoline = Memory.Memory.Allocate(JumpSize*3).BaseAddress;
-            var pTramp = Trampoline;
-
-            // dissassemble from target address
-            // moving JumpSize bytes to trampoline
-            var instrByteCount = 0;
-            foreach (var instr in Memory.Disassembler.Disassemble(TargetAddr))
-            {
-                // TODO: work out jumps
-                Memory.WriteArray(pTramp, instr.InstructionData);
-                pTramp += instr.Length;
-                instrByteCount += instr.Length;
-
-                // We now have enough data, stop disassembling
-                if (instrByteCount >= JumpSize)
-                    break;
-            }
-
-            // write a jmp instruction from trampoline back to function
-            WriteJump(pTramp, TargetAddr + instrByteCount);
-
-            // Write jump from target to detour
-            WriteJump(TargetAddr, HookAddr);
-
-            IsEnabled = true;
-        }
-
-        public void Disable()
-        {
-            if (!IsEnabled)
-                return;
-
-            // Restore the original bytes to the function address
-            Memory.WriteArray(TargetAddr, Original.ToArray());
-
-            // Release the trampoline
-            Memory.FreeMemory(Memory.Handle, Trampoline);
-        }
-
+        /// <summary>
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
         public void Dispose()
         {
-            if (!MustBeDisposed)
-                return;
-            Disable();
-
-            // Ensure _trampoline is freed, even though this should happen in Remove()
-            if (Trampoline != IntPtr.Zero)
+            if (IsEnabled && MustBeDisposed)
             {
-                Memory.FreeMemory(Memory.Handle, Trampoline);
+                Disable();
+                IsDisposed = true;
             }
-            IsDisposed = true;
+
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        ///     Removes this Detour from memory. (Reverts the bytes back to their originals.)
+        /// </summary>
+        /// <returns></returns>
+        public void Disable()
+        {
+            if (Memory.WriteBytes(Target, Orginal.ToArray()) == Orginal.Count)
+            {
+                IsEnabled = false;
+            }
+        }
+
+        /// <summary>
+        ///     Applies this Detour to memory. (Writes new bytes to memory)
+        /// </summary>
+        /// <returns></returns>
+        public void Enable()
+        {
+            if (Memory.WriteBytes(Target, New.ToArray()) == New.Count)
+            {
+                IsEnabled = true;
+            }
+        }
+
+        /// <summary>
+        ///     Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage
+        ///     collection.
+        /// </summary>
         ~Detour()
         {
             Dispose();
