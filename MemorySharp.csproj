@@ -42,6 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Disassembly\Bea\Constants.cs" />
+    <Compile Include="Disassembly\Bea\Engine.cs" />
+    <Compile Include="Disassembly\Bea\Structs.cs" />
+    <Compile Include="Disassembly\Disassembler.cs" />
+    <Compile Include="Extensions\DelegateExtensions.cs" />
     <Compile Include="ExternalMemorySharp.cs" />
     <Compile Include="Helpers\ApplicationFinder.cs" />
     <Compile Include="Helpers\ArchitectureHelper.cs" />
@@ -50,6 +55,8 @@
     <Compile Include="Helpers\SerializationHelper.cs" />
     <Compile Include="Helpers\Singleton.cs" />
     <Compile Include="InternalMemorySharp.cs" />
+    <Compile Include="Internals\Detour.cs" />
+    <Compile Include="Internals\MemoryDetour.cs" />
     <Compile Include="Internals\IApplicableElement.cs" />
     <Compile Include="Internals\IDisposableState.cs" />
     <Compile Include="Internals\IFactory.cs" />

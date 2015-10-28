@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using MemorySharp.Disassembly;
 using MemorySharp.Internals;
 using MemorySharp.Memory;
 
@@ -21,7 +22,13 @@ namespace MemorySharp
         /// </summary>
         public InternalMemorySharp(Process process) : base(process)
         {
+            Disassembler = new Disassembler(this);
         }
+
+        /// <summary>
+        ///     The <see cref="Disassembly.Disassembler" /> Instance.
+        /// </summary>
+        public Disassembler Disassembler { get; }
 
         /// <summary>
         ///     Reads the specified amount of bytes from the specified address.
@@ -257,6 +264,51 @@ namespace MemorySharp
             }
 
             return (T) ptrObject;
+        }
+
+        /// <summary>
+        ///     Registers a function into a delegate. Note: The delegate must provide a proper function signature!
+        /// </summary>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="address">The address where the value is written.</param>
+        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
+        /// <returns>A delegate.</returns>
+        public T GetDelegate<T>(IntPtr address, bool isRelative = false) where T : class
+        {
+            if (isRelative)
+            {
+                address = ToAbsolute(address);
+            }
+            if (typeof (T).GetCustomAttributes(typeof (UnmanagedFunctionPointerAttribute), true).Length == 0)
+            {
+                throw new InvalidOperationException(
+                    "This operation can only convert to delegates adorned with the UnmanagedFunctionPointerAttribute");
+            }
+            return Marshal.GetDelegateForFunctionPointer(address, typeof (T)) as T;
+        }
+
+        /// <summary>
+        ///     Gets a virtual function delegate. Note: The delegate must provide a proper function signature!
+        /// </summary>
+        /// <typeparam name="T">Type param.</typeparam>
+        /// <param name="address">The address the class is located in memory.</param>
+        /// <param name="functionIndex"></param>
+        /// <returns><see cref="IntPtr" /> to address to the function.</returns>
+        public T GetVirtualFunction<T>(IntPtr address, int functionIndex) where T : class
+        {
+            return Marshal.GetDelegateForFunctionPointer<T>(GetUnsafeVTablePointer(address, functionIndex));
+        }
+
+        /// <summary>
+        ///     Gets a function pointer from an object's virtual method table at the supplied index
+        /// </summary>
+        /// <param name="addr">Object base address</param>
+        /// <param name="index">Virtual method index</param>
+        /// <returns><see cref="IntPtr" /> to address to the function.</returns>
+        public static unsafe IntPtr GetUnsafeVTablePointer(IntPtr addr, int index)
+        {
+            var pAddr = (void***) addr.ToPointer();
+            return new IntPtr((*pAddr)[index]);
         }
     }
 }

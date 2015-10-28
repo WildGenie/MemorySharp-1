@@ -17,7 +17,7 @@ namespace MemorySharp.Internals
         /// <summary>
         ///     States if the element is enabled.
         /// </summary>
-        bool IsEnabled { get; set; }
+        bool IsEnabled { get; }
 
         /// <summary>
         ///     Disables the element.
