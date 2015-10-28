@@ -53,8 +53,10 @@
     <Compile Include="Internals\IApplicableElement.cs" />
     <Compile Include="Internals\IDisposableState.cs" />
     <Compile Include="Internals\IFactory.cs" />
+    <Compile Include="Internals\IFunction.cs" />
     <Compile Include="Internals\IMarshalledValue.cs" />
     <Compile Include="Internals\INamedElement.cs" />
+    <Compile Include="Internals\IProcessFunction.cs" />
     <Compile Include="Memory\LocalUnmanagedMemory.cs" />
     <Compile Include="Exceptions\MemorySharpException.cs" />
     <Compile Include="Exceptions\MemoryReadException.cs" />

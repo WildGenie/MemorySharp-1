@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using MemorySharp.Exceptions;
@@ -653,6 +654,22 @@ namespace MemorySharp.Memory
         {
         }
 #pragma warning restore CS1998
+        /// <summary>
+        ///     Registers a function into a delegate. Note: The delegate must provide a proper function signature!
+        /// </summary>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="address">The address where the value is written.</param>
+        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
+        /// <returns>A delegate.</returns>
+        public T GetDelegate<T>(IntPtr address, bool isRelative = false)
+        {
+            if (isRelative)
+            {
+                address = ToAbsolute(address);
+            }
+            return Marshal.GetDelegateForFunctionPointer<T>(address);
+        }
+
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
