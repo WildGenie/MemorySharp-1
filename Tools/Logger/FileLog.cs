@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace MemorySharp.Logger
+namespace MemorySharp.Tools.Logger
 {
     /// <summary>
     ///     A class class to handle writing logs to text files.
@@ -65,22 +65,22 @@ namespace MemorySharp.Logger
             StreamWriter.Close();
         }
 
-        public void WriteNormal(string message)
+        public void Normal(string message)
         {
             StreamWriter.WriteLine(UseFormattedText ? FormatText("Normal", message) : message);
         }
 
-        public void WriteError(string message)
+        public void Error(string message)
         {
             StreamWriter.WriteLine(UseFormattedText ? FormatText("Error", message) : message);
         }
 
-        public void WriteInfo(string message)
+        public void Info(string message)
         {
             StreamWriter.WriteLine(UseFormattedText ? FormatText("Information", message) : message);
         }
 
-        public void WriteWarning(string message)
+        public void Warning(string message)
         {
             StreamWriter.WriteLine(UseFormattedText ? FormatText("Warning", message) : message);
         }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using BeaEngine.Net;
-using MemorySharp.Extensions;
 
 namespace MemorySharp.Disassembly
 {

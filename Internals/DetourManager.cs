@@ -49,12 +49,12 @@ namespace MemorySharp.Internals
             {
                 throw new ArgumentNullException(nameof(name));
             }
-            if (!AttributeHelper.HasUFPAttribute(target))
+            if (!AttributeHelper.HasUfpAttribute(target))
             {
                 throw new MissingAttributeException(
                     "The target delegate does not have the proper UnmanagedFunctionPointer attribute!");
             }
-            if (!AttributeHelper.HasUFPAttribute(newTarget))
+            if (!AttributeHelper.HasUfpAttribute(newTarget))
             {
                 throw new MissingAttributeException(
                     "The new target delegate does not have the proper UnmanagedFunctionPointer attribute!");

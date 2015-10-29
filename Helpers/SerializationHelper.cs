@@ -50,7 +50,7 @@ namespace MemorySharp.Helpers
             // Create the stream to write into the specified file
             using (var file = new StreamWriter(FormatXmlFileNameOrPath(path), false, encoding))
             {
-                // Write the content by calling the method to serialize the object
+                // Normal the content by calling the method to serialize the object
                 file.Write(ExportToXmlString(obj));
             }
         }

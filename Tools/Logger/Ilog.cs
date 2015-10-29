@@ -1,4 +1,4 @@
-﻿namespace MemorySharp.Helpers.Logger
+﻿namespace MemorySharp.Tools.Logger
 {
     /// <summary>
     ///     An interface for creating very basic logger classes.
@@ -7,28 +7,28 @@
     {
         #region Methods
         /// <summary>
-        ///     Write a warning log.
+        ///     Normal a warning log.
         /// </summary>
         /// <param name="message">The message to write.</param>
-        void WriteWarning(string message);
+        void Warning(string message);
 
         /// <summary>
-        ///     Write a normal log.
+        ///     Normal a normal log.
         /// </summary>
         /// <param name="message">The message to write.</param>
-        void WriteNormal(string message);
+        void Normal(string message);
 
         /// <summary>
-        ///     Write an error log.
+        ///     Normal an error log.
         /// </summary>
         /// <param name="message">The message to write.</param>
-        void WriteError(string message);
+        void Error(string message);
 
         /// <summary>
-        ///     Write an information log.
+        ///     Normal an information log.
         /// </summary>
         /// <param name="message">The message to write.</param>
-        void WriteInfo(string message);
+        void Info(string message);
         #endregion
     }
 }

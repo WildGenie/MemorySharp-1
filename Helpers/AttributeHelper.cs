@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace MemorySharp.Helpers
 {
-    internal class AttributeHelper
+    public class AttributeHelper
     {
         #region Methods
         /// <summary>
@@ -15,7 +15,7 @@ namespace MemorySharp.Helpers
         ///     <c>true</c> if the specified item has attrib; otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>Created 2012-01-16 19:28 by Nesox.</remarks>
-        internal static bool HasAttrib<T>(Type item)
+        public static bool HasAttrib<T>(Type item)
         {
             return item.GetCustomAttributes(typeof (T), true).Length != 0;
         }
@@ -28,9 +28,9 @@ namespace MemorySharp.Helpers
         ///     <c>true</c> if [has UFP attribute] [the specified d]; otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>Created 2012-01-16 19:28 by Nesox.</remarks>
-        internal static bool HasUFPAttribute(Delegate d)
+        public static bool HasUfpAttribute(Delegate d)
         {
-            return HasUFPAttribute(d.GetType());
+            return HasUfpAttribute(d.GetType());
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace MemorySharp.Helpers
         ///     <c>true</c> if [has UFP attribute] [the specified t]; otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>Created 2012-01-16 19:28 by Nesox.</remarks>
-        internal static bool HasUFPAttribute(Type t)
+        public static bool HasUfpAttribute(Type t)
         {
             return HasAttrib<UnmanagedFunctionPointerAttribute>(t);
         }

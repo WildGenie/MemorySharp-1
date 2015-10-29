@@ -103,7 +103,7 @@ namespace MemorySharp.Memory
         }
 
         /// <summary>
-        ///     Write data to the unmanaged block of memory.
+        ///     Normal data to the unmanaged block of memory.
         /// </summary>
         /// <typeparam name="T">The type of data to write.</typeparam>
         /// <param name="data">The data to write.</param>

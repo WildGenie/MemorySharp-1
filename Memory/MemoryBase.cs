@@ -7,7 +7,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using MemorySharp.Extensions;
 using MemorySharp.Helpers;
 using MemorySharp.Internals.Exceptions;
 using MemorySharp.Internals.Interfaces;
@@ -193,7 +192,7 @@ namespace MemorySharp.Memory
             // Create the variable storing the number of bytes written
             IntPtr nbBytesWritten;
 
-            // Write the data to the target process
+            // Normal the data to the target process
             if (NativeMethods.WriteProcessMemory(Handle, address, byteArray, byteArray.Length, out nbBytesWritten))
             {
                 // Check whether the length of the data written is equal to the inital array

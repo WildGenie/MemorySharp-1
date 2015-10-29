@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using MemorySharp.Extensions;
 using MemorySharp.Internals.Interfaces;
 using MemorySharp.Native;
 
@@ -98,7 +97,7 @@ namespace MemorySharp.Disassembly
             // write a jmp instruction from trampoline back to function
             WriteJump(pTramp, _targetAddr + instrByteCount);
 
-            // Write jump from target to detour
+            // Normal jump from target to detour
             WriteJump(_targetAddr, _hookAddr);
 
             IsEnabled = true;

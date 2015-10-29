@@ -40,7 +40,7 @@ namespace MemorySharp
         }
 
         /// <summary>
-        ///     Write an array of bytes in the remote process.
+        ///     Normal an array of bytes in the remote process.
         /// </summary>
         /// <param name="address">The address where the array is written.</param>
         /// <param name="bytes">The array of bytes to write.</param>
@@ -115,7 +115,7 @@ namespace MemorySharp
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         public override void WriteArray<T>(IntPtr address, T[] value, bool isRelative = false)
         {
-            // Write the array in the remote process
+            // Normal the array in the remote process
             if (isRelative)
             {
                 address = ToAbsolute(address);
@@ -139,7 +139,7 @@ namespace MemorySharp
             {
                 address = ToAbsolute(address);
             }
-            // Write the array in the remote process
+            // Normal the array in the remote process
             for (var i = 0; i < array.Length; i++)
             {
                 Write(address + MarshalType<T>.Size*i, array[i]);

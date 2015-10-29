@@ -112,7 +112,7 @@ namespace MemorySharp.Internals.Marshaling
                 var text = Value.ToString();
                 // Allocate memory in the remote process (string + '\0')
                 Allocated = MemorySharp.Memory.Allocate(text.Length + 1);
-                // Write the value
+                // Normal the value
                 Allocated.WriteString(text, Encoding.UTF8);
                 // Get the pointer
                 Reference = Allocated.BaseAddress;
@@ -136,7 +136,7 @@ namespace MemorySharp.Internals.Marshaling
 
                     // Allocate memory in the remote process
                     Allocated = MemorySharp.Memory.Allocate(MarshalType<T>.Size);
-                    // Write the value
+                    // Normal the value
                     Allocated.Write(Value);
                     // Get the pointer
                     Reference = Allocated.BaseAddress;

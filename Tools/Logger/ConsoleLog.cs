@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MemorySharp.Logger
+namespace MemorySharp.Tools.Logger
 {
     /// <summary>
     ///     A class to handle writing logs to the system <see cref="Console" />.
@@ -8,22 +8,22 @@ namespace MemorySharp.Logger
     public class ConsoleLog : ILog
     {
         #region  Interface members
-        public void WriteWarning(string message)
+        public void Warning(string message)
         {
             Console.WriteLine($"{"[Warning]["}{DateTime.Now}{"]: "}{message}");
         }
 
-        public void WriteNormal(string message)
+        public void Normal(string message)
         {
             Console.WriteLine($"{"[Normal]["}{DateTime.Now}{"]: "}{message}");
         }
 
-        public void WriteError(string message)
+        public void Error(string message)
         {
             Console.WriteLine($"{"[Error]["}{DateTime.Now}{"]: "}{message}");
         }
 
-        public void WriteInfo(string message)
+        public void Info(string message)
         {
             Console.WriteLine($"{"[Info]["}{DateTime.Now}{"]: "}{message}");
         }

@@ -38,6 +38,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,19 +52,29 @@
     <Compile Include="Disassembly\Disassembler.cs" />
     <Compile Include="Disassembly\IMemoryEdit.cs" />
     <Compile Include="Disassembly\MemoryEditManager.cs" />
-    <Compile Include="Extensions\DelegateExtensions.cs" />
+    <Compile Include="Tools\Extensions\BooleanExtensions.cs" />
+    <Compile Include="Tools\Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Tools\Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Tools\Extensions\ObjectExtensions.cs" />
+    <Compile Include="Tools\Extensions\RichTextBoxExtensions.cs" />
+    <Compile Include="Tools\Extensions\StringExtensions.cs" />
     <Compile Include="ExternalMemorySharp.cs" />
     <Compile Include="Helpers\ApplicationFinder.cs" />
     <Compile Include="Helpers\ArchitectureHelper.cs" />
-    <Compile Include="Extensions\IntegerExtensions.cs" />
-    <Compile Include="Extensions\ProcessExtensions.cs" />
+    <Compile Include="Helpers\AsyncHelper.cs" />
+    <Compile Include="Tools\Emails\Emailer.cs" />
+    <Compile Include="Tools\Emails\EmailHelper.cs" />
+    <Compile Include="Tools\Emails\SmtpSettings.cs" />
     <Compile Include="Helpers\HandleManipulator.cs" />
-    <Compile Include="Logger\ConsoleLog.cs" />
-    <Compile Include="Logger\DebugLog.cs" />
-    <Compile Include="Logger\FileLog.cs" />
-    <Compile Include="Logger\Ilog.cs" />
-    <Compile Include="Logger\Log.cs" />
-    <Compile Include="Extensions\ProcessStartInfoExtensions.cs" />
+    <Compile Include="Tools\Logger\EmailLog.cs" />
+    <Compile Include="Helpers\ReflectionHelper.cs" />
+    <Compile Include="Tools\Scripts\Script.cs" />
+    <Compile Include="Tools\Scripts\ScriptManager.cs" />
+    <Compile Include="Tools\Scripts\ScriptThread.cs" />
+    <Compile Include="Internals\Exceptions\SleepException.cs" />
+    <Compile Include="Internals\Exceptions\TerminateException.cs" />
+    <Compile Include="Internals\Interfaces\IPulseable.cs" />
+    <Compile Include="Tools\ObjectCache.cs" />
     <Compile Include="Internals\Marshaling\CustomMarshal.cs" />
     <Compile Include="Internals\Marshaling\CustomMarshalAsAttribute.cs" />
     <Compile Include="Internals\Marshaling\CustomMarshalAttribute.cs" />
@@ -74,6 +86,11 @@
     <Compile Include="Helpers\AttributeHelper.cs" />
     <Compile Include="InternalMemorySharp.cs" />
     <Compile Include="Internals\DetourManager.cs" />
+    <Compile Include="Tools\Logger\ConsoleLog.cs" />
+    <Compile Include="Tools\Logger\DebugLog.cs" />
+    <Compile Include="Tools\Logger\FileLog.cs" />
+    <Compile Include="Tools\Logger\Ilog.cs" />
+    <Compile Include="Tools\Logger\Log.cs" />
     <Compile Include="Memory\MemoryDetour.cs" />
     <Compile Include="Internals\Interfaces\IApplicableElement.cs" />
     <Compile Include="Internals\Interfaces\IDisposableState.cs" />
@@ -87,7 +104,6 @@
     <Compile Include="Internals\Exceptions\MemoryReadException.cs" />
     <Compile Include="Internals\Exceptions\MemoryWriteException.cs" />
     <Compile Include="Helpers\Required.cs" />
-    <Compile Include="Extensions\IntPtrExtensions.cs" />
     <Compile Include="Internals\Manager.cs" />
     <Compile Include="Internals\Marshaling\MarshalType.cs" />
     <Compile Include="Internals\Marshaling\MarshalValue.cs" />
@@ -129,6 +145,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -12,7 +12,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Reflection;
+using MemorySharp.Tools.Extensions;
 using MemorySharp.Windows;
 
 namespace MemorySharp.Helpers
@@ -22,6 +24,11 @@ namespace MemorySharp.Helpers
     /// </summary>
     public static class ApplicationFinder
     {
+        #region  Fields
+        private static string _name = string.Empty;
+        private static string _appDataFolderName = string.Empty;
+        #endregion
+
         #region  Properties
         /// <summary>
         ///     Gets all top-level windows on the screen.
@@ -45,6 +52,55 @@ namespace MemorySharp.Helpers
         /// </summary>
         public static Version ApplicationVersion => Assembly.GetExecutingAssembly().
             GetName().Version;
+
+        /// <summary>
+        ///     Get default application name based on <see cref="Assembly.GetEntryAssembly()" />.<see cref="Assembly.GetName()" />.
+        ///     <see cref="AssemblyName.Name" />.
+        /// </summary>
+        public static string DefaultApplicationName
+        {
+            get
+            {
+                var asm = Assembly.GetEntryAssembly();
+                return asm.IsNull() ? "Inflop.Common" : asm.GetName().Name;
+            }
+        }
+
+        /// <summary>
+        ///     Get or set application name. If not set returns <see cref="MediaTypeNames.Application.DefaultApplicationName" />.
+        /// </summary>
+        public static string Name
+        {
+            get
+            {
+                if (_name.IsNull() || _name.IsEmpty())
+                    _name = DefaultApplicationName;
+
+                return _name;
+            }
+            set { _name = value; }
+        }
+
+        /// <summary>
+        ///     Get or set application folder name in <see cref="Environment.SpecialFolder.ApplicationData" /> location.
+        /// </summary>
+        public static string AppDataFolderName
+        {
+            get
+            {
+                if (_appDataFolderName.IsEmpty())
+                    _appDataFolderName = _name;
+
+                return _appDataFolderName;
+            }
+            set { _appDataFolderName = value; }
+        }
+
+        /// <summary>
+        ///     Get full path to application folder name in <see cref="Environment.SpecialFolder.ApplicationData" /> location.
+        /// </summary>
+        public static string AppFolderPath
+            => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppDataFolderName);
         #endregion
 
         #region Methods
