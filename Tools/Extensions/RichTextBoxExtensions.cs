@@ -33,11 +33,11 @@ namespace MemorySharp.Tools.Extensions
         {
             if (!box.InvokeRequired)
             {
-                box.AppendText("\n" + text, color == Color.Empty ? (Color) box.ForeColor : color, args);
+                box.AppendText("\n" + text, color == Color.Empty ? box.ForeColor : color, args);
             }
             else
             {
-                box.InvokeAppendText("\n" + text, color == Color.Empty ? (Color) box.ForeColor : color, args);
+                box.InvokeAppendText("\n" + text, color == Color.Empty ? box.ForeColor : color, args);
             }
         }
 

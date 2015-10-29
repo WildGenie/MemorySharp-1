@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MemorySharp.Internals.Exceptions;
 using MemorySharp.Tools.Logger;
 
 namespace MemorySharp.Tools.Scripts
@@ -13,7 +14,7 @@ namespace MemorySharp.Tools.Scripts
         #endregion
 
         #region Constructors
-        public Script(string name, string category)
+        protected Script(string name, string category)
         {
             Name = name;
             Category = category;
@@ -81,7 +82,7 @@ namespace MemorySharp.Tools.Scripts
 
                 if (IsRunning)
                 {
-                    MainThread.Tick();
+                    MainThread?.Tick();
 
                     foreach (var thread in ThreadPool)
                         thread.Tick();
@@ -134,19 +135,17 @@ namespace MemorySharp.Tools.Scripts
 
         private void OnStarted()
         {
-            if (OnStartedEvent != null)
-                OnStartedEvent(this, new EventArgs());
+            OnStartedEvent?.Invoke(this, new EventArgs());
         }
 
         private void OnTerminated()
         {
-            if (OnStoppedEvent != null)
-                OnStoppedEvent(this, new EventArgs());
+            OnStoppedEvent?.Invoke(this, new EventArgs());
         }
 
         public override string ToString()
         {
-            return string.Format("[{0}] {1}", Category, Name);
+            return $"[{Category}] {Name}";
         }
         #endregion
     }

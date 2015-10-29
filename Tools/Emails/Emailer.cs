@@ -19,13 +19,20 @@ namespace MemorySharp.Tools.Emails
         public Emailer(SmtpSettings settings)
         {
             Settings = settings;
+            Client = settings.Client;
         }
         #endregion
 
         #region  Properties
         /// <summary>
+        ///     The smpt settngs.
         /// </summary>
         public SmtpSettings Settings { get; }
+
+        /// <summary>
+        ///     The smtp client.
+        /// </summary>
+        public SmtpClient Client { get; }
         #endregion
 
         #region Methods
@@ -83,14 +90,17 @@ namespace MemorySharp.Tools.Emails
 
             try
             {
-                using (client = Settings.Client)
+                using (client = Client)
+                {
                     await client.SendMailAsync(mailMessage);
+                }
             }
             catch (SmtpException ex)
             {
                 ex.Log();
                 throw;
             }
+
             catch (Exception ex)
             {
                 ex.Log();
