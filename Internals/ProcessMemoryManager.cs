@@ -19,7 +19,7 @@ namespace MemorySharp.Internals
             ProcessAccessFlags.VmOperation | ProcessAccessFlags.VmWrite |
             ProcessAccessFlags.VmRead;
 
-        private static readonly Dictionary<int, ProcessMemoryManager> _processManagers =
+        public static readonly Dictionary<int, ProcessMemoryManager> ProcessManagers =
             new Dictionary<int, ProcessMemoryManager>();
         #endregion
 
@@ -64,13 +64,13 @@ namespace MemorySharp.Internals
             _handle = IntPtr.Zero;
         }
 
-        internal static ProcessMemoryManager ForProcess(Process process)
+        public static ProcessMemoryManager ForProcess(Process process)
         {
-            if (!_processManagers.ContainsKey(process.Id))
+            if (!ProcessManagers.ContainsKey(process.Id))
             {
-                _processManagers[process.Id] = new ProcessMemoryManager(process);
+                ProcessManagers[process.Id] = new ProcessMemoryManager(process);
             }
-            return _processManagers[process.Id];
+            return ProcessManagers[process.Id];
         }
         #endregion
 

@@ -36,7 +36,7 @@ namespace MemorySharp.Disassembly
                 pBuffer = Process.GetCurrentProcess().Allocate(IntPtr.Zero, (uint) bufferSize);
 
                 // TODO: this is probably horribly inefficient
-                Marshal.Copy(pAddr.ReadArray<byte>(bufferSize), 0, pBuffer, bufferSize);
+                Marshal.Copy(pAddr.ReadArray<byte>(bufferSize, false), 0, pBuffer, bufferSize);
 
                 var pDisasmLoc = pBuffer;
                 var virtualAddr = (uint) pAddr; // TODO: currently doesnt support x64

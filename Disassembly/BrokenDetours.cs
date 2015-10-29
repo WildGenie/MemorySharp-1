@@ -39,7 +39,7 @@ namespace MemorySharp.Disassembly
             _hookAddr = ((Delegate) (object) detourFunc).ToFunctionPointer();
 
             // store the original function bytes
-            _original = new List<byte>(_targetAddr.ReadArray<byte>((int) _jumpSize));
+            _original = new List<byte>(_targetAddr.ReadArray<byte>((int) _jumpSize, false));
         }
         #endregion
 
@@ -86,7 +86,7 @@ namespace MemorySharp.Disassembly
             foreach (var instr in _targetAddr.Disassemble())
             {
                 // TODO: work out jumps
-                pTramp.WriteArray(instr.InstructionData);
+                pTramp.WriteArray(instr.InstructionData, false);
                 pTramp += instr.Length;
                 instrByteCount += instr.Length;
 
@@ -110,7 +110,7 @@ namespace MemorySharp.Disassembly
                 return;
 
             // Restore the original bytes to the function address
-            _targetAddr.WriteArray(_original.ToArray());
+            _targetAddr.WriteArray(_original.ToArray(), false);
 
             // Release the trampoline
             Process.GetCurrentProcess().Free(_trampoline);
@@ -143,7 +143,7 @@ namespace MemorySharp.Disassembly
 
             jmpBytes.AddRange(BitConverter.GetBytes(relocAddr));
 
-            pAddr.WriteArray(jmpBytes.ToArray());
+            pAddr.WriteArray(jmpBytes.ToArray(), false);
         }
         #endregion
 
