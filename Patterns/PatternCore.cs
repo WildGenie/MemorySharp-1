@@ -9,6 +9,7 @@ namespace MemorySharp.Patterns
     /// </summary>
     public static class PatternCore
     {
+        #region Methods
         /// <summary>
         ///     Gets the mask from a string based byte pattern to scan for.
         /// </summary>
@@ -65,5 +66,6 @@ namespace MemorySharp.Patterns
         {
             return SerializationHelper.ImportFromXmlFile<Pattern[]>(nameOrPath);
         }
+        #endregion
     }
 }

@@ -16,6 +16,7 @@ namespace MemorySharp.Threads
     /// </summary>
     public class FrozenThread : IDisposable
     {
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="FrozenThread" /> class.
         /// </summary>
@@ -25,20 +26,16 @@ namespace MemorySharp.Threads
             // Save the parameter
             Thread = thread;
         }
+        #endregion
 
+        #region  Properties
         /// <summary>
         ///     The frozen thread.
         /// </summary>
         public RemoteThread Thread { get; }
+        #endregion
 
-        /// <summary>
-        ///     Returns a string that represents the current object.
-        /// </summary>
-        public override string ToString()
-        {
-            return $"Id = {Thread.Id}";
-        }
-
+        #region  Interface members
         /// <summary>
         ///     Releases all resources used by the <see cref="RemoteThread" /> object.
         /// </summary>
@@ -47,5 +44,16 @@ namespace MemorySharp.Threads
             // Unfreeze the thread
             Thread.Resume();
         }
+        #endregion
+
+        #region Methods
+        /// <summary>
+        ///     Returns a string that represents the current object.
+        /// </summary>
+        public override string ToString()
+        {
+            return $"Id = {Thread.Id}";
+        }
+        #endregion
     }
 }

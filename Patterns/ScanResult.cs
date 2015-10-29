@@ -7,6 +7,7 @@ namespace MemorySharp.Patterns
     /// </summary>
     public class ScanResult
     {
+        #region  Properties
         /// <summary>
         ///     The address found.
         /// </summary>
@@ -21,5 +22,6 @@ namespace MemorySharp.Patterns
         ///     The original address found.
         /// </summary>
         public IntPtr OriginalAddress { get; set; }
+        #endregion
     }
 }

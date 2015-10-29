@@ -17,6 +17,14 @@ namespace MemorySharp.Memory
     /// </summary>
     public class MemoryProtection : IDisposable
     {
+        #region  Fields
+        /// <summary>
+        ///     The reference of the <see cref="MemorySharp" /> object.
+        /// </summary>
+        private readonly MemoryBase _memorySharp;
+        #endregion
+
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="MemoryProtection" /> class.
         /// </summary>
@@ -40,12 +48,9 @@ namespace MemorySharp.Memory
             OldProtection = _memorySharp.ChangeMemoryProtection(_memorySharp.Handle, baseAddress,
                 size, protection);
         }
+        #endregion
 
-        /// <summary>
-        ///     The reference of the <see cref="MemorySharp" /> object.
-        /// </summary>
-        private readonly MemoryBase _memorySharp;
-
+        #region  Properties
         /// <summary>
         ///     The base address of the altered memory.
         /// </summary>
@@ -70,16 +75,9 @@ namespace MemorySharp.Memory
         ///     The size of the altered memory.
         /// </summary>
         public int Size { get; }
+        #endregion
 
-        /// <summary>
-        ///     Returns a string that represents the current object.
-        /// </summary>
-        public override string ToString()
-        {
-            return
-                $"BaseAddress = 0x{BaseAddress.ToInt64():X} NewProtection = {NewProtection} OldProtection = {OldProtection}";
-        }
-
+        #region  Interface members
         /// <summary>
         ///     Restores the initial protection of the memory.
         /// </summary>
@@ -91,7 +89,20 @@ namespace MemorySharp.Memory
             // Avoid the finalizer 
             GC.SuppressFinalize(this);
         }
+        #endregion
 
+        #region Methods
+        /// <summary>
+        ///     Returns a string that represents the current object.
+        /// </summary>
+        public override string ToString()
+        {
+            return
+                $"BaseAddress = 0x{BaseAddress.ToInt64():X} NewProtection = {NewProtection} OldProtection = {OldProtection}";
+        }
+        #endregion
+
+        #region Misc
         /// <summary>
         ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.
         /// </summary>
@@ -100,5 +111,6 @@ namespace MemorySharp.Memory
             if (MustBeDisposed)
                 Dispose();
         }
+        #endregion
     }
 }

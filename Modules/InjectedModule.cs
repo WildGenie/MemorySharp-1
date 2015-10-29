@@ -20,6 +20,7 @@ namespace MemorySharp.Modules
     /// </summary>
     public class InjectedModule : RemoteModule, IDisposableState
     {
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="InjectedModule" /> class.
         /// </summary>
@@ -32,7 +33,9 @@ namespace MemorySharp.Modules
             // Save the parameter
             MustBeDisposed = mustBeDisposed;
         }
+        #endregion
 
+        #region  Properties
         /// <summary>
         ///     Gets a value indicating whether the element is disposed.
         /// </summary>
@@ -42,7 +45,27 @@ namespace MemorySharp.Modules
         ///     Gets a value indicating whether the element must be disposed when the Garbage Collector collects the object.
         /// </summary>
         public bool MustBeDisposed { get; set; }
+        #endregion
 
+        #region  Interface members
+        /// <summary>
+        ///     Releases all resources used by the <see cref="InjectedModule" /> object.
+        /// </summary>
+        public virtual void Dispose()
+        {
+            if (!IsDisposed)
+            {
+                // Set the flag to true
+                IsDisposed = true;
+                // Eject the module
+                MemorySharp.Modules.Eject(this);
+                // Avoid the finalizer 
+                GC.SuppressFinalize(this);
+            }
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         ///     Injects the specified module into the address space of the remote process.
         /// </summary>
@@ -62,23 +85,9 @@ namespace MemorySharp.Modules
                     memorySharp.Modules.NativeModules.First(m => m.BaseAddress == thread.GetExitCode<IntPtr>()));
             return null;
         }
+        #endregion
 
-        /// <summary>
-        ///     Releases all resources used by the <see cref="InjectedModule" /> object.
-        /// </summary>
-        public virtual void Dispose()
-        {
-            if (!IsDisposed)
-            {
-                // Set the flag to true
-                IsDisposed = true;
-                // Eject the module
-                MemorySharp.Modules.Eject(this);
-                // Avoid the finalizer 
-                GC.SuppressFinalize(this);
-            }
-        }
-
+        #region Misc
         /// <summary>
         ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.
         /// </summary>
@@ -87,5 +96,6 @@ namespace MemorySharp.Modules
             if (MustBeDisposed)
                 Dispose();
         }
+        #endregion
     }
 }

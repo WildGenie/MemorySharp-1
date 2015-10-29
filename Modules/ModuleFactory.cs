@@ -22,6 +22,19 @@ namespace MemorySharp.Modules
     /// </summary>
     public class ModuleFactory : IFactory
     {
+        #region  Fields
+        /// <summary>
+        ///     The list containing all injected modules (writable).
+        /// </summary>
+        protected readonly List<InjectedModule> InternalInjectedModules;
+
+        /// <summary>
+        ///     The reference of the <see cref="MemoryManagement.MemorySharp" /> object.
+        /// </summary>
+        protected readonly MemoryBase MemorySharp;
+        #endregion
+
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="ModuleFactory" /> class.
         /// </summary>
@@ -33,17 +46,9 @@ namespace MemorySharp.Modules
             // Create a list containing all injected modules
             InternalInjectedModules = new List<InjectedModule>();
         }
+        #endregion
 
-        /// <summary>
-        ///     The list containing all injected modules (writable).
-        /// </summary>
-        protected readonly List<InjectedModule> InternalInjectedModules;
-
-        /// <summary>
-        ///     The reference of the <see cref="MemoryManagement.MemorySharp" /> object.
-        /// </summary>
-        protected readonly MemoryBase MemorySharp;
-
+        #region  Properties
         /// <summary>
         ///     A collection containing all injected modules.
         /// </summary>
@@ -77,7 +82,31 @@ namespace MemorySharp.Modules
         /// <param name="moduleName">The name of module (not case sensitive).</param>
         /// <returns>A new instance of a <see cref="RemoteModule" /> class.</returns>
         public RemoteModule this[string moduleName] => FetchModule(moduleName);
+        #endregion
 
+        #region  Interface members
+        /// <summary>
+        ///     Releases all resources used by the <see cref="ModuleFactory" /> object.
+        /// </summary>
+        public virtual void Dispose()
+        {
+            // Release all injected modules which must be disposed
+            foreach (var injectedModule in InternalInjectedModules.Where(m => m.MustBeDisposed))
+            {
+                injectedModule.Dispose();
+            }
+            // Clean the cached functions related to this process
+            foreach (var cachedFunction in RemoteModule.CachedFunctions.ToArray())
+            {
+                if (cachedFunction.Key.Item2 == MemorySharp.Handle)
+                    RemoteModule.CachedFunctions.Remove(cachedFunction);
+            }
+            // Avoid the finalizer
+            GC.SuppressFinalize(this);
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         ///     Frees the loaded dynamic-link library (DLL) module and, if necessary, decrements its reference count.
         /// </summary>
@@ -157,27 +186,9 @@ namespace MemorySharp.Modules
             // Return the module
             return module;
         }
+        #endregion
 
-        /// <summary>
-        ///     Releases all resources used by the <see cref="ModuleFactory" /> object.
-        /// </summary>
-        public virtual void Dispose()
-        {
-            // Release all injected modules which must be disposed
-            foreach (var injectedModule in InternalInjectedModules.Where(m => m.MustBeDisposed))
-            {
-                injectedModule.Dispose();
-            }
-            // Clean the cached functions related to this process
-            foreach (var cachedFunction in RemoteModule.CachedFunctions.ToArray())
-            {
-                if (cachedFunction.Key.Item2 == MemorySharp.Handle)
-                    RemoteModule.CachedFunctions.Remove(cachedFunction);
-            }
-            // Avoid the finalizer
-            GC.SuppressFinalize(this);
-        }
-
+        #region Misc
         /// <summary>
         ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.
         /// </summary>
@@ -185,5 +196,6 @@ namespace MemorySharp.Modules
         {
             Dispose();
         }
+        #endregion
     }
 }

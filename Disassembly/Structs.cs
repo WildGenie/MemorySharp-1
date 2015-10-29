@@ -6,16 +6,19 @@ namespace MemorySharp.Disassembly.Bea
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class REX_Struct
     {
+        #region  Fields
         public byte B_;
         public byte R_;
         public byte state;
         public byte W_;
         public byte X_;
+        #endregion
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class PrefixInfo
     {
+        #region  Fields
         public byte AddressSize;
         public byte BranchNotTaken;
         public byte BranchTaken;
@@ -32,11 +35,13 @@ namespace MemorySharp.Disassembly.Bea
         public byte RepPrefix;
         public REX_Struct REX;
         public byte SSPrefix;
+        #endregion
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class EFLStruct
     {
+        #region  Fields
         public byte AF_;
         public byte alignment;
         public byte CF_;
@@ -49,20 +54,24 @@ namespace MemorySharp.Disassembly.Bea
         public byte SF_;
         public byte TF_;
         public byte ZF_;
+        #endregion
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class MemoryType
     {
+        #region  Fields
         public int BaseRegister;
         public long Displacement;
         public int IndexRegister;
         public int Scale;
+        #endregion
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class InstructionType
     {
+        #region  Fields
         public ulong AddrValue;
         public int BranchType;
         public int Category;
@@ -71,11 +80,13 @@ namespace MemorySharp.Disassembly.Bea
         public uint ImplicitModifiedRegs;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)] public string Mnemonic;
         public int Opcode;
+        #endregion
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class ArgumentType
     {
+        #region  Fields
         public uint AccessMode;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public string ArgMnemonic;
         public int ArgPosition;
@@ -83,11 +94,13 @@ namespace MemorySharp.Disassembly.Bea
         public int ArgType;
         public MemoryType Memory;
         public uint SegmentReg;
+        #endregion
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class Disasm
     {
+        #region  Fields
         public IntPtr Archi;
         public ArgumentType Argument1;
         public ArgumentType Argument2;
@@ -103,5 +116,6 @@ namespace MemorySharp.Disassembly.Bea
 
         public IntPtr SecurityBlock;
         public IntPtr VirtualAddr;
+        #endregion
     }
 }

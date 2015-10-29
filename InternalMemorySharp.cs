@@ -16,6 +16,7 @@ namespace MemorySharp
     /// </summary>
     public class InternalMemorySharp : MemoryBase
     {
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="InternalMemorySharp" /> class.
         ///     <remarks>This class inherits from the <see cref="MemoryBase" /> class.</remarks>
@@ -25,7 +26,9 @@ namespace MemorySharp
             Disassembler = new Disassembler(this);
             Detours = new DetourManager(this);
         }
+        #endregion
 
+        #region  Properties
         /// <summary>
         ///     The <see cref="Disassembly.Disassembler" /> Instance.
         /// </summary>
@@ -35,7 +38,9 @@ namespace MemorySharp
         ///     A manager for detours. See <see cref="Detours" />
         /// </summary>
         public DetourManager Detours { get; }
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Reads the specified amount of bytes from the specified address.
         /// </summary>
@@ -299,23 +304,45 @@ namespace MemorySharp
         /// </summary>
         /// <typeparam name="T">Type param.</typeparam>
         /// <param name="address">The address the class is located in memory.</param>
-        /// <param name="functionIndex"></param>
+        /// <param name="functionIndex">The index the virtual method is located at.</param>
+        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         /// <returns><see cref="IntPtr" /> to address to the function.</returns>
-        public T GetVirtualFunction<T>(IntPtr address, int functionIndex) where T : class
+        public T GetVirtualFunction<T>(IntPtr address, int functionIndex, bool isRelative = false) where T : class
         {
-            return Marshal.GetDelegateForFunctionPointer<T>(GetUnsafeVTablePointer(address, functionIndex));
+            return Marshal.GetDelegateForFunctionPointer<T>(GetVTablePointer(address, functionIndex));
         }
 
         /// <summary>
         ///     Gets a function pointer from an object's virtual method table at the supplied index
         /// </summary>
-        /// <param name="addr">Object base address</param>
+        /// <param name="address">Object base address</param>
         /// <param name="index">Virtual method index</param>
+        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         /// <returns><see cref="IntPtr" /> to address to the function.</returns>
-        public static unsafe IntPtr GetUnsafeVTablePointer(IntPtr addr, int index)
+        public unsafe IntPtr GetVTablePointer(IntPtr address, int index, bool isRelative = false)
         {
-            var pAddr = (void***) addr.ToPointer();
+            if (isRelative)
+            {
+                address = ToAbsolute(address);
+            }
+            var pAddr = (void***) address.ToPointer();
             return new IntPtr((*pAddr)[index]);
         }
+
+        /// <summary>
+        ///     Creates an new <see cref="RemoteVirtualClass" /> Instance.
+        /// </summary>
+        /// <param name="address">The Address the class is located in memory.</param>
+        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
+        /// <returns>A <see cref="RemoteVirtualClass" /> Instance.</returns>
+        public RemoteVirtualClass CreateVirtualClass(IntPtr address, bool isRelative = false)
+        {
+            if (isRelative)
+            {
+                address = ToAbsolute(address);
+            }
+            return new RemoteVirtualClass(address);
+        }
+        #endregion
     }
 }

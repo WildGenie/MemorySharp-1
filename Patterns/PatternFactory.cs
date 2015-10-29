@@ -11,6 +11,16 @@ namespace MemorySharp.Patterns
     /// </summary>
     public class PatternFactory : IFactory
     {
+        #region  Fields
+        private readonly MemoryBase _memory;
+
+        /// <summary>
+        ///     The field for storing the modules data once dumped.
+        /// </summary>
+        private byte[] _moduleData;
+        #endregion
+
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="PatternFactory" /> class.
         /// </summary>
@@ -19,14 +29,9 @@ namespace MemorySharp.Patterns
         {
             _memory = memorySharp;
         }
+        #endregion
 
-        private readonly MemoryBase _memory;
-
-        /// <summary>
-        ///     The field for storing the modules data once dumped.
-        /// </summary>
-        private byte[] _moduleData;
-
+        #region  Properties
         /// <summary>
         ///     A dump of the modules data as a byte array.
         ///     <remarks>This value has a setter, should different module data than the processes main module data be desired.</remarks>
@@ -36,7 +41,19 @@ namespace MemorySharp.Patterns
             get { return _moduleData ?? (_moduleData = _memory.ReadBytes(_memory.BaseAddress, _memory.ImageSize)); }
             set { _moduleData = value; }
         }
+        #endregion
 
+        #region  Interface members
+        /// <summary>
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            // Nothing at the moment.
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         ///     Adds all pointers found from scanning a xml file to a given dictonary using the IDictonary interface.
         /// </summary>
@@ -115,13 +132,6 @@ namespace MemorySharp.Patterns
             // If this is reached, the pattern was not found.
             throw new Exception("The pattern " + "[" + myPattern + "]" + " was not found.");
         }
-
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            // Nothing at the moment.
-        }
+        #endregion
     }
 }

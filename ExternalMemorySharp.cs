@@ -16,6 +16,7 @@ namespace MemorySharp
     /// </summary>
     public sealed class ExternalMemorySharp : MemoryBase
     {
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="ExternalMemorySharp" /> class.
         ///     <remarks>This class inherits from the <see cref="MemoryBase" /> class.</remarks>
@@ -23,7 +24,9 @@ namespace MemorySharp
         public ExternalMemorySharp(Process process) : base(process)
         {
         }
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Reads an array of bytes in the remote process.
         /// </summary>
@@ -142,5 +145,6 @@ namespace MemorySharp
                 Write(address + MarshalType<T>.Size*i, array[i]);
             }
         }
+        #endregion
     }
 }

@@ -17,6 +17,7 @@ namespace MemorySharp.Memory
     /// </summary>
     public class RemoteRegion : RemotePointer, IEquatable<RemoteRegion>
     {
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="RemoteRegion" /> class.
         /// </summary>
@@ -25,7 +26,9 @@ namespace MemorySharp.Memory
         internal RemoteRegion(MemoryBase memorySharp, IntPtr baseAddress) : base(memorySharp, baseAddress)
         {
         }
+        #endregion
 
+        #region  Properties
         /// <summary>
         ///     Contains information about the memory.
         /// </summary>
@@ -36,7 +39,22 @@ namespace MemorySharp.Memory
         ///     Gets if the <see cref="RemoteRegion" /> is valid.
         /// </summary>
         public override bool IsValid => base.IsValid && Information.State != MemoryStateFlags.Free;
+        #endregion
 
+        #region  Interface members
+        /// <summary>
+        ///     Returns a value indicating whether this instance is equal to a specified object.
+        /// </summary>
+        public bool Equals(RemoteRegion other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return ReferenceEquals(this, other) ||
+                   (BaseAddress.Equals(other.BaseAddress) && MemorySharp.Equals(other.MemorySharp) &&
+                    Information.RegionSize.Equals(other.Information.RegionSize));
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         ///     Changes the protection of the n next bytes in remote process.
         /// </summary>
@@ -96,16 +114,6 @@ namespace MemorySharp.Memory
             return
                 $"BaseAddress = 0x{BaseAddress.ToInt64():X} Size = 0x{Information.RegionSize:X} Protection = {Information.Protect}";
         }
-
-        /// <summary>
-        ///     Returns a value indicating whether this instance is equal to a specified object.
-        /// </summary>
-        public bool Equals(RemoteRegion other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            return ReferenceEquals(this, other) ||
-                   (BaseAddress.Equals(other.BaseAddress) && MemorySharp.Equals(other.MemorySharp) &&
-                    Information.RegionSize.Equals(other.Information.RegionSize));
-        }
+        #endregion
     }
 }

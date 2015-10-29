@@ -16,6 +16,14 @@ namespace MemorySharp.Windows.Mouse
     /// </summary>
     public abstract class BaseMouse
     {
+        #region  Fields
+        /// <summary>
+        ///     The reference of the <see cref="RemoteWindow" /> object.
+        /// </summary>
+        protected readonly RemoteWindow Window;
+        #endregion
+
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of a child of the <see cref="BaseMouse" /> class.
         /// </summary>
@@ -25,12 +33,9 @@ namespace MemorySharp.Windows.Mouse
             // Save the parameter
             Window = window;
         }
+        #endregion
 
-        /// <summary>
-        ///     The reference of the <see cref="RemoteWindow" /> object.
-        /// </summary>
-        protected readonly RemoteWindow Window;
-
+        #region Methods
         /// <summary>
         ///     Moves the cursor at the specified coordinate.
         /// </summary>
@@ -126,5 +131,6 @@ namespace MemorySharp.Windows.Mouse
         {
             MoveToAbsolute(Window.X + x, Window.Y + y);
         }
+        #endregion
     }
 }

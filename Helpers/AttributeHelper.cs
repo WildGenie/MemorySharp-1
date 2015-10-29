@@ -5,6 +5,7 @@ namespace MemorySharp.Helpers
 {
     internal class AttributeHelper
     {
+        #region Methods
         /// <summary>
         ///     Determines whether the specified item has attrib.
         /// </summary>
@@ -44,5 +45,6 @@ namespace MemorySharp.Helpers
         {
             return HasAttrib<UnmanagedFunctionPointerAttribute>(t);
         }
+        #endregion
     }
 }

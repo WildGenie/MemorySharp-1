@@ -17,6 +17,7 @@ namespace MemorySharp.Helpers
     /// </summary>
     public static class Randomizer
     {
+        #region  Fields
         /// <summary>
         ///     Provides random engine.
         /// </summary>
@@ -27,7 +28,9 @@ namespace MemorySharp.Helpers
         /// </summary>
         private static readonly char[] _allowedChars =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".ToCharArray();
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Returns a random number within a specified range.
         /// </summary>
@@ -92,5 +95,6 @@ namespace MemorySharp.Helpers
         {
             return Guid.NewGuid();
         }
+        #endregion
     }
 }

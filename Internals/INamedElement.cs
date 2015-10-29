@@ -14,9 +14,11 @@ namespace MemorySharp.Internals
     /// </summary>
     public interface INamedElement : IApplicableElement
     {
+        #region  Properties
         /// <summary>
         ///     The name of the element.
         /// </summary>
         string Name { get; }
+        #endregion
     }
 }

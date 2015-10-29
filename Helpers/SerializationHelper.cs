@@ -18,6 +18,7 @@ namespace MemorySharp.Helpers
     /// </summary>
     public static class SerializationHelper
     {
+        #region Methods
         /// <summary>
         ///     Serializes the specified object and returns the XML document.
         /// </summary>
@@ -124,5 +125,6 @@ namespace MemorySharp.Helpers
             }
             return fileName;
         }
+        #endregion
     }
 }

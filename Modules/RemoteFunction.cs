@@ -17,17 +17,22 @@ namespace MemorySharp.Modules
     /// </summary>
     public class RemoteFunction : RemotePointer
     {
+        #region Constructors
         public RemoteFunction(MemoryBase memorySharp, IntPtr address, string functionName) : base(memorySharp, address)
         {
             // Save the parameter
             Name = functionName;
         }
+        #endregion
 
+        #region  Properties
         /// <summary>
         ///     The name of the function.
         /// </summary>
         public string Name { get; }
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Returns a string that represents the current object.
         /// </summary>
@@ -35,5 +40,6 @@ namespace MemorySharp.Modules
         {
             return $"BaseAddress = 0x{BaseAddress.ToInt64():X} Name = {Name}";
         }
+        #endregion
     }
 }

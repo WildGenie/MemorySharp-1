@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace GreyMagic
+namespace MemorySharp.Helpers
 {
     /// <summary>
     ///     An exception that is thrown when a struct, class, or delegate is missing proper attributes.
@@ -9,6 +9,7 @@ namespace GreyMagic
     [Serializable]
     public class MissingAttributeException : Exception
     {
+        #region Constructors
         //
         // For guidelines regarding the creation of new exception types, see
         //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconerrorraisinghandlingguidelines.asp
@@ -43,5 +44,6 @@ namespace GreyMagic
         protected MissingAttributeException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
+        #endregion
     }
 }

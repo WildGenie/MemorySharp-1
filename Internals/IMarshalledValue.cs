@@ -17,6 +17,7 @@ namespace MemorySharp.Internals
     /// </summary>
     public interface IMarshalledValue : IDisposable
     {
+        #region  Properties
         /// <summary>
         ///     The memory allocated where the value is fully written if needed. It can be unused.
         /// </summary>
@@ -26,5 +27,6 @@ namespace MemorySharp.Internals
         ///     The reference of the value. It can be directly the value or a pointer.
         /// </summary>
         IntPtr Reference { get; }
+        #endregion
     }
 }

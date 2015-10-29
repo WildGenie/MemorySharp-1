@@ -17,10 +17,13 @@ namespace MemorySharp.Windows.Keyboard
     /// </summary>
     public class MessageKeyboard : BaseKeyboard
     {
+        #region Constructors
         public MessageKeyboard(RemoteWindow window) : base(window)
         {
         }
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Presses the specified virtual key to the window.
         /// </summary>
@@ -122,5 +125,6 @@ namespace MemorySharp.Windows.Keyboard
         {
             return MakeKeyParameter(key, keyUp, keyUp, 1, false, false);
         }
+        #endregion
     }
 }

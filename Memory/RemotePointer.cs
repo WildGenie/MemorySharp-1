@@ -18,6 +18,7 @@ namespace MemorySharp.Memory
     /// </summary>
     public class RemotePointer : IEquatable<RemotePointer>
     {
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="RemotePointer" /> class.
         /// </summary>
@@ -30,7 +31,9 @@ namespace MemorySharp.Memory
             BaseAddress = address;
             BaseAddressField = address;
         }
+        #endregion
 
+        #region  Properties
         public IntPtr BaseAddressField { get; set; }
 
         /// <summary>
@@ -47,7 +50,21 @@ namespace MemorySharp.Memory
         ///     The reference of the <see cref="MemoryBase" /> object.
         /// </summary>
         public MemoryBase MemorySharp { get; }
+        #endregion
 
+        #region  Interface members
+        /// <summary>
+        ///     Returns a value indicating whether this instance is equal to a specified object.
+        /// </summary>
+        public bool Equals(RemotePointer other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return ReferenceEquals(this, other) ||
+                   (BaseAddress.Equals(other.BaseAddress) && MemorySharp.Equals(other.MemorySharp));
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         ///     Changes the protection of the n next bytes in remote process.
         /// </summary>
@@ -292,15 +309,6 @@ namespace MemorySharp.Memory
         {
             WriteString(0, text, encoding);
         }
-
-        /// <summary>
-        ///     Returns a value indicating whether this instance is equal to a specified object.
-        /// </summary>
-        public bool Equals(RemotePointer other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            return ReferenceEquals(this, other) ||
-                   (BaseAddress.Equals(other.BaseAddress) && MemorySharp.Equals(other.MemorySharp));
-        }
+        #endregion
     }
 }

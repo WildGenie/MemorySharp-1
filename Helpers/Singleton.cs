@@ -15,9 +15,11 @@ namespace MemorySharp.Helpers
     /// <typeparam name="T">The type to create or get a singleton.</typeparam>
     public static class Singleton<T> where T : new()
     {
+        #region  Fields
         /// <summary>
         ///     Gets the singleton of the given type.
         /// </summary>
         public static readonly T Instance = new T();
+        #endregion
     }
 }

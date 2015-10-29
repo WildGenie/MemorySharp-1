@@ -20,6 +20,14 @@ namespace MemorySharp.Windows
     /// </summary>
     public class WindowFactory : IFactory
     {
+        #region  Fields
+        /// <summary>
+        ///     The reference of the <see cref="MemorySharp" /> object.
+        /// </summary>
+        private readonly MemoryBase _memorySharp;
+        #endregion
+
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="WindowFactory" /> class.
         /// </summary>
@@ -29,12 +37,9 @@ namespace MemorySharp.Windows
             // Save the parameter
             _memorySharp = memorySharp;
         }
+        #endregion
 
-        /// <summary>
-        ///     The reference of the <see cref="MemorySharp" /> object.
-        /// </summary>
-        private readonly MemoryBase _memorySharp;
-
+        #region  Properties
         /// <summary>
         ///     Gets all the child windows that belong to the application.
         /// </summary>
@@ -78,7 +83,19 @@ namespace MemorySharp.Windows
         ///     Gets all the window handles that belong to the application.
         /// </summary>
         internal IEnumerable<IntPtr> WindowHandles => new List<IntPtr>(ChildWindowHandles) {MainWindowHandle};
+        #endregion
 
+        #region  Interface members
+        /// <summary>
+        ///     Releases all resources used by the <see cref="WindowFactory" /> object.
+        /// </summary>
+        public void Dispose()
+        {
+            // Nothing to dispose... yet
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         ///     Gets all the windows that have the specified class name.
         /// </summary>
@@ -114,13 +131,6 @@ namespace MemorySharp.Windows
                 .Where(handle => WindowCore.GetWindowText(handle).Contains(windowTitle))
                 .Select(handle => new RemoteWindow(_memorySharp, handle));
         }
-
-        /// <summary>
-        ///     Releases all resources used by the <see cref="WindowFactory" /> object.
-        /// </summary>
-        public void Dispose()
-        {
-            // Nothing to dispose... yet
-        }
+        #endregion
     }
 }

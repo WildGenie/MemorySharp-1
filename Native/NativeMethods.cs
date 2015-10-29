@@ -18,6 +18,7 @@ namespace MemorySharp.Native
     /// </summary>
     public static class NativeMethods
     {
+        #region Methods
         /// <summary>
         ///     Changes an attribute of the specified window. The function also sets the 32-bit (long) value at the specified
         ///     offset into the extra window memory.
@@ -1124,6 +1125,7 @@ namespace MemorySharp.Native
             }
             return (GetProcAddress(moduleHandle, functionName) != IntPtr.Zero);
         }
+        #endregion
     }
 
     #region Delegate EnumWindowsProc

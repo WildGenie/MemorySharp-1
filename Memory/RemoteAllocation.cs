@@ -18,6 +18,7 @@ namespace MemorySharp.Memory
     /// </summary>
     public class RemoteAllocation : RemoteRegion, IDisposableState
     {
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="RemoteAllocation" /> class.
         /// </summary>
@@ -35,7 +36,9 @@ namespace MemorySharp.Memory
             MustBeDisposed = mustBeDisposed;
             IsDisposed = false;
         }
+        #endregion
 
+        #region  Properties
         /// <summary>
         ///     Gets a value indicating whether the element is disposed.
         /// </summary>
@@ -45,7 +48,9 @@ namespace MemorySharp.Memory
         ///     Gets a value indicating whether the element must be disposed when the Garbage Collector collects the object.
         /// </summary>
         public bool MustBeDisposed { get; set; }
+        #endregion
 
+        #region  Interface members
         /// <summary>
         ///     Releases all resources used by the <see cref="RemoteAllocation" /> object.
         /// </summary>
@@ -66,7 +71,9 @@ namespace MemorySharp.Memory
                 GC.SuppressFinalize(this);
             }
         }
+        #endregion
 
+        #region Misc
         /// <summary>
         ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.
         /// </summary>
@@ -75,5 +82,6 @@ namespace MemorySharp.Memory
             if (MustBeDisposed)
                 Dispose();
         }
+        #endregion
     }
 }

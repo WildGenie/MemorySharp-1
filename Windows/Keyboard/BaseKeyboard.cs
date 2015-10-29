@@ -20,6 +20,19 @@ namespace MemorySharp.Windows.Keyboard
     /// </summary>
     public abstract class BaseKeyboard
     {
+        #region  Fields
+        /// <summary>
+        ///     The reference of the <see cref="RemoteWindow" /> object.
+        /// </summary>
+        protected readonly RemoteWindow Window;
+
+        /// <summary>
+        ///     The collection storing the current pressed keys.
+        /// </summary>
+        protected static readonly List<Tuple<IntPtr, Keys>> PressedKeys = new List<Tuple<IntPtr, Keys>>();
+        #endregion
+
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of a child of the <see cref="BaseKeyboard" /> class.
         /// </summary>
@@ -29,17 +42,9 @@ namespace MemorySharp.Windows.Keyboard
             // Save the parameter
             Window = window;
         }
+        #endregion
 
-        /// <summary>
-        ///     The collection storing the current pressed keys.
-        /// </summary>
-        protected static readonly List<Tuple<IntPtr, Keys>> PressedKeys = new List<Tuple<IntPtr, Keys>>();
-
-        /// <summary>
-        ///     The reference of the <see cref="RemoteWindow" /> object.
-        /// </summary>
-        protected readonly RemoteWindow Window;
-
+        #region Methods
         /// <summary>
         ///     Presses the specified virtual key to the window.
         /// </summary>
@@ -120,5 +125,6 @@ namespace MemorySharp.Windows.Keyboard
                 Write(character);
             }
         }
+        #endregion
     }
 }

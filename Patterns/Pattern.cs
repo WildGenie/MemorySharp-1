@@ -5,6 +5,7 @@
     /// </summary>
     public class Pattern
     {
+        #region Constructors
         /// <summary>
         ///     Creates a new instance of <see cref="Pattern" />.
         /// </summary>
@@ -31,7 +32,9 @@
         public Pattern()
         {
         }
+        #endregion
 
+        #region  Properties
         /// <summary>
         ///     A description of the pattern being scanned.
         /// </summary>
@@ -62,5 +65,6 @@
         ///     Tyhe type of pointer the scan results in.
         /// </summary>
         public string Comments { get; set; }
+        #endregion
     }
 }

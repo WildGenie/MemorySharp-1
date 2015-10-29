@@ -8,14 +8,22 @@ namespace MemorySharp.Disassembly
 {
     public class Disassembler
     {
+        #region  Fields
+        private readonly InternalMemorySharp _memory;
+        #endregion
+
+        #region Constructors
         public Disassembler(InternalMemorySharp memorySharp)
         {
             _memory = memorySharp;
         }
+        #endregion
 
-        private readonly InternalMemorySharp _memory;
+        #region  Properties
         private RemoteAllocation Allocation { get; set; }
+        #endregion
 
+        #region Methods
         public IEnumerable<DisassemblyInstruction> Disassemble(IntPtr pAddr, int maxInstructionCount = 0)
         {
             if (pAddr == IntPtr.Zero)
@@ -82,10 +90,12 @@ namespace MemorySharp.Disassembly
                     _memory.Memory.Deallocate(Allocation);
             }
         }
+        #endregion
     }
 
     public class DisassemblyInstruction
     {
+        #region Constructors
         public DisassemblyInstruction(Disasm disasm, int length, byte[] instructionData)
         {
             Length = length;
@@ -99,6 +109,9 @@ namespace MemorySharp.Disassembly
             Argument3 = disasm.Argument3;
             Prefix = disasm.Prefix;
         }
+        #endregion
+
+        #region  Properties
 
         // Bea Disasm property duplicates
         public string CompleteInstruction { get; private set; }
@@ -113,5 +126,6 @@ namespace MemorySharp.Disassembly
         // Extra information
         public int Length { get; private set; }
         public byte[] InstructionData { get; private set; }
+        #endregion
     }
 }

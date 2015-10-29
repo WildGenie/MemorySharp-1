@@ -22,6 +22,7 @@ namespace MemorySharp.Internals
     [SuppressMessage("ReSharper", "StaticMemberInGenericType")]
     public static class MarshalType<T>
     {
+        #region Constructors
         /// <summary>
         ///     Initializes static information related to the specified type.
         /// </summary>
@@ -48,7 +49,9 @@ namespace MemorySharp.Internals
                 TypeCode == TypeCode.UInt16 ||
                 TypeCode == TypeCode.UInt32;
         }
+        #endregion
 
+        #region  Properties
         /// <summary>
         ///     Gets if the type can be stored in a registers (for example ACX, ECX, ...).
         /// </summary>
@@ -73,7 +76,9 @@ namespace MemorySharp.Internals
         ///     The typecode of the type.
         /// </summary>
         public static TypeCode TypeCode { get; }
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Marshals a managed object to an array of bytes.
         /// </summary>
@@ -216,5 +221,6 @@ namespace MemorySharp.Internals
                 ? BitConverter.GetBytes(pointer.ToInt64())
                 : memorySharp.ReadBytes(pointer, Size));
         }
+        #endregion
     }
 }

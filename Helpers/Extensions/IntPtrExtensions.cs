@@ -1,12 +1,13 @@
 ﻿using System;
 
-namespace MemorySharp.Extensions
+namespace MemorySharp.Helpers.Extensions
 {
     /// <summary>
     ///     A static class providing extension methods for <see cref="IntPtr" />'s.
     /// </summary>
     public static class IntPtrExtensions
     {
+        #region Methods
         /// <summary>
         ///     Adds an offset to a pointer.
         /// </summary>
@@ -61,5 +62,6 @@ namespace MemorySharp.Extensions
         {
             return IntPtr.Subtract(pointer, pointer2.ToInt32());
         }
+        #endregion
     }
 }

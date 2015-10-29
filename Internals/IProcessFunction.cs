@@ -8,6 +8,7 @@ namespace MemorySharp.Internals
     /// </summary>
     public interface IProcessFunction
     {
+        #region  Properties
         /// <summary>
         ///     The pointer to the function in memory.
         /// </summary>
@@ -17,12 +18,15 @@ namespace MemorySharp.Internals
         ///     The name representing the function.
         /// </summary>
         string Name { get; }
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Get the functions delegate.
         /// </summary>
         /// <typeparam name="T">The delegate.</typeparam>
         /// <returns>A type.</returns>
         T GetDelegate<T>();
+        #endregion
     }
 }

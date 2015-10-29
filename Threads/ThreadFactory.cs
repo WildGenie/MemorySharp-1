@@ -22,6 +22,14 @@ namespace MemorySharp.Threads
     /// </summary>
     public class ThreadFactory : IFactory
     {
+        #region  Fields
+        /// <summary>
+        ///     The reference of the <see cref="MemorySharp" /> object.
+        /// </summary>
+        protected readonly MemoryBase MemorySharp;
+        #endregion
+
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="ThreadFactory" /> class.
         /// </summary>
@@ -31,12 +39,9 @@ namespace MemorySharp.Threads
             // Save the parameter
             MemorySharp = memorySharp;
         }
+        #endregion
 
-        /// <summary>
-        ///     The reference of the <see cref="MemorySharp" /> object.
-        /// </summary>
-        protected readonly MemoryBase MemorySharp;
-
+        #region  Properties
         /// <summary>
         ///     Gets the main thread of the remote process.
         /// </summary>
@@ -80,7 +85,19 @@ namespace MemorySharp.Threads
         {
             get { return new RemoteThread(MemorySharp, NativeThreads.First(t => t.Id == threadId)); }
         }
+        #endregion
 
+        #region  Interface members
+        /// <summary>
+        ///     Releases all resources used by the <see cref="ThreadFactory" /> object.
+        /// </summary>
+        public void Dispose()
+        {
+            // Nothing to dispose... yet
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         ///     Creates a thread that runs in the remote process.
         /// </summary>
@@ -204,13 +221,6 @@ namespace MemorySharp.Threads
                 thread.Suspend();
             }
         }
-
-        /// <summary>
-        ///     Releases all resources used by the <see cref="ThreadFactory" /> object.
-        /// </summary>
-        public void Dispose()
-        {
-            // Nothing to dispose... yet
-        }
+        #endregion
     }
 }

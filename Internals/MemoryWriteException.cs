@@ -1,12 +1,13 @@
 ﻿using System;
 
-namespace MemorySharp.Exceptions
+namespace MemorySharp.Internals
 {
     /// <summary>
     ///     Exception thrown when a writing operation fails.
     /// </summary>
     public class MemorySharpWriteException : MemorySharpException
     {
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="MemorySharpWriteException" /> class.
         /// </summary>
@@ -25,5 +26,6 @@ namespace MemorySharp.Exceptions
             : this($"WriteProcessMemory failed! Could not write {count} bytes at {address.ToString("X")}!")
         {
         }
+        #endregion
     }
 }

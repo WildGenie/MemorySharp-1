@@ -22,6 +22,7 @@ namespace MemorySharp.Helpers
     /// </summary>
     public static class ApplicationFinder
     {
+        #region  Properties
         /// <summary>
         ///     Gets all top-level windows on the screen.
         /// </summary>
@@ -44,7 +45,9 @@ namespace MemorySharp.Helpers
         /// </summary>
         public static Version ApplicationVersion => Assembly.GetExecutingAssembly().
             GetName().Version;
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Returns a new <see cref="Process" /> component, given the identifier of a process.
         /// </summary>
@@ -138,5 +141,6 @@ namespace MemorySharp.Helpers
             return
                 Windows.Where(window => WindowCore.GetWindowText(window).Contains(windowTitle)).Select(FromWindowHandle);
         }
+        #endregion
     }
 }

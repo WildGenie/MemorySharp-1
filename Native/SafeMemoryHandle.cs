@@ -14,6 +14,7 @@ namespace MemorySharp.Native
     [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
     public sealed class SafeMemoryHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
+        #region Constructors
         /// <summary>
         ///     Parameterless constructor for handles built by the system (like <see cref="NativeMethods.OpenProcess" />).
         /// </summary>
@@ -29,7 +30,9 @@ namespace MemorySharp.Native
         {
             SetHandle(handle);
         }
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Executes the code required to free the handle.
         /// </summary>
@@ -43,5 +46,6 @@ namespace MemorySharp.Native
             // Check whether the handle is set AND whether the handle has been successfully closed
             return handle != IntPtr.Zero && NativeMethods.CloseHandle(handle);
         }
+        #endregion
     }
 }

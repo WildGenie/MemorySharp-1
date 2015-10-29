@@ -1,12 +1,13 @@
 ﻿using System;
 
-namespace MemorySharp.Exceptions
+namespace MemorySharp.Internals
 {
     /// <summary>
     ///     Exception thrown when a reading operation fails.
     /// </summary>
     public class MemorySharpReadException : MemorySharpException
     {
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="MemorySharpReadException" /> class.
         /// </summary>
@@ -26,5 +27,6 @@ namespace MemorySharp.Exceptions
                 )
         {
         }
+        #endregion
     }
 }

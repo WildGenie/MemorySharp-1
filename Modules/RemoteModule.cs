@@ -21,6 +21,15 @@ namespace MemorySharp.Modules
     /// </summary>
     public class RemoteModule : RemoteRegion
     {
+        #region  Fields
+        /// <summary>
+        ///     The dictionary containing all cached functions of the remote module.
+        /// </summary>
+        internal static readonly IDictionary<Tuple<string, SafeMemoryHandle>, RemoteFunction> CachedFunctions =
+            new Dictionary<Tuple<string, SafeMemoryHandle>, RemoteFunction>();
+        #endregion
+
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="RemoteModule" /> class.
         /// </summary>
@@ -31,13 +40,9 @@ namespace MemorySharp.Modules
             // Save the parameter
             Native = module;
         }
+        #endregion
 
-        /// <summary>
-        ///     The dictionary containing all cached functions of the remote module.
-        /// </summary>
-        internal static readonly IDictionary<Tuple<string, SafeMemoryHandle>, RemoteFunction> CachedFunctions =
-            new Dictionary<Tuple<string, SafeMemoryHandle>, RemoteFunction>();
-
+        #region  Properties
         /// <summary>
         ///     State if this is the main module of the remote process.
         /// </summary>
@@ -82,7 +87,9 @@ namespace MemorySharp.Modules
         /// <param name="functionName">The name of the function.</param>
         /// <returns>A new instance of a <see cref="RemoteFunction" /> class.</returns>
         public RemoteFunction this[string functionName] => FindFunction(functionName);
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Ejects the loaded dynamic-link library (DLL) module.
         /// </summary>
@@ -168,5 +175,6 @@ namespace MemorySharp.Modules
         {
             return $"BaseAddress = 0x{BaseAddress.ToInt64():X} Name = {Name}";
         }
+        #endregion
     }
 }

@@ -7,9 +7,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using MemorySharp.Exceptions;
-using MemorySharp.Extensions;
 using MemorySharp.Helpers;
+using MemorySharp.Helpers.Extensions;
 using MemorySharp.Internals;
 using MemorySharp.Modules;
 using MemorySharp.Native;
@@ -21,6 +20,14 @@ namespace MemorySharp.Memory
 {
     public abstract class MemoryBase : IDisposable
     {
+        #region  Fields
+        /// <summary>
+        ///     The factories embedded inside the library.
+        /// </summary>
+        protected List<IFactory> Factories;
+        #endregion
+
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="MemoryBase" /> class.
         /// </summary>
@@ -45,12 +52,9 @@ namespace MemorySharp.Memory
                 });
             MainModule = new RemoteModule(this, Process.MainModule);
         }
+        #endregion
 
-        /// <summary>
-        ///     The factories embedded inside the library.
-        /// </summary>
-        protected List<IFactory> Factories;
-
+        #region  Properties
         /// <summary>
         ///     Factory for finding patterns in byte data.
         /// </summary>
@@ -133,7 +137,24 @@ namespace MemorySharp.Memory
         ///     Gets or sets the process this NativeMemory instance is wrapped around.
         /// </summary>
         public Process Process { [Pure] get; protected set; }
+        #endregion
 
+        #region  Interface members
+        /// <summary>
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public virtual void Dispose()
+        {
+            if (IsDisposed)
+                return;
+            // Pretty much all we "have" to clean up.
+            Process.LeaveDebugMode();
+
+            IsDisposed = true;
+        }
+        #endregion
+
+        #region Methods
         public byte[] ReadProcessMemory(IntPtr address, int size, bool isRelative = false)
         {
             if (isRelative)
@@ -654,17 +675,6 @@ namespace MemorySharp.Memory
         {
         }
 #pragma warning restore CS1998
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public virtual void Dispose()
-        {
-            if (IsDisposed)
-                return;
-            // Pretty much all we "have" to clean up.
-            Process.LeaveDebugMode();
-
-            IsDisposed = true;
-        }
+        #endregion
     }
 }

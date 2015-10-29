@@ -25,6 +25,24 @@ namespace MemorySharp.Threads
     /// </summary>
     public class RemoteThread : IDisposable, IEquatable<RemoteThread>
     {
+        #region  Fields
+        /// <summary>
+        ///     The parameter passed to the thread when it was created.
+        /// </summary>
+        private readonly IMarshalledValue _parameter;
+
+        /// <summary>
+        ///     The task involved in cleaning the parameter memory when the <see cref="RemoteThread" /> object is collected.
+        /// </summary>
+        private readonly Task _parameterCleaner;
+
+        /// <summary>
+        ///     The reference of the <see cref="MemoryManagement.MemorySharp" /> object.
+        /// </summary>
+        protected readonly MemoryBase MemorySharp;
+        #endregion
+
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="RemoteThread" /> class.
         /// </summary>
@@ -61,22 +79,9 @@ namespace MemorySharp.Threads
                 _parameter.Dispose();
             });
         }
+        #endregion
 
-        /// <summary>
-        ///     The parameter passed to the thread when it was created.
-        /// </summary>
-        private readonly IMarshalledValue _parameter;
-
-        /// <summary>
-        ///     The task involved in cleaning the parameter memory when the <see cref="RemoteThread" /> object is collected.
-        /// </summary>
-        private readonly Task _parameterCleaner;
-
-        /// <summary>
-        ///     The reference of the <see cref="MemoryManagement.MemorySharp" /> object.
-        /// </summary>
-        protected readonly MemoryBase MemorySharp;
-
+        #region  Properties
         /// <summary>
         ///     Gets or sets the full context of the thread.
         ///     If the thread is not already suspended, performs a <see cref="Suspend" /> and <see cref="Resume" /> call on the
@@ -189,7 +194,31 @@ namespace MemorySharp.Threads
         ///     The native <see cref="ProcessThread" /> object corresponding to this thread.
         /// </summary>
         public ProcessThread Native { get; private set; }
+        #endregion
 
+        #region  Interface members
+        /// <summary>
+        ///     Releases all resources used by the <see cref="RemoteThread" /> object.
+        /// </summary>
+        public virtual void Dispose()
+        {
+            // Close the thread handle
+            Handle.Close();
+            // Avoid the finalizer
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     Returns a value indicating whether this instance is equal to a specified object.
+        /// </summary>
+        public bool Equals(RemoteThread other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return ReferenceEquals(this, other) || (Id == other.Id && MemorySharp.Equals(other.MemorySharp));
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         ///     Determines whether the specified object is equal to the current object.
         /// </summary>
@@ -343,27 +372,9 @@ namespace MemorySharp.Threads
         {
             return $"Id = {Id} IsAlive = {IsAlive} IsMainThread = {IsMainThread}";
         }
+        #endregion
 
-        /// <summary>
-        ///     Releases all resources used by the <see cref="RemoteThread" /> object.
-        /// </summary>
-        public virtual void Dispose()
-        {
-            // Close the thread handle
-            Handle.Close();
-            // Avoid the finalizer
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        ///     Returns a value indicating whether this instance is equal to a specified object.
-        /// </summary>
-        public bool Equals(RemoteThread other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            return ReferenceEquals(this, other) || (Id == other.Id && MemorySharp.Equals(other.MemorySharp));
-        }
-
+        #region Misc
         /// <summary>
         ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.
         /// </summary>
@@ -371,5 +382,6 @@ namespace MemorySharp.Threads
         {
             Dispose();
         }
+        #endregion
     }
 }

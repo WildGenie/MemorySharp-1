@@ -17,6 +17,7 @@ namespace MemorySharp.Memory
     /// </summary>
     public class LocalUnmanagedMemory : IDisposable
     {
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="LocalUnmanagedMemory" /> class, allocating a block of memory in the
         ///     local process.
@@ -28,7 +29,9 @@ namespace MemorySharp.Memory
             Size = size;
             Address = Marshal.AllocHGlobal(Size);
         }
+        #endregion
 
+        #region  Properties
         /// <summary>
         ///     The address where the data is allocated.
         /// </summary>
@@ -38,7 +41,24 @@ namespace MemorySharp.Memory
         ///     The size of the allocated memory.
         /// </summary>
         public int Size { get; }
+        #endregion
 
+        #region  Interface members
+        /// <summary>
+        ///     Releases the memory held by the <see cref="LocalUnmanagedMemory" /> object.
+        /// </summary>
+        public virtual void Dispose()
+        {
+            // Free the allocated memory
+            Marshal.FreeHGlobal(Address);
+            // Remove the pointer
+            Address = IntPtr.Zero;
+            // Avoid the finalizer
+            GC.SuppressFinalize(this);
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         ///     Reads data from the unmanaged block of memory.
         /// </summary>
@@ -92,20 +112,9 @@ namespace MemorySharp.Memory
             // Marshal data from the managed object to the block of memory
             Marshal.StructureToPtr(data, Address, false);
         }
+        #endregion
 
-        /// <summary>
-        ///     Releases the memory held by the <see cref="LocalUnmanagedMemory" /> object.
-        /// </summary>
-        public virtual void Dispose()
-        {
-            // Free the allocated memory
-            Marshal.FreeHGlobal(Address);
-            // Remove the pointer
-            Address = IntPtr.Zero;
-            // Avoid the finalizer
-            GC.SuppressFinalize(this);
-        }
-
+        #region Misc
         /// <summary>
         ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.
         /// </summary>
@@ -113,5 +122,6 @@ namespace MemorySharp.Memory
         {
             Dispose();
         }
+        #endregion
     }
 }

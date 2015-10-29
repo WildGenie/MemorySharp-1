@@ -2,6 +2,7 @@
 {
     public class BeaConstants
     {
+        #region Enums
         public enum ArgumentType : uint
         {
             NO_ARGUMENT = 0x10000000,
@@ -177,7 +178,10 @@
             LowPosition = 0,
             HighPosition = 1
         }
+        #endregion
 
+        #region  Fields
         public static int INSTRUCT_LENGTH = 64;
+        #endregion
     }
 }

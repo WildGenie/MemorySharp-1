@@ -16,6 +16,7 @@ namespace MemorySharp.Windows.Mouse
     /// </summary>
     public class SendInputMouse : BaseMouse
     {
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of a child of the <see cref="SendInputMouse" /> class.
         /// </summary>
@@ -23,7 +24,9 @@ namespace MemorySharp.Windows.Mouse
         public SendInputMouse(RemoteWindow window) : base(window)
         {
         }
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Moves the cursor at the specified coordinate.
         /// </summary>
@@ -146,5 +149,6 @@ namespace MemorySharp.Windows.Mouse
         {
             return new Input(InputTypes.Mouse);
         }
+        #endregion
     }
 }

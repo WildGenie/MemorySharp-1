@@ -19,6 +19,7 @@ namespace MemorySharp.Helpers
     /// </summary>
     public static class ArchitectureHelper
     {
+        #region  Properties
         /// <summary>
         ///     Determines whether the current process is a 32-bit process.
         /// </summary>
@@ -38,7 +39,9 @@ namespace MemorySharp.Helpers
         ///     Determines whether the current operating system is a 64-bit operating system.
         /// </summary>
         public static bool Is64BitOperatingSystem => Environment.Is64BitOperatingSystem;
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Determines whether the specified process is running under WOW64.
         ///     WOW64 is the x86 emulator that allows 32-bit Windows-based applications to run seamlessly on 64-bit Windows.
@@ -81,5 +84,6 @@ namespace MemorySharp.Helpers
 
             return architecture;
         }
+        #endregion
     }
 }

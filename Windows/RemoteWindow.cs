@@ -23,6 +23,14 @@ namespace MemorySharp.Windows
     /// </summary>
     public class RemoteWindow : IEquatable<RemoteWindow>
     {
+        #region  Fields
+        /// <summary>
+        ///     The reference of the <see cref="MemoryManagement.MemorySharp" /> object.
+        /// </summary>
+        protected readonly MemoryBase MemorySharp;
+        #endregion
+
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="RemoteWindow" /> class.
         /// </summary>
@@ -37,12 +45,9 @@ namespace MemorySharp.Windows
             Keyboard = new MessageKeyboard(this);
             Mouse = new SendInputMouse(this);
         }
+        #endregion
 
-        /// <summary>
-        ///     The reference of the <see cref="MemoryManagement.MemorySharp" /> object.
-        /// </summary>
-        protected readonly MemoryBase MemorySharp;
-
+        #region  Properties
         /// <summary>
         ///     Gets all the child windows of this window.
         /// </summary>
@@ -181,7 +186,21 @@ namespace MemorySharp.Windows
                 Placement = p;
             }
         }
+        #endregion
 
+        #region  Interface members
+        /// <summary>
+        ///     Returns a value indicating whether this instance is equal to a specified object.
+        /// </summary>
+        public bool Equals(RemoteWindow other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(MemorySharp, other.MemorySharp) && Handle.Equals(other.Handle);
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         ///     Activates the window.
         /// </summary>
@@ -310,15 +329,6 @@ namespace MemorySharp.Windows
         {
             return $"Title = {Title} ClassName = {ClassName}";
         }
-
-        /// <summary>
-        ///     Returns a value indicating whether this instance is equal to a specified object.
-        /// </summary>
-        public bool Equals(RemoteWindow other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(MemorySharp, other.MemorySharp) && Handle.Equals(other.Handle);
-        }
+        #endregion
     }
 }

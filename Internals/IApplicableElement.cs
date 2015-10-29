@@ -14,11 +14,14 @@ namespace MemorySharp.Internals
     /// </summary>
     public interface IApplicableElement : IDisposableState
     {
+        #region  Properties
         /// <summary>
         ///     States if the element is enabled.
         /// </summary>
         bool IsEnabled { get; }
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Disables the element.
         /// </summary>
@@ -28,5 +31,6 @@ namespace MemorySharp.Internals
         ///     Enables the element.
         /// </summary>
         void Enable();
+        #endregion
     }
 }

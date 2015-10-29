@@ -16,16 +16,21 @@ namespace MemorySharp.Internals
     /// </summary>
     public abstract class Manager<T> where T : INamedElement
     {
+        #region  Fields
         /// <summary>
         ///     The collection of the elements (writable).
         /// </summary>
         protected Dictionary<string, T> InternalItems = new Dictionary<string, T>();
+        #endregion
 
+        #region  Properties
         /// <summary>
         ///     The collection of the elements.
         /// </summary>
         public IReadOnlyDictionary<string, T> Items => InternalItems;
+        #endregion
 
+        #region Methods
         /// <summary>
         ///     Disables all items in the manager.
         /// </summary>
@@ -93,5 +98,6 @@ namespace MemorySharp.Internals
             // Clear the dictionary
             InternalItems.Clear();
         }
+        #endregion
     }
 }

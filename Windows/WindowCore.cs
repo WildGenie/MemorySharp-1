@@ -24,6 +24,7 @@ namespace MemorySharp.Windows
     /// </summary>
     public static class WindowCore
     {
+        #region Methods
         /// <summary>
         ///     Retrieves the name of the class to which the specified window belongs.
         /// </summary>
@@ -525,5 +526,6 @@ namespace MemorySharp.Windows
             // Change the state of the window
             return NativeMethods.ShowWindow(windowHandle, state);
         }
+        #endregion
     }
 }

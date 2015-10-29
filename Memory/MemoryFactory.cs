@@ -20,6 +20,19 @@ namespace MemorySharp.Memory
     /// </summary>
     public class MemoryFactory : IFactory
     {
+        #region  Fields
+        /// <summary>
+        ///     The list containing all allocated memory.
+        /// </summary>
+        protected readonly List<RemoteAllocation> InternalRemoteAllocations;
+
+        /// <summary>
+        ///     The reference of the <see cref="MemorySharp" /> object.
+        /// </summary>
+        protected readonly MemoryBase MemorySharp;
+        #endregion
+
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="MemoryFactory" /> class.
         /// </summary>
@@ -31,17 +44,9 @@ namespace MemorySharp.Memory
             // Create a list containing all allocated memory
             InternalRemoteAllocations = new List<RemoteAllocation>();
         }
+        #endregion
 
-        /// <summary>
-        ///     The list containing all allocated memory.
-        /// </summary>
-        protected readonly List<RemoteAllocation> InternalRemoteAllocations;
-
-        /// <summary>
-        ///     The reference of the <see cref="MemorySharp" /> object.
-        /// </summary>
-        protected readonly MemoryBase MemorySharp;
-
+        #region  Properties
         /// <summary>
         ///     A collection containing all allocated memory in the remote process.
         /// </summary>
@@ -61,7 +66,25 @@ namespace MemorySharp.Memory
                         address).Select(page => new RemoteRegion(MemorySharp, page.BaseAddress));
             }
         }
+        #endregion
 
+        #region  Interface members
+        /// <summary>
+        ///     Releases all resources used by the <see cref="MemoryFactory" /> object.
+        /// </summary>
+        public virtual void Dispose()
+        {
+            // Release all allocated memories which must be disposed
+            foreach (var allocatedMemory in InternalRemoteAllocations.Where(m => m.MustBeDisposed).ToArray())
+            {
+                allocatedMemory.Dispose();
+            }
+            // Avoid the finalizer
+            GC.SuppressFinalize(this);
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         ///     Allocates a region of memory within the virtual address space of the remote process.
         /// </summary>
@@ -92,21 +115,9 @@ namespace MemorySharp.Memory
             if (InternalRemoteAllocations.Contains(allocation))
                 InternalRemoteAllocations.Remove(allocation);
         }
+        #endregion
 
-        /// <summary>
-        ///     Releases all resources used by the <see cref="MemoryFactory" /> object.
-        /// </summary>
-        public virtual void Dispose()
-        {
-            // Release all allocated memories which must be disposed
-            foreach (var allocatedMemory in InternalRemoteAllocations.Where(m => m.MustBeDisposed).ToArray())
-            {
-                allocatedMemory.Dispose();
-            }
-            // Avoid the finalizer
-            GC.SuppressFinalize(this);
-        }
-
+        #region Misc
         /// <summary>
         ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.
         /// </summary>
@@ -114,5 +125,6 @@ namespace MemorySharp.Memory
         {
             Dispose();
         }
+        #endregion
     }
 }

@@ -8,6 +8,7 @@ namespace MemorySharp.Internals
     /// </summary>
     public class Function : IProcessFunction
     {
+        #region Constructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="Function" /> class.
         /// </summary>
@@ -19,7 +20,9 @@ namespace MemorySharp.Internals
             Pointer = address;
             Name = name;
         }
+        #endregion
 
+        #region  Properties
         /// <summary>
         ///     The pointer to the function in memory.
         /// </summary>
@@ -29,7 +32,9 @@ namespace MemorySharp.Internals
         ///     The name representing the function
         /// </summary>
         public string Name { get; }
+        #endregion
 
+        #region  Interface members
         /// <summary>
         ///     Registers a function into a delegate. Note: The delegate must provide a proper function signature!
         /// </summary>
@@ -37,5 +42,6 @@ namespace MemorySharp.Internals
         {
             return Marshal.GetDelegateForFunctionPointer<T>(Pointer);
         }
+        #endregion
     }
 }

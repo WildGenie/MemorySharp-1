@@ -1,23 +1,28 @@
 ﻿using System;
-using GreyMagic;
 using MemorySharp.Helpers;
+using MemorySharp.Memory;
 
 namespace MemorySharp.Internals
 {
     /// <summary>
     ///     A manager class to handle function detours, and hooks.
     /// </summary>
-    public class DetourManager : Manager<Detour>
+    public class DetourManager : Manager<MemoryDetour>
     {
+        #region Constructors
         internal DetourManager(InternalMemorySharp memory)
         {
             Memory = memory;
         }
+        #endregion
 
+        #region  Properties
         private InternalMemorySharp Memory { get; }
+        #endregion
 
+        #region Methods
         /// <summary>
-        ///     Creates a new Detour.
+        ///     Creates a new MemoryDetour.
         /// </summary>
         /// <param name="target">
         ///     The original function to detour. (This delegate should already be registered via
@@ -26,10 +31,10 @@ namespace MemorySharp.Internals
         /// <param name="newTarget">The new function to be called. (This delegate should NOT be registered!)</param>
         /// <param name="name">The name of the detour.</param>
         /// <returns>
-        ///     A <see cref="Detour" /> object containing the required methods to apply, remove, and call the original
+        ///     A <see cref="MemoryDetour" /> object containing the required methods to apply, remove, and call the original
         ///     function.
         /// </returns>
-        public Detour Create(Delegate target, Delegate newTarget, string name)
+        public MemoryDetour Create(Delegate target, Delegate newTarget, string name)
         {
             if (target == null)
             {
@@ -59,13 +64,13 @@ namespace MemorySharp.Internals
                 throw new ArgumentException($"The {name} detour already exists!", nameof(name));
             }
 
-            var d = new Detour(target, newTarget, name, Memory);
+            var d = new MemoryDetour(target, newTarget, name, Memory);
             InternalItems.Add(name, d);
             return d;
         }
 
         /// <summary>
-        ///     Creates and applies new Detour.
+        ///     Creates and applies new MemoryDetour.
         /// </summary>
         /// <param name="target">
         ///     The original function to detour. (This delegate should already be registered via
@@ -74,14 +79,15 @@ namespace MemorySharp.Internals
         /// <param name="newTarget">The new function to be called. (This delegate should NOT be registered!)</param>
         /// <param name="name">The name of the detour.</param>
         /// <returns>
-        ///     A <see cref="Detour" /> object containing the required methods to apply, remove, and call the original
+        ///     A <see cref="MemoryDetour" /> object containing the required methods to apply, remove, and call the original
         ///     function.
         /// </returns>
-        public Detour CreateAndApply(Delegate target, Delegate newTarget, string name)
+        public MemoryDetour CreateAndApply(Delegate target, Delegate newTarget, string name)
         {
             var ret = Create(target, newTarget, name);
             ret?.Enable();
             return ret;
         }
+        #endregion
     }
 }

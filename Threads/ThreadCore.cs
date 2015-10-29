@@ -20,6 +20,7 @@ namespace MemorySharp.Threads
     /// </summary>
     public static class ThreadCore
     {
+        #region Methods
         /// <summary>
         ///     Creates a thread that runs in the virtual address space of another process.
         /// </summary>
@@ -289,5 +290,6 @@ namespace MemorySharp.Threads
 
             return ret;
         }
+        #endregion
     }
 }

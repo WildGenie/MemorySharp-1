@@ -2,16 +2,27 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using MemorySharp.Memory;
+using MemorySharp.Internals;
 
-namespace MemorySharp.Internals
+namespace MemorySharp.Memory
 {
     /// <summary>
     ///     A  class to handle function detours.
     /// </summary>
-    public class Detour : INamedElement
+    public class MemoryDetour : INamedElement
     {
-        internal Detour(Delegate target, Delegate hook, string name, MemoryBase memory)
+        #region  Fields
+        [SuppressMessage("ReSharper", "PrivateFieldCanBeConvertedToLocalVariable")] private readonly IntPtr _hook;
+
+        /// <summary>
+        ///     This var is not used within the detour itself. It is only here
+        ///     to keep a reference, to avoid the GC from collecting the delegate instance!
+        /// </summary>
+        [SuppressMessage("ReSharper", "NotAccessedField.Local")] private readonly Delegate _hookDelegate;
+        #endregion
+
+        #region Constructors
+        internal MemoryDetour(Delegate target, Delegate hook, string name, MemoryBase memory)
         {
             Memory = memory;
             Name = name;
@@ -32,15 +43,9 @@ namespace MemorySharp.Internals
             IsDisposed = false;
             MustBeDisposed = true;
         }
+        #endregion
 
-        [SuppressMessage("ReSharper", "PrivateFieldCanBeConvertedToLocalVariable")] private readonly IntPtr _hook;
-
-        /// <summary>
-        ///     This var is not used within the detour itself. It is only here
-        ///     to keep a reference, to avoid the GC from collecting the delegate instance!
-        /// </summary>
-        [SuppressMessage("ReSharper", "NotAccessedField.Local")] private readonly Delegate _hookDelegate;
-
+        #region  Properties
         private MemoryBase Memory { get; }
         private List<byte> New { get; }
         private List<byte> Orginal { get; }
@@ -66,23 +71,9 @@ namespace MemorySharp.Internals
         ///     The name of the element.
         /// </summary>
         public string Name { get; }
+        #endregion
 
-        /// <summary>
-        ///     Calls the original function, and returns a return value.
-        /// </summary>
-        /// <param name="args">
-        ///     The arguments to pass. If it is a 'void' argument list,
-        ///     you MUST pass 'null'.
-        /// </param>
-        /// <returns>An object containing the original functions return value.</returns>
-        public object CallOriginal(params object[] args)
-        {
-            Disable();
-            var ret = TargetDelegate.DynamicInvoke(args);
-            Enable();
-            return ret;
-        }
-
+        #region  Interface members
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -99,7 +90,7 @@ namespace MemorySharp.Internals
         }
 
         /// <summary>
-        ///     Removes this Detour from memory. (Reverts the bytes back to their originals.)
+        ///     Removes this MemoryDetour from memory. (Reverts the bytes back to their originals.)
         /// </summary>
         /// <returns></returns>
         public void Disable()
@@ -111,7 +102,7 @@ namespace MemorySharp.Internals
         }
 
         /// <summary>
-        ///     Applies this Detour to memory. (Writes new bytes to memory)
+        ///     Applies this MemoryDetour to memory. (Writes new bytes to memory)
         /// </summary>
         /// <returns></returns>
         public void Enable()
@@ -121,14 +112,35 @@ namespace MemorySharp.Internals
                 IsEnabled = true;
             }
         }
+        #endregion
 
+        #region Methods
+        /// <summary>
+        ///     Calls the original function, and returns a return value.
+        /// </summary>
+        /// <param name="args">
+        ///     The arguments to pass. If it is a 'void' argument list,
+        ///     you MUST pass 'null'.
+        /// </param>
+        /// <returns>An object containing the original functions return value.</returns>
+        public object CallOriginal(params object[] args)
+        {
+            Disable();
+            var ret = TargetDelegate.DynamicInvoke(args);
+            Enable();
+            return ret;
+        }
+        #endregion
+
+        #region Misc
         /// <summary>
         ///     Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage
         ///     collection.
         /// </summary>
-        ~Detour()
+        ~MemoryDetour()
         {
             Dispose();
         }
+        #endregion
     }
 }
