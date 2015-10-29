@@ -11,7 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using MemorySharp.Internals;
+using MemorySharp.Internals.Interfaces;
+using MemorySharp.Internals.Marshaling;
 using MemorySharp.Memory;
 using MemorySharp.Native;
 

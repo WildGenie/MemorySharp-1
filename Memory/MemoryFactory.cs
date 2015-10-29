@@ -10,7 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MemorySharp.Internals;
+using MemorySharp.Internals.Interfaces;
 using MemorySharp.Native;
 
 namespace MemorySharp.Memory
@@ -62,7 +62,7 @@ namespace MemorySharp.Memory
             {
                 var address = IntPtr.Size == 8 ? new IntPtr(0x7fffffffffffffff) : new IntPtr(0x7fffffff);
                 return
-                    MemorySharp.QueryInformationMemory(MemorySharp.Handle, IntPtr.Zero,
+                    MemorySharp.QueryInformationMemory(IntPtr.Zero,
                         address).Select(page => new RemoteRegion(MemorySharp, page.BaseAddress));
             }
         }
@@ -111,7 +111,7 @@ namespace MemorySharp.Memory
             // Dispose the element
             if (!allocation.IsDisposed)
                 allocation.Dispose();
-            // Remove the element from the allocated memory list
+            // Disable the element from the allocated memory list
             if (InternalRemoteAllocations.Contains(allocation))
                 InternalRemoteAllocations.Remove(allocation);
         }

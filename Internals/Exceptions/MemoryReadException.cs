@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MemorySharp.Internals
+namespace MemorySharp.Internals.Exceptions
 {
     /// <summary>
     ///     Exception thrown when a reading operation fails.

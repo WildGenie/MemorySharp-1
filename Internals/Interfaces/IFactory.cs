@@ -9,7 +9,7 @@
 
 using System;
 
-namespace MemorySharp.Internals
+namespace MemorySharp.Internals.Interfaces
 {
     /// <summary>
     ///     Define a factory for the library.

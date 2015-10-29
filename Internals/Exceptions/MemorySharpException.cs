@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MemorySharp.Internals
+namespace MemorySharp.Internals.Exceptions
 {
     /// <summary>
     ///     Base exception type thrown by BlueRain.

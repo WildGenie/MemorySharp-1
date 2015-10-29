@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace MemorySharp.Internals
+namespace MemorySharp.Internals.Interfaces
 {
     /// <summary>
     ///     A class for managing process functions.

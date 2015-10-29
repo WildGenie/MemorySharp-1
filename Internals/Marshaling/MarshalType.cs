@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using MemorySharp.Memory;
 
-namespace MemorySharp.Internals
+namespace MemorySharp.Internals.Marshaling
 {
     /// <summary>
     ///     Static class providing tools for extracting information related to types.

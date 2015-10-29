@@ -1,36 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
-using MemorySharp.Disassembly.Bea;
-using MemorySharp.Memory;
+using BeaEngine.Net;
+using MemorySharp.Helpers.Extensions;
 
 namespace MemorySharp.Disassembly
 {
     public class Disassembler
     {
-        #region  Fields
-        private readonly InternalMemorySharp _memory;
-        #endregion
-
-        #region Constructors
-        public Disassembler(InternalMemorySharp memorySharp)
-        {
-            _memory = memorySharp;
-        }
-        #endregion
-
-        #region  Properties
-        private RemoteAllocation Allocation { get; set; }
-        #endregion
-
         #region Methods
         public IEnumerable<DisassemblyInstruction> Disassemble(IntPtr pAddr, int maxInstructionCount = 0)
+        {
+            return SDisassemble(pAddr, maxInstructionCount);
+        }
+
+        public static IEnumerable<DisassemblyInstruction> SDisassemble(IntPtr pAddr, int maxInstructionCount = 0)
         {
             if (pAddr == IntPtr.Zero)
                 throw new ArgumentNullException(nameof(pAddr));
 
             const int maxInstructionSize = 15;
             const int maxBufferSize = 4096;
+
             // default buffer of 100 x maxInstructionSize bytes (1500 bytes)
             // unless maxInstructionCount is specified
             var bufferSize = (maxInstructionCount == 0 ? 100 : maxInstructionCount)*maxInstructionSize;
@@ -41,29 +33,28 @@ namespace MemorySharp.Disassembly
             var pBuffer = IntPtr.Zero;
             try
             {
-                Allocation = _memory.Memory.Allocate(bufferSize);
-                pBuffer = Allocation.BaseAddress;
+                pBuffer = Process.GetCurrentProcess().Allocate(IntPtr.Zero, (uint) bufferSize);
 
                 // TODO: this is probably horribly inefficient
-                Marshal.Copy(_memory.ReadArray<byte>(pAddr, bufferSize), 0, pBuffer, bufferSize);
+                Marshal.Copy(pAddr.ReadArray<byte>(bufferSize), 0, pBuffer, bufferSize);
 
                 var pDisasmLoc = pBuffer;
-                var virtualAddr = pAddr; // TODO: currently doesnt support x64
+                var virtualAddr = (uint) pAddr; // TODO: currently doesnt support x64
                 var disasm = new Disasm {EIP = pDisasmLoc, VirtualAddr = virtualAddr};
 
                 int length;
                 var instructionsRead = 0;
                 var bufferOffset = 0;
-                while ((length = BeaEngine.Disasm(disasm)) != (int) BeaConstants.SpecialInfo.UNKNOWN_OPCODE)
+                while ((length = BeaEngine64.Disasm(disasm)) != (int) BeaConstants.SpecialInfo.UNKNOWN_OPCODE)
                 {
                     instructionsRead++;
 
                     var disasmInstr = new DisassemblyInstruction(disasm, length,
-                        _memory.ReadArray<byte>(virtualAddr, length));
+                        virtualAddr.ReadArray<byte>(length));
                     yield return disasmInstr;
 
                     pDisasmLoc += length;
-                    virtualAddr += length;
+                    virtualAddr += (uint) length;
                     bufferOffset += length;
 
                     if (maxInstructionCount > 0 && instructionsRead >= maxInstructionCount)
@@ -74,7 +65,7 @@ namespace MemorySharp.Disassembly
                     if ((bufferSize - bufferOffset) < maxInstructionSize)
                     {
                         // Copy new bytes to buffer from current location
-                        Marshal.Copy(_memory.ReadArray<byte>(virtualAddr, bufferSize), 0, pBuffer, bufferSize);
+                        Marshal.Copy(virtualAddr.ReadArray<byte>(bufferSize), 0, pBuffer, bufferSize);
                         // reset pointers etc
                         pDisasmLoc = pBuffer;
                         bufferOffset = 0;
@@ -87,7 +78,7 @@ namespace MemorySharp.Disassembly
             finally
             {
                 if (pBuffer != IntPtr.Zero)
-                    _memory.Memory.Deallocate(Allocation);
+                    Process.GetCurrentProcess().Free(pBuffer);
             }
         }
         #endregion
@@ -115,8 +106,8 @@ namespace MemorySharp.Disassembly
 
         // Bea Disasm property duplicates
         public string CompleteInstruction { get; private set; }
-        public IntPtr Architecture { get; private set; }
-        public IntPtr Options { get; private set; }
+        public uint Architecture { get; private set; }
+        public ulong Options { get; private set; }
         public InstructionType Instruction { get; private set; }
         public ArgumentType Argument1 { get; private set; }
         public ArgumentType Argument2 { get; private set; }

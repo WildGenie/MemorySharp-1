@@ -8,7 +8,7 @@
 */
 
 using System;
-using MemorySharp.Internals;
+using MemorySharp.Internals.Interfaces;
 using MemorySharp.Native;
 
 namespace MemorySharp.Memory
@@ -63,9 +63,9 @@ namespace MemorySharp.Memory
                 IsDisposed = true;
                 // Release the allocated memory
                 Release();
-                // Remove this object from the collection of allocated memory
+                // Disable this object from the collection of allocated memory
                 MemorySharp.Memory.Deallocate(this);
-                // Remove the pointer
+                // Disable the pointer
                 BaseAddressField = IntPtr.Zero;
                 // Avoid the finalizer 
                 GC.SuppressFinalize(this);

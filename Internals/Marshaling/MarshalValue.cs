@@ -9,9 +9,10 @@
 
 using System;
 using System.Text;
+using MemorySharp.Internals.Interfaces;
 using MemorySharp.Memory;
 
-namespace MemorySharp.Internals
+namespace MemorySharp.Internals.Marshaling
 {
     /// <summary>
     ///     The factory to create instance of the <see cref="MarshalledValue{T}" /> class.

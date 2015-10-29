@@ -10,7 +10,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using MemorySharp.Internals;
+using MemorySharp.Internals.Interfaces;
 using MemorySharp.Memory;
 
 namespace MemorySharp.Modules

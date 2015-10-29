@@ -7,7 +7,7 @@
  * See the file LICENSE for more information.
 */
 
-namespace MemorySharp.Internals
+namespace MemorySharp.Internals.Interfaces
 {
     /// <summary>
     ///     Defines a element with a name.

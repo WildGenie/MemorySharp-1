@@ -10,7 +10,7 @@
 using System;
 using System.ComponentModel;
 using MemorySharp.Helpers;
-using MemorySharp.Internals;
+using MemorySharp.Internals.Marshaling;
 using MemorySharp.Native;
 
 namespace MemorySharp.Threads

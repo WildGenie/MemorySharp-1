@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using MemorySharp.Helpers;
-using MemorySharp.Internals;
+using MemorySharp.Internals.Marshaling;
 using MemorySharp.Memory;
 
 namespace MemorySharp

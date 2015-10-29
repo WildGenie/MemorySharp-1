@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace MemorySharp.Helpers
+namespace MemorySharp.Internals.Exceptions
 {
     /// <summary>
     ///     An exception that is thrown when a struct, class, or delegate is missing proper attributes.

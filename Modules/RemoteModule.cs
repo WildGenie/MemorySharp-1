@@ -97,7 +97,7 @@ namespace MemorySharp.Modules
         {
             // Eject the module
             MemorySharp.Modules.Eject(this);
-            // Remove the pointer
+            // Disable the pointer
             BaseAddressField = IntPtr.Zero;
         }
 

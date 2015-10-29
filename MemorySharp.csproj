@@ -32,6 +32,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BeaEngine.Net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\BeaEngine.Net.0.13\lib\net35\BeaEngine.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,21 +46,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Disassembly\Constants.cs" />
-    <Compile Include="Disassembly\Engine.cs" />
-    <Compile Include="Disassembly\Structs.cs" />
+    <Compile Include="Disassembly\BrokenDetours.cs" />
     <Compile Include="Disassembly\Disassembler.cs" />
+    <Compile Include="Disassembly\IMemoryEdit.cs" />
+    <Compile Include="Disassembly\MemoryEditManager.cs" />
     <Compile Include="Helpers\Extensions\DelegateExtensions.cs" />
     <Compile Include="ExternalMemorySharp.cs" />
     <Compile Include="Helpers\ApplicationFinder.cs" />
     <Compile Include="Helpers\ArchitectureHelper.cs" />
+    <Compile Include="Helpers\Extensions\IntegerExtensions.cs" />
+    <Compile Include="Helpers\Extensions\ProcessExtensions.cs" />
     <Compile Include="Helpers\HandleManipulator.cs" />
     <Compile Include="Helpers\Logger\ConsoleLog.cs" />
     <Compile Include="Helpers\Logger\DebugLog.cs" />
     <Compile Include="Helpers\Logger\FileLog.cs" />
     <Compile Include="Helpers\Logger\Ilog.cs" />
     <Compile Include="Helpers\Logger\Log.cs" />
-    <Compile Include="Internals\MissingAttributeException.cs" />
+    <Compile Include="Helpers\Extensions\ProcessStartInfoExtensions.cs" />
+    <Compile Include="Internals\Marshaling\CustomMarshal.cs" />
+    <Compile Include="Internals\Marshaling\CustomMarshalAsAttribute.cs" />
+    <Compile Include="Internals\Marshaling\CustomMarshalAttribute.cs" />
+    <Compile Include="Internals\ProcessMemoryManager.cs" />
+    <Compile Include="Internals\Exceptions\MissingAttributeException.cs" />
     <Compile Include="Helpers\Randomizer.cs" />
     <Compile Include="Helpers\SerializationHelper.cs" />
     <Compile Include="Helpers\Singleton.cs" />
@@ -64,22 +75,22 @@
     <Compile Include="InternalMemorySharp.cs" />
     <Compile Include="Internals\DetourManager.cs" />
     <Compile Include="Memory\MemoryDetour.cs" />
-    <Compile Include="Internals\IApplicableElement.cs" />
-    <Compile Include="Internals\IDisposableState.cs" />
-    <Compile Include="Internals\IFactory.cs" />
-    <Compile Include="Internals\IFunction.cs" />
-    <Compile Include="Internals\IMarshalledValue.cs" />
-    <Compile Include="Internals\INamedElement.cs" />
-    <Compile Include="Internals\IProcessFunction.cs" />
+    <Compile Include="Internals\Interfaces\IApplicableElement.cs" />
+    <Compile Include="Internals\Interfaces\IDisposableState.cs" />
+    <Compile Include="Internals\Interfaces\IFactory.cs" />
+    <Compile Include="Internals\Interfaces\IFunction.cs" />
+    <Compile Include="Internals\Interfaces\IMarshalledValue.cs" />
+    <Compile Include="Internals\Interfaces\INamedElement.cs" />
+    <Compile Include="Internals\Interfaces\IProcessFunction.cs" />
     <Compile Include="Memory\LocalUnmanagedMemory.cs" />
-    <Compile Include="Internals\MemorySharpException.cs" />
-    <Compile Include="Internals\MemoryReadException.cs" />
-    <Compile Include="Internals\MemoryWriteException.cs" />
+    <Compile Include="Internals\Exceptions\MemorySharpException.cs" />
+    <Compile Include="Internals\Exceptions\MemoryReadException.cs" />
+    <Compile Include="Internals\Exceptions\MemoryWriteException.cs" />
     <Compile Include="Helpers\Required.cs" />
     <Compile Include="Helpers\Extensions\IntPtrExtensions.cs" />
     <Compile Include="Internals\Manager.cs" />
-    <Compile Include="Internals\MarshalType.cs" />
-    <Compile Include="Internals\MarshalValue.cs" />
+    <Compile Include="Internals\Marshaling\MarshalType.cs" />
+    <Compile Include="Internals\Marshaling\MarshalValue.cs" />
     <Compile Include="Memory\MemoryBase.cs" />
     <Compile Include="Memory\MemoryFactory.cs" />
     <Compile Include="Memory\MemoryProtection.cs" />
@@ -87,6 +98,7 @@
     <Compile Include="Memory\RemotePointer.cs" />
     <Compile Include="Memory\RemoteRegion.cs" />
     <Compile Include="Memory\RemoteVirtualClass.cs" />
+    <Compile Include="Modules\AlternateInjectedModule.cs" />
     <Compile Include="Modules\InjectedModule.cs" />
     <Compile Include="Modules\ModuleCore.cs" />
     <Compile Include="Modules\ModuleFactory.cs" />
@@ -114,7 +126,9 @@
     <Compile Include="Windows\WindowCore.cs" />
     <Compile Include="Windows\WindowFactory.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

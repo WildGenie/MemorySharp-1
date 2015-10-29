@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace MemorySharp.Internals
+namespace MemorySharp.Internals.Interfaces
 {
     /// <summary>
     ///     Defines a function inside of a <see cref="Process" />.

@@ -9,7 +9,7 @@
 
 using System;
 
-namespace MemorySharp.Internals
+namespace MemorySharp.Internals.Interfaces
 {
     /// <summary>
     ///     Defines an IDisposable interface with a known state.

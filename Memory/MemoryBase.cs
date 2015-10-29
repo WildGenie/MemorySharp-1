@@ -9,7 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using MemorySharp.Helpers;
 using MemorySharp.Helpers.Extensions;
-using MemorySharp.Internals;
+using MemorySharp.Internals.Exceptions;
+using MemorySharp.Internals.Interfaces;
+using MemorySharp.Internals.Marshaling;
 using MemorySharp.Modules;
 using MemorySharp.Native;
 using MemorySharp.Patterns;
@@ -278,14 +280,14 @@ namespace MemorySharp.Memory
         /// </summary>
         /// <param name="processHandle">A handle to a process.</param>
         /// <param name="address">A pointer to the starting address of the region of memory to be freed.</param>
-        public void FreeMemory(SafeMemoryHandle processHandle, IntPtr address)
+        public void FreeMemory(IntPtr address)
         {
             // Check if the handles are valid
-            HandleManipulator.ValidateAsArgument(processHandle, "processHandle");
+            HandleManipulator.ValidateAsArgument(Handle, "processHandle");
             HandleManipulator.ValidateAsArgument(address, "address");
 
             // Free the memory
-            if (!NativeMethods.VirtualFreeEx(processHandle, address, 0, MemoryReleaseFlags.Release))
+            if (!NativeMethods.VirtualFreeEx(Handle, address, 0, MemoryReleaseFlags.Release))
             {
                 // If the memory wasn't correctly freed, throws an exception
                 throw new Win32Exception($"The memory page 0x{address.ToString("X")} cannot be freed.");
@@ -322,18 +324,18 @@ namespace MemorySharp.Memory
         /// <param name="size">The size of the region whose access protection attributes are changed, in bytes.</param>
         /// <param name="protection">The memory protection option.</param>
         /// <returns>The old protection of the region in a <see cref="Native.MemoryBasicInformation" /> structure.</returns>
-        public MemoryProtectionFlags ChangeMemoryProtection(SafeMemoryHandle processHandle, IntPtr address, int size,
+        public MemoryProtectionFlags ChangeMemoryProtection(IntPtr address, int size,
             MemoryProtectionFlags protection)
         {
             // Check if the handles are valid
-            HandleManipulator.ValidateAsArgument(processHandle, "processHandle");
+            HandleManipulator.ValidateAsArgument(Handle, "processHandle");
             HandleManipulator.ValidateAsArgument(address, "address");
 
             // Create the variable storing the old protection of the memory page
             MemoryProtectionFlags oldProtection;
 
             // Change the protection in the target process
-            if (NativeMethods.VirtualProtectEx(processHandle, address, size, protection, out oldProtection))
+            if (NativeMethods.VirtualProtectEx(Handle, address, size, protection, out oldProtection))
             {
                 // Return the old protection
                 return oldProtection;
@@ -353,14 +355,14 @@ namespace MemorySharp.Memory
         ///     A <see cref="Native.MemoryBasicInformation" /> structures in which information about the specified page range
         ///     is returned.
         /// </returns>
-        public MemoryBasicInformation QueryInformationMemory(SafeMemoryHandle processHandle, IntPtr baseAddress)
+        public MemoryBasicInformation QueryInformationMemory(IntPtr baseAddress)
         {
             // Allocate the structure to store information of memory
             MemoryBasicInformation memoryInfo;
 
             // Query the memory region
             if (
-                NativeMethods.VirtualQueryEx(processHandle, baseAddress, out memoryInfo,
+                NativeMethods.VirtualQueryEx(Handle, baseAddress, out memoryInfo,
                     MarshalType<MemoryBasicInformation>.Size) != 0)
                 return memoryInfo;
 
@@ -375,11 +377,11 @@ namespace MemorySharp.Memory
         /// <param name="addressFrom">A pointer to the starting address of the region of pages to be queried.</param>
         /// <param name="addressTo">A pointer to the ending address of the region of pages to be queried.</param>
         /// <returns>A collection of <see cref="Native.MemoryBasicInformation" /> structures.</returns>
-        public IEnumerable<MemoryBasicInformation> QueryInformationMemory(SafeMemoryHandle processHandle,
+        public IEnumerable<MemoryBasicInformation> QueryInformationMemory(
             IntPtr addressFrom, IntPtr addressTo)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(processHandle, "processHandle");
+            HandleManipulator.ValidateAsArgument(Handle, "processHandle");
 
             // Convert the addresses to Int64
             var numberFrom = addressFrom.ToInt64();
@@ -400,7 +402,7 @@ namespace MemorySharp.Memory
                 MemoryBasicInformation memoryInfo;
 
                 // Get the next memory page
-                ret = NativeMethods.VirtualQueryEx(processHandle, new IntPtr(numberFrom), out memoryInfo,
+                ret = NativeMethods.VirtualQueryEx(Handle, new IntPtr(numberFrom), out memoryInfo,
                     MarshalType<MemoryBasicInformation>.Size);
 
                 // Increment the starting address with the size of the page
@@ -417,16 +419,16 @@ namespace MemorySharp.Memory
         /// </summary>
         /// <param name="processHandle">A handle to the process to query.</param>
         /// <returns>A <see cref="ProcessBasicInformation" /> structure containg process information.</returns>
-        public ProcessBasicInformation QueryInformationProcess(SafeMemoryHandle processHandle)
+        public ProcessBasicInformation QueryInformationProcess()
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(processHandle, "processHandle");
+            HandleManipulator.ValidateAsArgument(Handle, "processHandle");
 
             // Create a structure to store process info
             var info = new ProcessBasicInformation();
 
             // Get the process info
-            var ret = NativeMethods.NtQueryInformationProcess(processHandle,
+            var ret = NativeMethods.NtQueryInformationProcess(Handle,
                 ProcessInformationClass.ProcessBasicInformation, ref info, info.Size, IntPtr.Zero);
 
             // If the function succeeded

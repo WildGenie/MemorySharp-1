@@ -8,6 +8,7 @@
 */
 
 using System.Collections.Generic;
+using MemorySharp.Internals.Interfaces;
 
 namespace MemorySharp.Internals
 {
@@ -69,14 +70,14 @@ namespace MemorySharp.Internals
                 }
                 finally
                 {
-                    // Remove the element from the dictionary
+                    // Disable the element from the dictionary
                     InternalItems.Remove(name);
                 }
             }
         }
 
         /// <summary>
-        ///     Remove a given element.
+        ///     Disable a given element.
         /// </summary>
         /// <param name="item">The element to remove.</param>
         public void Remove(T item)

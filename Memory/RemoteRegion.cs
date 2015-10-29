@@ -33,7 +33,7 @@ namespace MemorySharp.Memory
         ///     Contains information about the memory.
         /// </summary>
         public MemoryBasicInformation Information
-            => MemorySharp.QueryInformationMemory(MemorySharp.Handle, BaseAddress);
+            => MemorySharp.QueryInformationMemory(BaseAddress);
 
         /// <summary>
         ///     Gets if the <see cref="RemoteRegion" /> is valid.
@@ -101,8 +101,8 @@ namespace MemorySharp.Memory
         public void Release()
         {
             // Release the memory
-            MemorySharp.FreeMemory(MemorySharp.Handle, BaseAddress);
-            // Remove the pointer
+            MemorySharp.FreeMemory(BaseAddress);
+            // Disable the pointer
             BaseAddressField = IntPtr.Zero;
         }
 

@@ -7,7 +7,7 @@
  * See the file LICENSE for more information.
 */
 
-namespace MemorySharp.Internals
+namespace MemorySharp.Internals.Interfaces
 {
     /// <summary>
     ///     Defines an element able to be activated in the remote process.

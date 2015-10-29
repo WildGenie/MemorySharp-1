@@ -45,7 +45,7 @@ namespace MemorySharp.Memory
             MustBeDisposed = mustBeDisposed;
 
             // Change the memory protection
-            OldProtection = _memorySharp.ChangeMemoryProtection(_memorySharp.Handle, baseAddress,
+            OldProtection = _memorySharp.ChangeMemoryProtection(baseAddress,
                 size, protection);
         }
         #endregion
@@ -84,7 +84,7 @@ namespace MemorySharp.Memory
         public virtual void Dispose()
         {
             // Restore the memory protection
-            _memorySharp.ChangeMemoryProtection(_memorySharp.Handle, BaseAddress, Size,
+            _memorySharp.ChangeMemoryProtection(BaseAddress, Size,
                 OldProtection);
             // Avoid the finalizer 
             GC.SuppressFinalize(this);

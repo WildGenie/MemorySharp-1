@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using MemorySharp.Disassembly;
 using MemorySharp.Internals;
+using MemorySharp.Internals.Marshaling;
 using MemorySharp.Memory;
 
 namespace MemorySharp
@@ -23,7 +24,7 @@ namespace MemorySharp
         /// </summary>
         public InternalMemorySharp(Process process) : base(process)
         {
-            Disassembler = new Disassembler(this);
+            Disassembler = new Disassembler();
             Detours = new DetourManager(this);
         }
         #endregion

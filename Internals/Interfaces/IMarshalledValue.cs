@@ -10,7 +10,7 @@
 using System;
 using MemorySharp.Memory;
 
-namespace MemorySharp.Internals
+namespace MemorySharp.Internals.Interfaces
 {
     /// <summary>
     ///     Interface representing a value within the memory of a remote process.

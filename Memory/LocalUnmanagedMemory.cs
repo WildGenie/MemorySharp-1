@@ -51,7 +51,7 @@ namespace MemorySharp.Memory
         {
             // Free the allocated memory
             Marshal.FreeHGlobal(Address);
-            // Remove the pointer
+            // Disable the pointer
             Address = IntPtr.Zero;
             // Avoid the finalizer
             GC.SuppressFinalize(this);
