@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MemorySharp.Helpers.Logger
+namespace MemorySharp.Logger
 {
     /// <summary>
     ///     A class to handle writing logs to the system <see cref="Console" />.

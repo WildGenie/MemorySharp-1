@@ -12,7 +12,7 @@ using MemorySharp.Internals.Marshaling;
 using MemorySharp.Modules;
 using MemorySharp.Native;
 
-namespace MemorySharp.Helpers.Extensions
+namespace MemorySharp.Extensions
 {
     /// <summary>
     ///     A class providing extension methods for <see cref="Process" /> Instance's.

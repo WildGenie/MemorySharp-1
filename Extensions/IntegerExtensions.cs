@@ -2,7 +2,7 @@
 using System.Text;
 using MemorySharp.Disassembly;
 
-namespace MemorySharp.Helpers.Extensions
+namespace MemorySharp.Extensions
 {
     /// <summary>
     ///     A class providing extension methods for <see cref="int" /> Instance's.

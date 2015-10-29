@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace MemorySharp.Helpers.Extensions
+namespace MemorySharp.Extensions
 {
     /// <summary>
     ///     A class providing extension methods for <see cref="Delegate" /> Instance's.

@@ -9,7 +9,7 @@ using MemorySharp.Disassembly;
 using MemorySharp.Internals.Marshaling;
 using MemorySharp.Native;
 
-namespace MemorySharp.Helpers.Extensions
+namespace MemorySharp.Extensions
 {
     /// <summary>
     ///     A class providing extension methods for <see cref="IntPtr.

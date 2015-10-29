@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using MemorySharp.Helpers.Extensions;
+using MemorySharp.Extensions;
 using MemorySharp.Internals;
 using MemorySharp.Internals.Marshaling;
 using MemorySharp.Native;

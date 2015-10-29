@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace MemorySharp.Helpers.Logger
+namespace MemorySharp.Logger
 {
     /// <summary>
     ///     A class class to handle writing logs to text files.

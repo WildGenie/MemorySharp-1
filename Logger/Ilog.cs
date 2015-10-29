@@ -1,4 +1,4 @@
-﻿namespace MemorySharp.Helpers.Logger
+﻿namespace MemorySharp.Logger
 {
     /// <summary>
     ///     An interface for creating very basic logger classes.

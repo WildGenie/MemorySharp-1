@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using MemorySharp.Helpers.Extensions;
+using MemorySharp.Extensions;
 using MemorySharp.Internals.Interfaces;
 using MemorySharp.Native;
 

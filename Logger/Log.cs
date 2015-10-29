@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MemorySharp.Helpers.Logger
+namespace MemorySharp.Logger
 {
     /// <summary>
     ///     A log class. TODO: Make this much more generic/flexible.

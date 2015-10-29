@@ -7,7 +7,7 @@ using System.Text;
 using MemorySharp.Internals;
 using MemorySharp.Native;
 
-namespace MemorySharp.Helpers
+namespace MemorySharp.Extensions
 {
     /// <summary>
     ///     A class providing extension methods for <see cref="Process" /> Instance's.

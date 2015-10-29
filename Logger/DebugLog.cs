@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 #pragma warning disable 1591
 
-namespace MemorySharp.Helpers.Logger
+namespace MemorySharp.Logger
 {
     [SuppressMessage("ReSharper", "InvocationIsSkipped")]
     public class DebugLog : ILog
