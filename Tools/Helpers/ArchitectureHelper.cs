@@ -12,7 +12,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using MemorySharp.Native;
 
-namespace MemorySharp.Helpers
+namespace MemorySharp.Tools.Helpers
 {
     /// <summary>
     ///     Static helper class providing tools for detecting architecture.

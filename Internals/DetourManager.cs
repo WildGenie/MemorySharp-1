@@ -1,7 +1,7 @@
 ﻿using System;
-using MemorySharp.Helpers;
 using MemorySharp.Internals.Exceptions;
 using MemorySharp.Memory;
+using MemorySharp.Tools.Helpers;
 
 namespace MemorySharp.Internals
 {

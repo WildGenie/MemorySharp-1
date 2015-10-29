@@ -17,7 +17,7 @@ using System.Reflection;
 using MemorySharp.Tools.Extensions;
 using MemorySharp.Windows;
 
-namespace MemorySharp.Helpers
+namespace MemorySharp.Tools.Helpers
 {
     /// <summary>
     ///     Static helper class providing tools for finding applications.

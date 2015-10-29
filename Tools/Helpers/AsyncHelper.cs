@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MemorySharp.Helpers
+namespace MemorySharp.Tools.Helpers
 {
     public static class AsyncHelper
     {

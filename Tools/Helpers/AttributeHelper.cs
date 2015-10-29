@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace MemorySharp.Helpers
+namespace MemorySharp.Tools.Helpers
 {
     public class AttributeHelper
     {

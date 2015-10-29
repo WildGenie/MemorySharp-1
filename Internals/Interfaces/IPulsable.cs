@@ -3,7 +3,7 @@
     /// <summary>
     ///     Defines an element which pulses a method or set of methods.
     /// </summary>
-    public interface IPulseable
+    public interface IPulsable
     {
         #region Methods
         /// <summary>

@@ -11,7 +11,7 @@ using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace MemorySharp.Helpers
+namespace MemorySharp.Tools.Helpers
 {
     /// <summary>
     ///     Static helper class providing tools for serializing/deserializing objects.

@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 using System.Security;
 using System.Security.Permissions;
 
-namespace MemorySharp.Helpers
+namespace MemorySharp.Tools.Helpers
 {
     /// <summary>
     ///     The reflection helper.

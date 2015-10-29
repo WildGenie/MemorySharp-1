@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using System.Linq;
-using MemorySharp.Helpers;
+using MemorySharp.Tools.Helpers;
 
 namespace MemorySharp.Patterns
 {

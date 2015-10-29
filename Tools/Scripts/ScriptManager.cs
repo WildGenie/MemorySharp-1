@@ -8,7 +8,7 @@ using MemorySharp.Tools.Extensions;
 
 namespace MemorySharp.Tools.Scripts
 {
-    public class ScriptManager : IPulseable
+    public class ScriptManager : IPulsable
     {
         #region Events
         public event EventHandler CompilerStarted;

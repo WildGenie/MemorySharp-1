@@ -9,9 +9,9 @@
 
 using System;
 using System.ComponentModel;
-using MemorySharp.Helpers;
 using MemorySharp.Internals.Marshaling;
 using MemorySharp.Native;
+using MemorySharp.Tools.Helpers;
 
 namespace MemorySharp.Threads
 {

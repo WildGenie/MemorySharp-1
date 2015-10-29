@@ -18,8 +18,8 @@ using System;
 using System.Collections;
 using System.Data.SqlClient;
 using System.Text;
-using MemorySharp.Helpers;
 using MemorySharp.Tools.Emails;
+using MemorySharp.Tools.Helpers;
 
 namespace MemorySharp.Tools.Extensions
 {

@@ -1,6 +1,6 @@
 ﻿using System;
-using MemorySharp.Helpers;
 using MemorySharp.Tools.Emails;
+using MemorySharp.Tools.Helpers;
 
 namespace MemorySharp.Tools.Logger
 {

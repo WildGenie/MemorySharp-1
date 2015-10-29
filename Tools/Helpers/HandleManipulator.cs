@@ -13,7 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using MemorySharp.Native;
 
-namespace MemorySharp.Helpers
+namespace MemorySharp.Tools.Helpers
 {
     /// <summary>
     ///     Static helper class providing tools for manipulating handles.

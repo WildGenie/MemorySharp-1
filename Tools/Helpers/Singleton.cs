@@ -7,7 +7,7 @@
  * See the file LICENSE for more information.
 */
 
-namespace MemorySharp.Helpers
+namespace MemorySharp.Tools.Helpers
 {
     /// <summary>
     ///     Static helper used to create or get a singleton from another class.

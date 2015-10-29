@@ -10,7 +10,7 @@
 using System;
 using System.Text;
 
-namespace MemorySharp.Helpers
+namespace MemorySharp.Tools.Helpers
 {
     /// <summary>
     ///     Static helper class providing tools for generating random numbers or strings.

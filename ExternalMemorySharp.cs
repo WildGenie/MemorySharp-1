@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using MemorySharp.Helpers;
 using MemorySharp.Internals.Marshaling;
 using MemorySharp.Memory;
+using MemorySharp.Tools.Helpers;
 
 namespace MemorySharp
 {

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using MemorySharp.Helpers;
 using MemorySharp.Internals.Exceptions;
 using MemorySharp.Internals.Interfaces;
 using MemorySharp.Internals.Marshaling;
@@ -15,6 +14,7 @@ using MemorySharp.Modules;
 using MemorySharp.Native;
 using MemorySharp.Patterns;
 using MemorySharp.Threads;
+using MemorySharp.Tools.Helpers;
 using MemorySharp.Windows;
 
 namespace MemorySharp.Memory
@@ -315,7 +315,6 @@ namespace MemorySharp.Memory
         /// <summary>
         ///     Changes the protection on a region of committed pages in the virtual address space of a specified process.
         /// </summary>
-        /// <param name="processHandle">A handle to the process whose memory protection is to be changed.</param>
         /// <param name="address">
         ///     A pointer to the base address of the region of pages whose access protection attributes are to be
         ///     changed.
@@ -348,7 +347,6 @@ namespace MemorySharp.Memory
         /// <summary>
         ///     Retrieves information about a range of pages within the virtual address space of a specified process.
         /// </summary>
-        /// <param name="processHandle">A handle to the process whose memory information is queried.</param>
         /// <param name="baseAddress">A pointer to the base address of the region of pages to be queried.</param>
         /// <returns>
         ///     A <see cref="Native.MemoryBasicInformation" /> structures in which information about the specified page range
@@ -372,7 +370,6 @@ namespace MemorySharp.Memory
         /// <summary>
         ///     Retrieves information about a range of pages within the virtual address space of a specified process.
         /// </summary>
-        /// <param name="processHandle">A handle to the process whose memory information is queried.</param>
         /// <param name="addressFrom">A pointer to the starting address of the region of pages to be queried.</param>
         /// <param name="addressTo">A pointer to the ending address of the region of pages to be queried.</param>
         /// <returns>A collection of <see cref="Native.MemoryBasicInformation" /> structures.</returns>
@@ -416,7 +413,6 @@ namespace MemorySharp.Memory
         /// <summary>
         ///     Retrieves information about the specified process.
         /// </summary>
-        /// <param name="processHandle">A handle to the process to query.</param>
         /// <returns>A <see cref="ProcessBasicInformation" /> structure containg process information.</returns>
         public ProcessBasicInformation QueryInformationProcess()
         {
