@@ -16,8 +16,10 @@
 
 using System;
 using System.Collections;
+using System.Data.SqlClient;
 using System.Text;
 using MemorySharp.Helpers;
+using MemorySharp.Tools.Emails;
 
 namespace MemorySharp.Tools.Extensions
 {
@@ -83,7 +85,7 @@ namespace MemorySharp.Tools.Extensions
             while (innerException.IsNotNull())
             {
                 sb.Append(innerException.FullInfo());
-                innerException = _exceptionLevel > 1 ? innerException.InnerException : null;
+                innerException = _exceptionLevel > 1 ? innerException?.InnerException : null;
             }
 
             _exceptionLevel--;
@@ -97,9 +99,74 @@ namespace MemorySharp.Tools.Extensions
         ///     Sends an email with <see cref="ExceptionExtensions.FullInfo(Exception, bool)" /> to address defined in the
         /// </summary>
         /// <param name="ex">Thrown an exception to be reported.</param>
-        public static void SendToEmail(this Exception ex)
+        /// <param name="emailer">The emailer Instance.</param>
+        public static void SendToEmail(this Exception ex, Emailer emailer)
         {
-            ex.FullInfo(true).SendMe($"{ApplicationFinder.Name} - {ex.GetType()}");
+            emailer.SendMe($"{ApplicationFinder.Name} - {ex.GetType()}{ex.FullInfo(true)}", "Exception log");
+        }
+
+        /// <summary>
+        ///     Logs the exception.
+        /// </summary>
+        /// <param name="exception">The exception.</param>
+        public static void LogException(this Exception exception)
+        {
+            Logger.Log.Error(exception.ToString());
+        }
+
+        /// <summary>
+        ///     Logs the exception.
+        /// </summary>
+        /// <param name="exception">The exception.</param>
+        public static void LogException(this SqlException exception)
+        {
+            Logger.Log.Error(exception.ToString());
+        }
+
+        /// <summary>
+        ///     Gets the error message.
+        /// </summary>
+        /// <param name="exception">The exception.</param>
+        /// <returns>The Exception Message text</returns>
+        public static string GetErrorMessage(this Exception exception)
+        {
+            if (exception == null) return string.Empty;
+            return exception.InnerException?.Message ?? exception.Message;
+        }
+
+        /// <summary>
+        ///     Gets the error source.
+        /// </summary>
+        /// <param name="exception">The exception.</param>
+        /// <returns>the exception source text</returns>
+        public static string GetErrorSource(this Exception exception)
+        {
+            if (exception == null) return string.Empty;
+            return exception.InnerException != null ? exception.InnerException.Source : exception.Source;
+        }
+
+        /// <summary>
+        ///     Gets the name of the error type.
+        /// </summary>
+        /// <param name="exception">The exception.</param>
+        /// <returns>the exception type name text</returns>
+        public static string GetErrorTypeName(this Exception exception)
+        {
+            if (exception == null) return string.Empty;
+            return exception.InnerException != null
+                ? exception.InnerException.GetType().FullName
+                : exception.GetType().FullName;
+        }
+
+        /// <summary>
+        ///     Gets the error error details.
+        /// </summary>
+        /// <param name="exception">The exception.</param>
+        /// <returns>the exception detail text</returns>
+        public static string GetErrorErrorDetails(this Exception exception)
+        {
+            if (exception == null) return string.Empty;
+            return exception.InnerException?.ToString() ?? exception.ToString();
         }
         #endregion
     }

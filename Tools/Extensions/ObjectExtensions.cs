@@ -94,31 +94,11 @@ namespace MemorySharp.Tools.Extensions
 
         /// <summary>
         /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        public static Tuple<bool, DateTime> TryParseToDateTime(this object date)
-        {
-            return date.IsNull()
-                ? new Tuple<bool, DateTime>(false, SettingsExtensions.DefaultDateTime)
-                : date.ToString().TryParseToDateTime();
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        public static DateTime ToDateTime(this object date)
-        {
-            return date.IsNull() ? SettingsExtensions.DefaultDateTime : ToDateTime(date.ToString());
-        }
-
-        /// <summary>
-        /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
         public static bool IsBoolean(this object value)
         {
-            return value.IsNull() ? false : IsBoolean(value.ToString());
+            return !value.IsNull() && IsBoolean(value.ToString());
         }
 
         /// <summary>

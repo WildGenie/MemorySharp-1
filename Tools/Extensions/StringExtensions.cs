@@ -15,19 +15,6 @@ namespace MemorySharp.Tools.Extensions
     {
         #region Methods
         /// <summary>
-        ///     Determines whether the specified string can convert to <see cref="System.DateTime" />.
-        /// </summary>
-        /// <param name="value">The string value to check.</param>
-        /// <returns>
-        ///     Returns <see langword="true" /> if input string is <see cref="System.DateTime" /> equivalent, otherwise
-        ///     returns <see langword="false" />.
-        /// </returns>
-        public static bool IsDateTime(this string value)
-        {
-            return value.TryParseToDateTime().Item1;
-        }
-
-        /// <summary>
         ///     Surrounds text with double quotes.
         /// </summary>
         /// <param name="text">The text to quote.</param>
@@ -56,22 +43,6 @@ namespace MemorySharp.Tools.Extensions
         public static string SurroundWith(this string text, string ends)
         {
             return ends + text + ends;
-        }
-
-        /// <summary>
-        ///     Converts input string to <see cref="System.DateTime" />.
-        /// </summary>
-        /// <param name="value">The string value to convert.</param>
-        /// <returns>
-        ///     If convertion succeed , returns parsed value. If failed, returns
-        ///     <see cref="DateTime">Inflop.Common.Settings.Default.DateTime</see>.
-        /// </returns>
-        /// <remarks>
-        ///     Conversion is based on method <see cref="StringExtensions.TryParseToDateTime(string)" />.
-        /// </remarks>
-        public static DateTime ToDateTime(this string value)
-        {
-            return value.TryParseToDateTime().Item2;
         }
 
         /// <summary>

@@ -242,7 +242,7 @@ namespace MemorySharp.Memory
         {
             Requires.NotEqual(absoluteAddress, IntPtr.Zero, nameof(absoluteAddress));
 
-            return BaseAddress.Subtract(absoluteAddress);
+            return BaseAddress - (int) (absoluteAddress);
         }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace MemorySharp.Memory
         public IntPtr ToAbsolute(IntPtr relativeAddress)
         {
             // In this case, we allow IntPtr zero - relative + base = base, so no harm done.
-            return BaseAddress.Add(relativeAddress);
+            return BaseAddress + (int) (relativeAddress);
         }
 
         /// <summary>

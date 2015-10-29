@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using MemorySharp.Disassembly;
 using MemorySharp.Internals;
 using MemorySharp.Internals.Marshaling;
 using MemorySharp.Memory;
@@ -24,17 +23,15 @@ namespace MemorySharp
         /// </summary>
         public InternalMemorySharp(Process process) : base(process)
         {
-            Disassembler = new Disassembler();
             Detours = new DetourManager(this);
         }
         #endregion
 
         #region  Properties
-        /// <summary>
-        ///     The <see cref="Disassembly.Disassembler" /> Instance.
-        /// </summary>
-        public Disassembler Disassembler { get; }
-
+        // <summary>
+        //     The <see cref="Disassembly.Disassembler" /> Instance.
+        // </summary>
+        //  public Disassembler Disassembler { get; }
         /// <summary>
         ///     A manager for detours. See <see cref="Detours" />
         /// </summary>
