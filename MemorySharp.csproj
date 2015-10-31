@@ -70,6 +70,9 @@
     <Compile Include="Helpers\CustomMarshal.cs" />
     <Compile Include="Helpers\CustomMarshalAsAttribute.cs" />
     <Compile Include="Helpers\CustomMarshalAttribute.cs" />
+    <Compile Include="Hooks\WndProc\IWindowEngine.cs" />
+    <Compile Include="Hooks\WndProc\IWindowPulsable.cs" />
+    <Compile Include="Tools\Updater.cs" />
     <Compile Include="MemoryExternal\Assembly\Assembler\Fasm32Assembler.cs" />
     <Compile Include="MemoryExternal\Assembly\Assembler\IAssembler.cs" />
     <Compile Include="MemoryExternal\Assembly\AssemblyFactory.cs" />
@@ -82,7 +85,7 @@
     <Compile Include="MemoryExternal\Assembly\CallingConvention\ICallingConvention.cs" />
     <Compile Include="MemoryExternal\Assembly\CallingConvention\Enumerations.cs" />
     <Compile Include="Helpers\ApplicationFinder.cs" />
-    <Compile Include="Helpers\Emailer.cs" />
+    <Compile Include="Tools\Emailer.cs" />
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\HandleManipulator.cs" />
     <Compile Include="Helpers\QuickBenchMark.cs" />
@@ -94,6 +97,8 @@
     <Compile Include="MemoryExternal\Patterns\PatternCore.cs" />
     <Compile Include="MemoryExternal\Patterns\PatternFactory.cs" />
     <Compile Include="MemoryExternal\Patterns\ScanResult.cs" />
+    <Compile Include="Hooks\WndProc\UserMessage.cs" />
+    <Compile Include="Hooks\WndProc\WindowHook.cs" />
     <Compile Include="MemoryInternal\Modules\InjectedModule.cs" />
     <Compile Include="MemoryInternal\Processes\LocalProcess.cs" />
     <Compile Include="MemoryInternal\Modules\ModuleFactory.cs" />

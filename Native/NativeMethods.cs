@@ -19,8 +19,68 @@ namespace Binarysharp.MemoryManagement.Native
     public static class NativeMethods
     {
         #region Methods
+        /// <summary>
+        ///     TODO: Document.
+        ///     For now see msdn for <code>RtlMoveMemory</code>.
+        /// </summary>
+        /// <param name="dest"></param>
+        /// <param name="src"></param>
+        /// <param name="size"></param>
         [DllImport("Kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = false)]
         public static extern unsafe void MoveMemory(void* dest, void* src, int size);
+
+        /// <summary>
+        ///     Changes an attribute of the specified window. The function also sets the 32-bit (long) value at the specified
+        ///     offset into the extra window memory.
+        /// </summary>
+        /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
+        /// <param name="nIndex">
+        ///     The zero-based offset to the value to be set. Valid values are in the range zero through the
+        ///     number of bytes of extra window memory, minus the size of an integer. To set any other value, specify one of the
+        ///     following values.
+        /// </param>
+        /// <param name="dwNewLong">The replacement value.</param>
+        /// <returns>Type: LONG</returns>
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        private static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        /// <summary>
+        ///     Valid for x32 or 64.
+        /// </summary>
+        public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+        {
+            return IntPtr.Size == 8
+                ? SetWindowLongPtr64(hWnd, nIndex, dwNewLong)
+                : new IntPtr(SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32()));
+        }
+
+        /// <summary>
+        ///     Passes message information to the specified window procedure..
+        /// </summary>
+        /// <param name="lpPrevWndFunc">
+        ///     The previous window procedure. If this value is obtained by calling the GetWindowLong
+        ///     function with the nIndex parameter set to GWL_WNDPROC or DWL_DLGPROC, it is actually either the address of a window
+        ///     or dialog box procedure, or a special internal value meaningful only to CallWindowProc
+        /// </param>
+        /// <param name="hWnd">A handle to the window procedure to receive the message.</param>
+        /// <param name="msg">The message.</param>
+        /// <param name="wParam">
+        ///     Additional message-specific information. The contents of this parameter depend on the value of the
+        ///     Msg parameter.
+        /// </param>
+        /// <param name="lParam">
+        ///     Additional message-specific information. The contents of this parameter depend on the value of the
+        ///     Msg parameter.
+        /// </param>
+        /// <returns>Type: LRESULT</returns>
+        [DllImport("user32.dll")]
+        public static extern int CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, int msg, int wParam, int lParam);
 
         /// <summary>
         ///     Closes an open object handle.
@@ -765,6 +825,26 @@ namespace Binarysharp.MemoryManagement.Native
         /// <returns>The return value specifies the result of the message processing; it depends on the message sent.</returns>
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam);
+
+        /// <summary>
+        ///     Sends the specified message to a window or windows. The SendMessage function calls the window procedure for the
+        ///     specified window and does not return until the window procedure has processed the message.
+        ///     To send a message and return immediately, use the SendMessageCallback or SendNotifyMessage function. To post a
+        ///     message to a thread's message queue and return immediately, use the PostMessage or PostThreadMessage function.
+        /// </summary>
+        /// <param name="hWnd">
+        ///     A handle to the window whose window procedure will receive the message. If this parameter is
+        ///     HWND_BROADCAST ((HWND)0xffff), the message is sent to all top-level windows in the system, including disabled or
+        ///     invisible unowned windows, overlapped windows, and pop-up windows; but the message is not sent to child windows.
+        ///     Message sending is subject to UIPI.The thread of a process can send messages only to message queues of threads in
+        ///     processes of lesser or equal integrity level.
+        /// </param>
+        /// <param name="msg">The message to be sent.</param>
+        /// <param name="wParam">Additional message-specific information.</param>
+        /// <param name="lParam">Additional message-specific information.</param>
+        /// <returns>Type: LRESULT</returns>
+        [DllImport("user32.dll")]
+        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
         /// <summary>
         ///     Brings the thread that created the specified window into the foreground and activates the window.

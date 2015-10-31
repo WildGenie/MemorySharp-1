@@ -1,4 +1,5 @@
 ﻿using System.Net.Mail;
+using Binarysharp.MemoryManagement.Tools;
 
 namespace Binarysharp.MemoryManagement.Helpers
 {

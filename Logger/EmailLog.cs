@@ -1,6 +1,7 @@
 ﻿using System;
 using Binarysharp.MemoryManagement.Helpers;
 using Binarysharp.MemoryManagement.MemoryInternal.Interfaces;
+using Binarysharp.MemoryManagement.Tools;
 
 namespace Binarysharp.MemoryManagement.Logger
 {
@@ -13,7 +14,7 @@ namespace Binarysharp.MemoryManagement.Logger
         /// <summary>
         ///     Initializes a new instance of the <see cref="EmailLog" /> class.
         /// </summary>
-        /// <param name="emailer">The <see cref="Helpers.Emailer" /> to use.</param>
+        /// <param name="emailer">The <see cref="Tools.Emailer" /> to use.</param>
         /// <param name="useFormattedText">State if the log should use raw or formatted text.</param>
         public EmailLog(Emailer emailer, bool useFormattedText)
         {

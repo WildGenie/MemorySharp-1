@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Mail;
 using Binarysharp.MemoryManagement.Extensions;
+using Binarysharp.MemoryManagement.Helpers;
 
-namespace Binarysharp.MemoryManagement.Helpers
+namespace Binarysharp.MemoryManagement.Tools
 {
     /// <summary>
     ///     Allows you to send e-mail messages based on the settings contained in the

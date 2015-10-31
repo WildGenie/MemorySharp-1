@@ -18,6 +18,7 @@ using System;
 using System.Collections;
 using System.Text;
 using Binarysharp.MemoryManagement.Helpers;
+using Binarysharp.MemoryManagement.Tools;
 
 namespace Binarysharp.MemoryManagement.Extensions
 {
