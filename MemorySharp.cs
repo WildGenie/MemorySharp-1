@@ -54,7 +54,7 @@ namespace Binarysharp.MemoryManagement
             // Open the process with all rights
             Handle = MemoryCore.OpenProcess(ProcessAccessFlags.AllAccess, process.Id);
             // Initialize the PEB
-            if (IntPtr.Size == 8)
+            if (IntPtr.Size == 4)
             {
                 Peb = new ManagedPeb(this, ManagedPeb.FindPeb(Handle));
             }
