@@ -15,6 +15,7 @@ using System.Text;
 using Binarysharp.MemoryManagement.Helpers;
 using Binarysharp.MemoryManagement.Internals;
 using Binarysharp.MemoryManagement.MemoryExternal.Assembly;
+using Binarysharp.MemoryManagement.MemoryExternal.Assembly.CallingConvention;
 using Binarysharp.MemoryManagement.MemoryExternal.Memory;
 using Binarysharp.MemoryManagement.MemoryExternal.Modules;
 using Binarysharp.MemoryManagement.MemoryExternal.Threading;
@@ -509,6 +510,49 @@ namespace Binarysharp.MemoryManagement
             WriteString(new IntPtr(Convert.ToInt64(address)), text, isRelative);
         }
         #endregion
+        /// <summary>
+        ///     Executes the assembly code located in the remote process at the specified address.
+        /// </summary>
+        /// <param name="address">The address where the assembly code is located.</param>
+        /// <param name="callingConvention">The calling convention used to execute the assembly code with the parameters.</param>
+        /// <param name="parameters">An array of parameters used to execute the assembly code.</param>
+        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
+        public T Call<T>(IntPtr address, CallingConventions callingConvention, params dynamic[] parameters)
+        {
+            return Assembly.Execute<T>(address, callingConvention, parameters);
+        }
+
+        /// <summary>
+        ///     Executes the assembly code located in the remote process at the specified address.
+        /// </summary>
+        /// <param name="address">The address where the assembly code is located.</param>
+        /// <param name="callingConvention">The calling convention used to execute the assembly code with the parameters.</param>
+        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
+        public T Call<T>(IntPtr address, CallingConventions callingConvention)
+        {
+            return Assembly.Execute<T>(address, callingConvention);
+        }
+
+        /// <summary>
+        ///     Executes the assembly code located in the remote process at the specified address.
+        /// </summary>
+        /// <param name="address">The address where the assembly code is located.</param>
+        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
+        public T Call<T>(IntPtr address)
+        {
+            return Assembly.Execute<T>(address);
+        }
+
+        /// <summary>
+        ///     Executes the assembly code located in the remote process at the specified address.
+        /// </summary>
+        /// <param name="call">The <see cref="RemoteCall" /> structure to use.</param>
+        /// <param name="parameters">An array of parameters used to execute the assembly code.</param>
+        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
+        public T Call<T>(RemoteCall call, params dynamic[] parameters)
+        {
+            return Assembly.Execute<T>(call.Address, call.CallingConvention, parameters);
+        }
 
         #region Misc
         /// <summary>
