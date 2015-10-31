@@ -10,8 +10,32 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace MemorySharp.Native
+namespace Binarysharp.MemoryManagement.Native
 {
+#pragma warning disable 1591
+    /// <summary>
+    ///     Flags used in LoadLibraryEx to determine behaviour when loading library into process
+    /// </summary>
+    [Flags]
+    public enum LoadLibraryExFlags : uint
+    {
+        DontResolveDllReferences = 0x00000001, //#define DONT_RESOLVE_DLL_REFERENCES         0x00000001
+        LoadLibraryAsDatafile = 0x00000002, //#define LOAD_LIBRARY_AS_DATAFILE            0x00000002
+        LoadLibraryWithAlteredSearchPath = 0x00000008, //#define LOAD_WITH_ALTERED_SEARCH_PATH       0x00000008
+        LoadIgnoreCodeAuthzLevel = 0x00000010, //#define LOAD_IGNORE_CODE_AUTHZ_LEVEL        0x00000010
+        LoadLibraryAsImageResource = 0x00000020, //#define LOAD_LIBRARY_AS_IMAGE_RESOURCE      0x00000020
+        LoadLibraryAsDatafileExclusive = 0x00000040 //#define LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE  0x00000040
+    }
+
+    public enum ThreadWaitValue : uint
+    {
+        Object0 = 0x00000000,
+        Abandoned = 0x00000080,
+        Timeout = 0x00000102,
+        Failed = 0xFFFFFFFF,
+        Infinite = 0xFFFFFFFF
+    }
+#pragma warning restore 1591
 
     #region FlashWindowFlags
     /// <summary>
@@ -874,24 +898,6 @@ namespace MemorySharp.Native
     }
     #endregion
 
-    #region ProcessArchitectures
-    /// <summary>
-    ///     The architectures for a process.
-    /// </summary>
-    public enum ProcessArchitectures
-    {
-        /// <summary>
-        ///     IA-32 (Intel Architecture, 32-bit, sometimes called i386).
-        /// </summary>
-        Ia32,
-
-        /// <summary>
-        ///     x86-64 (also known as x64, x86_64 and amd64).
-        /// </summary>
-        Amd64
-    }
-    #endregion
-
     #region ProcessInformationClass
     /// <summary>
     ///     The type of process information to be retrieved.
@@ -1409,63 +1415,6 @@ namespace MemorySharp.Native
         Failed = 0xFFFFFFFF
     }
     #endregion
-
-    public enum ThreadWaitValue : uint
-    {
-        Object0 = 0x00000000,
-        Abandoned = 0x00000080,
-        Timeout = 0x00000102,
-        Failed = 0xFFFFFFFF,
-        Infinite = 0xFFFFFFFF
-    }
-
-    /// <summary>
-    ///     Process Information struct, used with <see cref="Imports.CreateProcess" />. Definition from pinvoke.net.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct ProcessInformation
-    {
-        public IntPtr hProcess;
-        public IntPtr hThread;
-        public int dwProcessId;
-        public int dwThreadId;
-    }
-
-    [Flags]
-    public enum ProcessCreationFlags : uint
-    {
-        None = 0x00000000,
-        DebugProcess = 0x00000001,
-        DebugOnlyThisProcess = 0x00000002,
-        CreateSuspended = 0x00000004,
-        DetachedProcess = 0x00000008,
-        CreateNewConsole = 0x00000010,
-        CreateNewProcessGroup = 0x00000200,
-        CreateUnicodeEnvironment = 0x00000400,
-        CreateSeparateWowVDM = 0x00000800,
-        CreateSharedWowVDM = 0x00001000,
-        InheritParentAffinity = 0x00010000,
-        CreateProtectedProcess = 0x00040000,
-        ExtendedStartupInfoPresent = 0x00080000,
-        CreateBreakawayFromJob = 0x01000000,
-        CreatePreserveCodeAuthzLevel = 0x02000000,
-        CreateDefaultErrorMode = 0x04000000,
-        CreateNoWindow = 0x08000000
-    }
-
-    /// <summary>
-    ///     Flags used in LoadLibraryEx to determine behaviour when loading library into process
-    /// </summary>
-    [Flags]
-    public enum LoadLibraryExFlags : uint
-    {
-        DontResolveDllReferences = 0x00000001, //#define DONT_RESOLVE_DLL_REFERENCES         0x00000001
-        LoadLibraryAsDatafile = 0x00000002, //#define LOAD_LIBRARY_AS_DATAFILE            0x00000002
-        LoadLibraryWithAlteredSearchPath = 0x00000008, //#define LOAD_WITH_ALTERED_SEARCH_PATH       0x00000008
-        LoadIgnoreCodeAuthzLevel = 0x00000010, //#define LOAD_IGNORE_CODE_AUTHZ_LEVEL        0x00000010
-        LoadLibraryAsImageResource = 0x00000020, //#define LOAD_LIBRARY_AS_IMAGE_RESOURCE      0x00000020
-        LoadLibraryAsDatafileExclusive = 0x00000040 //#define LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE  0x00000040
-    }
 
     #region WindowsMessages
     /// <summary>

@@ -8,9 +8,8 @@
 */
 
 using System.Collections.Generic;
-using MemorySharp.Internals.Interfaces;
 
-namespace MemorySharp.Internals
+namespace Binarysharp.MemoryManagement.Internals
 {
     /// <summary>
     ///     Class managing objects implementing <see cref="INamedElement" /> interface.
@@ -70,14 +69,14 @@ namespace MemorySharp.Internals
                 }
                 finally
                 {
-                    // Disable the element from the dictionary
+                    // Remove the element from the dictionary
                     InternalItems.Remove(name);
                 }
             }
         }
 
         /// <summary>
-        ///     Disable a given element.
+        ///     Remove a given element.
         /// </summary>
         /// <param name="item">The element to remove.</param>
         public void Remove(T item)

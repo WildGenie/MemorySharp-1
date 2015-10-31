@@ -9,9 +9,9 @@
 
 using System;
 using System.Runtime.InteropServices;
-using MemorySharp.Internals.Marshaling;
+using Binarysharp.MemoryManagement.Internals;
 
-namespace MemorySharp.Native
+namespace Binarysharp.MemoryManagement.Native
 {
 
     #region FlashInfo
@@ -28,32 +28,6 @@ namespace MemorySharp.Native
         public int Timeout;
     }
     #endregion
-
-    /// <summary>
-    ///     Startup Info struct used with <see cref="Imports.CreateProcess" />. Definition from pinvoke.net.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public struct Startupinfo
-    {
-        public int cb;
-        public string lpReserved;
-        public string lpDesktop;
-        public string lpTitle;
-        public int dwX;
-        public int dwY;
-        public int dwXSize;
-        public int dwYSize;
-        public int dwXCountChars;
-        public int dwYCountChars;
-        public int dwFillAttribute;
-        public int dwFlags;
-        public short wShowWindow;
-        public short cbReserved2;
-        public IntPtr lpReserved2;
-        public IntPtr hStdInput;
-        public IntPtr hStdOutput;
-        public IntPtr hStdError;
-    }
 
     #region HardwareInput
     /// <summary>
@@ -352,7 +326,7 @@ namespace MemorySharp.Native
         /// <summary>
         ///     The exit status.
         /// </summary>
-        public IntPtr ExitStatus;
+        public uint ExitStatus;
 
         /// <summary>
         ///     The base address of Process Environment Block.

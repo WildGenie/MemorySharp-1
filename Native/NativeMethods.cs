@@ -10,9 +10,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using MemorySharp.Memory;
 
-namespace MemorySharp.Native
+namespace Binarysharp.MemoryManagement.Native
 {
     /// <summary>
     ///     Static class referencing all P/Invoked functions used by the library.
@@ -20,114 +19,8 @@ namespace MemorySharp.Native
     public static class NativeMethods
     {
         #region Methods
-        /// <summary>
-        ///     Changes an attribute of the specified window. The function also sets the 32-bit (long) value at the specified
-        ///     offset into the extra window memory.
-        /// </summary>
-        /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
-        /// <param name="nIndex">
-        ///     The zero-based offset to the value to be set. Valid values are in the range zero through the
-        ///     number of bytes of extra window memory, minus the size of an integer. To set any other value, specify one of the
-        ///     following values.
-        /// </param>
-        /// <param name="dwNewLong">The replacement value.</param>
-        /// <returns>Type: LONG</returns>
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
-        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
-        private static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
-
-        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
-        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
-        /// <summary>
-        /// </summary>
-        /// <param name="hWnd"></param>
-        /// <param name="nIndex"></param>
-        /// <param name="dwNewLong"></param>
-        /// <returns></returns>
-        public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
-        {
-            return IntPtr.Size == 8
-                ? SetWindowLongPtr64(hWnd, nIndex, dwNewLong)
-                : new IntPtr(SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32()));
-        }
-
-        /// <summary>
-        ///     Reserves or commits a region of memory within the virtual address space of a specified process.
-        ///     The function initializes the memory it allocates to zero, unless <see cref="AllocationType.Reset" /> is used.
-        /// </summary>
-        /// <param name="hProcess">
-        ///     The handle to a process. The function allocated memory within the virtual address space of this process.
-        ///     The process must have the <see cref="ProcessAccessFlags.VMOperation" /> access right.
-        /// </param>
-        /// <param name="lpAddress">
-        ///     Optional desired address to begin allocation from. Use <see cref="IntPtr.Zero" /> to let the
-        ///     function determine the address
-        /// </param>
-        /// <param name="dwSize">The size of the region of memory to allocate, in bytes</param>
-        /// <param name="flAllocationType">
-        ///     <see cref="AllocationType" /> type of allocation. Must contain one of <see cref="AllocationType.Commit" />,
-        ///     <see cref="AllocationType.Reserve" /> or <see cref="AllocationType.Reset" />.
-        ///     Can also specify <see cref="AllocationType.LargePages" />, <see cref="AllocationType.Physical" />,
-        ///     <see cref="AllocationType.TopDown" />.
-        /// </param>
-        /// <param name="flProtect">One of <see cref="MemoryProtection" /> constants.</param>
-        /// <returns>
-        ///     If the function succeeds, the return value is the base address of the allocated region of pages.
-        ///     If the function fails, the return value is <see cref="IntPtr.Zero" />. Call
-        ///     <see cref="Marshal.GetLastWin32Error" /> to get Win32 error.
-        /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-        public static extern IntPtr VirtualAllocEx(
-            IntPtr hProcess,
-            IntPtr lpAddress,
-            uint dwSize,
-            MemoryAllocationFlags flAllocationType,
-            MemoryProtectionFlags flProtect);
-
-        /// <summary>
-        ///     Reserves or commits a region of pages in the virtual address space of the calling process.
-        ///     Memory allocated by this function is automatically initialized to zero, unless <see cref="AllocationType.Reset" />
-        ///     is specified.
-        /// </summary>
-        /// <param name="lpAddress">
-        ///     The starting address of the region to allocate. If null, the system determines where to
-        ///     allocate the region
-        /// </param>
-        /// <param name="dwSize">The size of the region, in bytes.</param>
-        /// <param name="flAllocationType">The type of memory allocation.</param>
-        /// <param name="flProtect">The memory protection for the region of pages to be allocated.</param>
-        /// <returns></returns>
-        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-        public static extern IntPtr VirtualAlloc(
-            IntPtr lpAddress,
-            uint dwSize,
-            MemoryAllocationFlags flAllocationType,
-            MemoryProtectionFlags flProtect);
-
-        /// <summary>
-        ///     Passes message information to the specified window procedure..
-        /// </summary>
-        /// <param name="lpPrevWndFunc">
-        ///     The previous window procedure. If this value is obtained by calling the GetWindowLong
-        ///     function with the nIndex parameter set to GWL_WNDPROC or DWL_DLGPROC, it is actually either the address of a window
-        ///     or dialog box procedure, or a special internal value meaningful only to CallWindowProc
-        /// </param>
-        /// <param name="hWnd">A handle to the window procedure to receive the message.</param>
-        /// <param name="msg">The message.</param>
-        /// <param name="wParam">
-        ///     Additional message-specific information. The contents of this parameter depend on the value of the
-        ///     Msg parameter.
-        /// </param>
-        /// <param name="lParam">
-        ///     Additional message-specific information. The contents of this parameter depend on the value of the
-        ///     Msg parameter.
-        /// </param>
-        /// <returns>Type: LRESULT</returns>
-        [DllImport("user32.dll")]
-        public static extern int CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, int msg, int wParam, int lParam);
+        [DllImport("Kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = false)]
+        public static extern unsafe void MoveMemory(void* dest, void* src, int size);
 
         /// <summary>
         ///     Closes an open object handle.
@@ -244,6 +137,39 @@ namespace MemorySharp.Native
         public static extern uint WaitForSingleObject(IntPtr hObject, uint dwMilliseconds);
 
         /// <summary>
+        ///     Retrieves the termination status of the specified thread.
+        /// </summary>
+        /// <param name="hThread">Handle to the thread</param>
+        /// <param name="lpExitCode">
+        ///     A pointer to a variable to receive the thread termination status. If this works properly, this
+        ///     should be the return value from the thread function of <see cref="CreateRemoteThread" />
+        /// </param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetExitCodeThread(IntPtr hThread, out IntPtr lpExitCode);
+
+        /// <summary>
+        ///     Retrieves the termination status of the specified thread.
+        /// </summary>
+        /// <param name="hThread">Handle to the thread</param>
+        /// <param name="lpExitCode">
+        ///     A pointer to a variable to receive the thread termination status. If this works properly, this
+        ///     should be the return value from the thread function of <see cref="CreateRemoteThread" />
+        /// </param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetExitCodeThread(IntPtr hThread, out uint lpExitCode);
+
+        /// <summary>
+        /// </summary>
+        /// <param name="hThread"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern int ResumeThread(IntPtr hThread);
+
+        /// <summary>
         ///     Frees the loaded dynamic-link library (DLL) module and, if necessary, decrements its reference count.
         ///     When the reference count reaches zero, the module is unloaded from the address space of the calling process and the
         ///     handle is no longer valid.
@@ -312,160 +238,6 @@ namespace MemorySharp.Native
         /// </returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool GetExitCodeThread(SafeMemoryHandle hThread, out IntPtr lpExitCode);
-
-        /// <summary>
-        ///     Retrieves the termination status of the specified thread.
-        /// </summary>
-        /// <param name="hThread">Handle to the thread</param>
-        /// <param name="lpExitCode">
-        ///     A pointer to a variable to receive the thread termination status. If this works properly, this
-        ///     should be the return value from the thread function of <see cref="CreateRemoteThread" />
-        /// </param>
-        /// <returns></returns>
-        [DllImport("kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetExitCodeThread(IntPtr hThread, out IntPtr lpExitCode);
-
-        /// <summary>
-        ///     Loads the specified module into the address space of the calling process. The specified module may cause other
-        ///     modules to be loaded.
-        /// </summary>
-        /// <param name="lpFileName">
-        ///     <para>The name of the module. This can be either a library module (.dll) or an executable module (.exe).</para>
-        ///     <para>
-        ///         If the string specifies a full path, the function searches only that path for the module.
-        ///         Relative paths or files without a path will be searched for using standard strategies.
-        ///     </para>
-        /// </param>
-        /// <returns>
-        ///     If the function succeeds, a handle to the module is returned.
-        ///     Otherwise, <see cref="IntPtr.Zero" /> is returned. Call <see cref="Marshal.GetLastWin32Error" /> on failure to get
-        ///     Win32 error.
-        /// </returns>
-        [DllImport("kernel32.dll", EntryPoint = "LoadLibraryW", SetLastError = true)]
-        public static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPWStr)] string lpFileName);
-
-        /// <summary>
-        ///     Loads the specified module into the address space of the calling process. The specified module may cause other
-        ///     modules to be loaded.
-        /// </summary>
-        /// <param name="lpFileName">
-        ///     <para>The name of the module. This can be either a library module (.dll) or an executable module (.exe).</para>
-        ///     <para>
-        ///         If the string specifies a full path, the function searches only that path for the module.
-        ///         Relative paths or files without a path will be searched for using standard strategies.
-        ///     </para>
-        /// </param>
-        /// <param name="hFile">This parameter is reserved for future use. It must be NULL (<see cref="IntPtr.Zero" />)</param>
-        /// <param name="dwFlags">
-        ///     The action to be taken when loading the module. If no flags are specified, the behaviour is identical to
-        ///     <see cref="LoadLibrary" />.
-        ///     The parameter can be one of the values defined in <see cref="LoadLibraryExFlags" />
-        /// </param>
-        /// <returns></returns>
-        [DllImport("kernel32.dll", EntryPoint = "LoadLibraryExW", SetLastError = true)]
-        public static extern IntPtr LoadLibraryEx(
-            [MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
-            IntPtr hFile,
-            LoadLibraryExFlags dwFlags);
-
-        /// <summary>
-        ///     Creates a new process and its primary thread. The new process runs in the security context of the calling process.
-        /// </summary>
-        /// <param name="lpApplicationName">
-        ///     The name of the module to be executed. The string can specify the full path and file name of hte module to execute
-        ///     or it can specify a partial name.
-        /// </param>
-        /// <param name="lpCommandLine">The command line to be executed.</param>
-        /// <param name="lpProcessAttributes">
-        ///     A pointer to a SECURITY_ATTRIBUTES structure that determines whether the returned
-        ///     handle to the new process object can be inherited by child processes. If lpProcessAttributes is
-        ///     <see cref="IntPtr.Zero" />, the handle cannot be inherited.
-        /// </param>
-        /// <param name="lpThreadAttributes">
-        ///     A pointer to a SECURITY_ATTRIBUTES structure that determines whether the returned
-        ///     handle to the new thread object can be inherited by child processes. If lpThreadAttributes is
-        ///     <see cref="IntPtr.Zero" />, the handle cannot be inherited.
-        /// </param>
-        /// <param name="bInheritHandles">
-        ///     If this parameter is true, each inheritable handle in the calling process is inherited by
-        ///     the new process. If the parameter is FALSE, the handles are not inherited. Note that inherited handles have the
-        ///     same value and access rights as the original handles.
-        /// </param>
-        /// <param name="dwCreationFlags">
-        ///     The flags that control the priority class and the creation of the process. See
-        ///     <see cref="ProcessCreationFlags" />
-        /// </param>
-        /// <param name="lpEnvironment">
-        ///     A pointer to the environment block for the new process. If this parameter is
-        ///     <see cref="IntPtr.Zero" />, the new process uses the environment of the calling process.
-        /// </param>
-        /// <param name="lpCurrentDirectory">
-        ///     The full path to the current directory for the process. The string can also specify a
-        ///     UNC path.
-        /// </param>
-        /// <param name="lpStartupInfo">A pointer to a <see cref="Startupinfo" /> structure.</param>
-        /// <param name="lpProcessInformation">
-        ///     A pointer to a <see cref="ProcessInformation" /> structure that receives
-        ///     identification information about the new process.
-        /// </param>
-        /// <returns>
-        ///     If the function succeeds, the return value is true. If the function fails, the return value is false. Call
-        ///     <see cref="Marshal.GetLastWin32Error" /> to get the Win32 Error.
-        /// </returns>
-        [DllImport("kernel32.dll", EntryPoint = "CreateProcessW", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool CreateProcess(
-            [MarshalAs(UnmanagedType.LPWStr)] string lpApplicationName,
-            [MarshalAs(UnmanagedType.LPWStr)] StringBuilder lpCommandLine,
-            IntPtr lpProcessAttributes,
-            IntPtr lpThreadAttributes,
-            bool bInheritHandles,
-            ProcessCreationFlags dwCreationFlags,
-            IntPtr lpEnvironment,
-            string lpCurrentDirectory,
-            ref Startupinfo lpStartupInfo,
-            out ProcessInformation lpProcessInformation);
-
-        /// <summary>
-        ///     Retrieves the termination status of the specified thread.
-        /// </summary>
-        /// <param name="hThread">Handle to the thread</param>
-        /// <param name="lpExitCode">
-        ///     A pointer to a variable to receive the thread termination status. If this works properly, this
-        ///     should be the return value from the thread function of <see cref="CreateRemoteThread" />
-        /// </param>
-        /// <returns></returns>
-        [DllImport("kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetExitCodeThread(IntPtr hThread, out uint lpExitCode);
-
-        /// <summary>
-        ///     Retrieves a module handle for the specified module. The module must have been loaded by the calling process.
-        /// </summary>
-        /// <param name="moduleName">
-        ///     <para>
-        ///         The name of the loaded module (either a .dll or .exe file). If the file name extension is omitted, the default
-        ///         library extension .dll is appended.
-        ///         The file name string can include a trailing point character (.) to indicate that the module name has no
-        ///         extension.
-        ///         The string does not have to specify a path. When specifying a path, be sure to use backslashes (\), not forward
-        ///         slashes (/).
-        ///         The name is compared (case independently) to the names of modules currently mapped into the address space of
-        ///         the calling process.
-        ///     </para>
-        ///     <para>
-        ///         If this parameter is NULL, GetModuleHandle returns a handle to the file used to create the calling process
-        ///         (.exe file).
-        ///     </para>
-        /// </param>
-        /// <returns>
-        ///     If the function succeeds, the return value is a handle to the specified module.
-        ///     If the function fails, the return value is NULL. To get extended error information, call
-        ///     <see cref="Marshal.GetLastWin32Error" />.
-        /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern IntPtr GetModuleHandle(string moduleName);
 
         /// <summary>
         ///     Retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
@@ -710,28 +482,56 @@ namespace MemorySharp.Native
         public static extern bool FlashWindowEx(ref FlashInfo pwfi);
 
         /// <summary>
-        ///     Determines whether the specified process is running under WOW64.
-        ///     WOW64 is the x86 emulator that allows 32-bit Windows-based applications to run seamlessly on 64-bit Windows.
+        ///     Loads the specified module into the address space of the calling process. The specified module may cause other
+        ///     modules to be loaded.
         /// </summary>
-        /// <param name="process">
-        ///     A handle to the process.
-        ///     The handle must have the <see cref="ProcessAccessFlags.QueryInformation" /> or
-        ///     <see cref="ProcessAccessFlags.QueryLimitedInformation" /> access right.
-        /// </param>
-        /// <param name="wow64Process">
-        ///     A pointer to a value that is set to TRUE if the process is running under WOW64.
-        ///     If the process is running under 32-bit Windows, the value is set to FALSE.
-        ///     If the process is a 64-bit application running under 64-bit Windows, the value is also set to FALSE.
+        /// <param name="lpFileName">
+        ///     The name of the module. This can be either a library module (a .dll file) or an executable module (an .exe file).
+        ///     The name specified is the file name of the module and is not related to the name stored in the library module
+        ///     itself,
+        ///     as specified by the LIBRARY keyword in the module-definition (.def) file.
+        ///     If the string specifies a full path, the function searches only that path for the module.
+        ///     If the string specifies a relative path or a module name without a path, the function uses a standard search
+        ///     strategy to find the module; for more information, see the Remarks.
+        ///     If the function cannot find the module, the function fails. When specifying a path, be sure to use backslashes (\),
+        ///     not forward slashes (/).
+        ///     For more information about paths, see Naming a File or Directory.
+        ///     If the string specifies a module name without a path and the file name extension is omitted, the function appends
+        ///     the default library extension .dll to the module name.
+        ///     To prevent the function from appending .dll to the module name, include a trailing point character (.) in the
+        ///     module name string.
         /// </param>
         /// <returns>
-        ///     If the function succeeds, the return value is nonzero.
-        ///     If the function fails, the return value is zero. To get extended error information, call
+        ///     If the function succeeds, the return value is a handle to the module.
+        ///     If the function fails, the return value is NULL. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool IsWow64Process(IntPtr process,
-            [Out, MarshalAs(UnmanagedType.Bool)] out bool wow64Process);
+        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern IntPtr LoadLibrary(string lpFileName);
+
+        /// <summary>
+        ///     Loads the specified module into the address space of the calling process. The specified module may cause other
+        ///     modules to be loaded.
+        /// </summary>
+        /// <param name="lpFileName">
+        ///     <para>The name of the module. This can be either a library module (.dll) or an executable module (.exe).</para>
+        ///     <para>
+        ///         If the string specifies a full path, the function searches only that path for the module.
+        ///         Relative paths or files without a path will be searched for using standard strategies.
+        ///     </para>
+        /// </param>
+        /// <param name="hFile">This parameter is reserved for future use. It must be NULL (<see cref="IntPtr.Zero" />)</param>
+        /// <param name="dwFlags">
+        ///     The action to be taken when loading the module. If no flags are specified, the behaviour is identical to
+        ///     <see cref="LoadLibrary" />.
+        ///     The parameter can be one of the values defined in <see cref="LoadLibraryExFlags" />
+        /// </param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", EntryPoint = "LoadLibraryExW", SetLastError = true)]
+        public static extern IntPtr LoadLibraryEx(
+            [MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
+            IntPtr hFile,
+            LoadLibraryExFlags dwFlags);
 
         /// <summary>
         ///     Translates (maps) a virtual-key code into a scan code or character value, or translates a scan code into a
@@ -911,7 +711,7 @@ namespace MemorySharp.Native
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ReadProcessMemory(SafeMemoryHandle hProcess, IntPtr lpBaseAddress,
-            [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
+            [Out] byte[] lpBuffer, int dwSize, out int lpNumberOfBytesRead);
 
         /// <summary>
         ///     Decrements a thread's suspend count. When the suspend count is decremented to zero, the execution of the thread is
@@ -929,9 +729,6 @@ namespace MemorySharp.Native
         /// </returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern uint ResumeThread(SafeMemoryHandle hThread);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern int ResumeThread(IntPtr hThread);
 
         /// <summary>
         ///     Synthesizes keystrokes, mouse motions, and button clicks.
@@ -968,26 +765,6 @@ namespace MemorySharp.Native
         /// <returns>The return value specifies the result of the message processing; it depends on the message sent.</returns>
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam);
-
-        /// <summary>
-        ///     Sends the specified message to a window or windows. The SendMessage function calls the window procedure for the
-        ///     specified window and does not return until the window procedure has processed the message.
-        ///     To send a message and return immediately, use the SendMessageCallback or SendNotifyMessage function. To post a
-        ///     message to a thread's message queue and return immediately, use the PostMessage or PostThreadMessage function.
-        /// </summary>
-        /// <param name="hWnd">
-        ///     A handle to the window whose window procedure will receive the message. If this parameter is
-        ///     HWND_BROADCAST ((HWND)0xffff), the message is sent to all top-level windows in the system, including disabled or
-        ///     invisible unowned windows, overlapped windows, and pop-up windows; but the message is not sent to child windows.
-        ///     Message sending is subject to UIPI.The thread of a process can send messages only to message queues of threads in
-        ///     processes of lesser or equal integrity level.
-        /// </param>
-        /// <param name="msg">The message to be sent.</param>
-        /// <param name="wParam">Additional message-specific information.</param>
-        /// <param name="lParam">Additional message-specific information.</param>
-        /// <returns>Type: LRESULT</returns>
-        [DllImport("user32.dll")]
-        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
         /// <summary>
         ///     Brings the thread that created the specified window into the foreground and activates the window.
@@ -1157,10 +934,6 @@ namespace MemorySharp.Native
         public static extern IntPtr VirtualAllocEx(SafeMemoryHandle hProcess, IntPtr lpAddress, int dwSize,
             MemoryAllocationFlags flAllocationType, MemoryProtectionFlags flProtect);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, int dwSize,
-            MemoryAllocationFlags flAllocationType, MemoryProtectionFlags flProtect);
-
         /// <summary>
         ///     Releases, decommits, or releases and decommits a region of memory within the virtual address space of a specified
         ///     process.
@@ -1198,65 +971,6 @@ namespace MemorySharp.Native
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool VirtualFreeEx(SafeMemoryHandle hProcess, IntPtr lpAddress, int dwSize,
             MemoryReleaseFlags dwFreeType);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, int dwSize,
-            MemoryReleaseFlags dwFreeType);
-
-        /// <summary>
-        ///     Releases, decommits or releases and decommits a region of pages within the virtual address space of the calling
-        ///     process.
-        /// </summary>
-        /// <param name="lpAddress">A pointer to the base address of the region of pages to be freed.</param>
-        /// <param name="dwSize">The size of the region of memory to be freed, in bytes.</param>
-        /// <param name="dwFreeType">The type of free operation.</param>
-        /// <returns>
-        ///     If the function succeeds, the return value is true. If the function fails, it returns false. Call
-        ///     <see cref="Marshal.GetLastWin32Error" /> to get Win32 error.
-        /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool VirtualFree(
-            IntPtr lpAddress,
-            int dwSize,
-            MemoryReleaseFlags dwFreeType);
-
-        /// <summary>
-        ///     Releases, decommits, or releases and decommits a region of memory within the virtual address space of a specified
-        ///     process
-        /// </summary>
-        /// <param name="hProcess">
-        ///     A handle to a process. The function frees memory within the virtual address space of this process.
-        ///     The handle must have the <see cref="ProcessAccessFlags.VMOperation" /> access right
-        /// </param>
-        /// <param name="lpAddress">
-        ///     A pointer to the starting address of the region of memory to be freed.
-        ///     If the <paramref name="dwFreeType" /> parameter is <see cref="AllocationType.Release" />, this address must be the
-        ///     base address
-        ///     returned by <see cref="VirtualAllocEx" />.
-        /// </param>
-        /// <param name="dwSize">
-        ///     The size of the region of memory to free, in bytes.
-        ///     If the <paramref name="dwFreeType" /> parameter is <see cref="AllocationType.Release" />, this parameter must be 0.
-        ///     The function
-        ///     frees the entire region that is reserved in the initial allocation call to <see cref="VirtualAllocEx" />
-        /// </param>
-        /// <param name="dwFreeType">
-        ///     The type of free operation. This parameter can be one of the following values:
-        ///     <see cref="AllocationType.Decommit" /> or <see cref="AllocationType.Release" />
-        /// </param>
-        /// <returns>
-        ///     If the function is successful, it returns true. If the function fails, it returns false. Call
-        ///     <see cref="Marshal.GetLastWin32Error" /> to get Win32 error.
-        /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool VirtualFreeEx(
-            IntPtr hProcess,
-            IntPtr lpAddress,
-            int dwSize,
-            MemoryAllocationFlags dwFreeType);
 
         /// <summary>
         ///     Changes the protection on a region of committed pages in the virtual address space of a specified process.
@@ -1382,55 +1096,7 @@ namespace MemorySharp.Native
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool WriteProcessMemory(SafeMemoryHandle hProcess, IntPtr lpBaseAddress, byte[] lpBuffer,
-            int nSize, out IntPtr lpNumberOfBytesWritten);
-
-        /// <summary>
-        ///     Reads data from an area of memory in the specified process.
-        /// </summary>
-        /// <param name="hProcess">
-        ///     Handle to the process from which the memory is being read.
-        ///     The handle must have <see cref="ProcessAccessFlags.VMRead" /> access to the process.
-        /// </param>
-        /// <param name="lpBaseAddress">A pointer to the base address in the specified process to begin reading from</param>
-        /// <param name="lpBuffer">A pointer to a buffer that receives the contents from the address space of the process</param>
-        /// <param name="dwSize">The number of bytes to be read</param>
-        /// <param name="lpNumberOfBytesRead">The number of bytes read into the specified buffer</param>
-        /// <returns>
-        ///     If the function succeeds, it returns true. Otherwise, false is returned and calling
-        ///     <see cref="Marshal.GetLastWin32Error" /> will retrieve the error.
-        /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool ReadProcessMemory(
-            IntPtr hProcess,
-            IntPtr lpBaseAddress,
-            [Out] byte[] lpBuffer,
-            uint dwSize,
-            out int lpNumberOfBytesRead);
-
-        /// <summary>
-        ///     Reads data from an area of memory in the specified process.
-        /// </summary>
-        /// <param name="hProcess">
-        ///     Handle to the process from which the memory is being read.
-        ///     The handle must have <see cref="ProcessAccessFlags.VMRead" /> access to the process.
-        /// </param>
-        /// <param name="lpBaseAddress">A pointer to the base address in the specified process to begin reading from</param>
-        /// <param name="lpBuffer">A pointer to a buffer that receives the contents from the address space of the process</param>
-        /// <param name="dwSize">The number of bytes to be read</param>
-        /// <param name="lpNumberOfBytesRead">The number of bytes read into the specified buffer</param>
-        /// <returns>
-        ///     If the function succeeds, it returns true. Otherwise, false is returned and calling
-        ///     <see cref="Marshal.GetLastWin32Error" /> will retrieve the error.
-        /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool ReadProcessMemory(
-            IntPtr hProcess,
-            IntPtr lpBaseAddress,
-            IntPtr lpBuffer,
-            uint dwSize,
-            out int lpNumberOfBytesRead);
+            int nSize, out int lpNumberOfBytesWritten);
 
         /// <summary>
         ///     Writes data to an area of memory in a specified process.
@@ -1481,23 +1147,6 @@ namespace MemorySharp.Native
             IntPtr lpBuffer,
             uint nSize,
             out int lpNumberOfBytesWritten);
-
-        /// <summary>
-        ///     Determines whether the specified function exists in the specified module.
-        /// </summary>
-        /// <param name="moduleName">The name of the module.</param>
-        /// <param name="functionName">The name of the function</param>
-        /// <returns>The return value indicates whether the function exists in the module.</returns>
-        /// <remarks>This is an internal function from Microsoft.</remarks>
-        internal static bool DoesWin32MethodExist(string moduleName, string functionName)
-        {
-            var moduleHandle = GetModuleHandle(moduleName);
-            if (moduleHandle == IntPtr.Zero)
-            {
-                return false;
-            }
-            return (GetProcAddress(moduleHandle, functionName) != IntPtr.Zero);
-        }
         #endregion
     }
 
