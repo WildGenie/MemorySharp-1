@@ -1,4 +1,4 @@
-﻿namespace MemorySharp.Internals.Marshaling
+﻿namespace Binarysharp.MemoryManagement.Helpers
 {
     public enum CustomUnmanagedType
     {

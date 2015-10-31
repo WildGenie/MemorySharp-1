@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Binarysharp.MemoryManagement.Internals;
-using Binarysharp.MemoryManagement.MemoryInternal.Modules;
+using Binarysharp.MemoryManagement.MemoryExternal.Modules;
 
-namespace MemorySharp.Patterns
+namespace Binarysharp.MemoryManagement.MemoryExternal.Patterns
 {
     /// <summary>
     /// </summary>
     public class PatternFactory : IFactory
     {
         #region  Fields
-        private readonly Binarysharp.MemoryManagement.MemorySharp _memory;
+        private readonly MemorySharp _memory;
         private readonly RemoteModule _remoteModule;
 
         /// <summary>
@@ -25,9 +25,10 @@ namespace MemorySharp.Patterns
         ///     Initializes a new instance of the <see cref="PatternFactory" /> class.
         /// </summary>
         /// <param name="memorySharp">The <see cref="MemorySharp" /> instance.</param>
-        public PatternFactory(Binarysharp.MemoryManagement.MemorySharp memorySharp, RemoteModule module)
+        public PatternFactory(MemorySharp memorySharp, RemoteModule module)
         {
             _memory = memorySharp;
+            _remoteModule = module;
         }
         #endregion
 

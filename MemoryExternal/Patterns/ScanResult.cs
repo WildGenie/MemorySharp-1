@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MemorySharp.Patterns
+namespace Binarysharp.MemoryManagement.MemoryExternal.Patterns
 {
     /// <summary>
     ///     Contains data regarding a pattern scan result.

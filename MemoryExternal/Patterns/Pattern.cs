@@ -1,4 +1,4 @@
-﻿namespace MemorySharp.Patterns
+﻿namespace Binarysharp.MemoryManagement.MemoryExternal.Patterns
 {
     /// <summary>
     ///     A class that represents basic pattrn scanning properties.

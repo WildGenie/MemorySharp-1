@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MemorySharp.Internals.Marshaling
+namespace Binarysharp.MemoryManagement.Helpers
 {
     public static class CustomMarshal
     {

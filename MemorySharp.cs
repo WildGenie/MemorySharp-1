@@ -54,7 +54,11 @@ namespace Binarysharp.MemoryManagement
             // Open the process with all rights
             Handle = MemoryCore.OpenProcess(ProcessAccessFlags.AllAccess, process.Id);
             // Initialize the PEB
-            Peb = new ManagedPeb(this, ManagedPeb.FindPeb(Handle));
+            if (IntPtr.Size == 8)
+            {
+                Peb = new ManagedPeb(this, ManagedPeb.FindPeb(Handle));
+            }
+
             // Create instances of the factories
             Factories = new List<IFactory>();
             Factories.AddRange(

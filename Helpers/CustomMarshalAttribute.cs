@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MemorySharp.Internals.Marshaling
+namespace Binarysharp.MemoryManagement.Helpers
 {
     public abstract class CustomMarshalAttribute : Attribute
     {

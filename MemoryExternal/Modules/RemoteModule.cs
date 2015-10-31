@@ -12,8 +12,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Binarysharp.MemoryManagement.MemoryExternal.Memory;
+using Binarysharp.MemoryManagement.MemoryExternal.Patterns;
 using Binarysharp.MemoryManagement.Native;
-using MemorySharp.Patterns;
 
 namespace Binarysharp.MemoryManagement.MemoryExternal.Modules
 {
@@ -40,7 +40,7 @@ namespace Binarysharp.MemoryManagement.MemoryExternal.Modules
         {
             // Save the parameter
             Native = module;
-            Patterns = new PatternFactory(memorySharp);
+            Patterns = new PatternFactory(memorySharp, this);
         }
         #endregion
 

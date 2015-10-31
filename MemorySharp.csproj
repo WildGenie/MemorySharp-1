@@ -55,7 +55,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Fasm.NET">
-      <HintPath>..\Libraries\Fasm.NET.dll</HintPath>
+      <HintPath>Libraries\Fasm.NET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

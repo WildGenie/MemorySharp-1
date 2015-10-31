@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Binarysharp.MemoryManagement.Helpers;
 using Binarysharp.MemoryManagement.MemoryExternal.Modules;
 using Binarysharp.MemoryManagement.Native;
-using MemorySharp.Internals.Marshaling;
 
 namespace Binarysharp.MemoryManagement.MemoryInternal.Modules
 {
