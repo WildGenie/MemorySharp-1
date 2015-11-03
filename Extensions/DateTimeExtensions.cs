@@ -9,6 +9,7 @@ namespace Binarysharp.MemoryManagement.Extensions
     public static class DateTimeExtensions
     {
         #region  Fields
+
         /// <summary>
         ///     String array contains avaliable DateTime formats used to coverts string to DateTime.
         /// </summary>
@@ -140,42 +141,48 @@ namespace Binarysharp.MemoryManagement.Extensions
             "yyyy-MM-dTHH:mm:ss.fffZ",
             "yyyy-M-ddTHH:mm:ss.fffZ"
         };
+
         #endregion
 
         #region Methods
+
         /// <summary>
+        ///     Determines whether the specified dt is today.
         /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
+        /// <param name="dt">The dt.</param>
+        /// <returns><c>true</c> if the specified dt is today; otherwise, <c>false</c>.</returns>
         public static bool IsToday(this DateTime dt)
         {
             return (dt.Date == DateTime.Today);
         }
 
         /// <summary>
+        ///     Determines whether [is date equal] [the specified date to compare].
         /// </summary>
-        /// <param name="date"></param>
-        /// <param name="dateToCompare"></param>
-        /// <returns></returns>
+        /// <param name="date">The date.</param>
+        /// <param name="dateToCompare">The date to compare.</param>
+        /// <returns><c>true</c> if [is date equal] [the specified date to compare]; otherwise, <c>false</c>.</returns>
         public static bool IsDateEqual(this DateTime date, DateTime dateToCompare)
         {
             return (date.Date == dateToCompare.Date);
         }
 
         /// <summary>
+        ///     Determines whether [is time equal] [the specified time to compare].
         /// </summary>
-        /// <param name="time"></param>
-        /// <param name="timeToCompare"></param>
-        /// <returns></returns>
+        /// <param name="time">The time.</param>
+        /// <param name="timeToCompare">The time to compare.</param>
+        /// <returns><c>true</c> if [is time equal] [the specified time to compare]; otherwise, <c>false</c>.</returns>
         public static bool IsTimeEqual(this DateTime time, DateTime timeToCompare)
         {
             return (time.TimeOfDay == timeToCompare.TimeOfDay);
         }
 
         /// <summary>
+        ///     Gets the milliseconds since1970.
         /// </summary>
-        /// <param name="datetime"></param>
-        /// <returns></returns>
+        /// <param name="datetime">The datetime.</param>
+        /// <returns>System.Int64.</returns>
         public static long GetMillisecondsSince1970(this DateTime datetime)
         {
             var ts = datetime.Subtract(new DateTime(1970, 1, 1));
@@ -183,59 +190,65 @@ namespace Binarysharp.MemoryManagement.Extensions
         }
 
         /// <summary>
+        ///     Gets the days.
         /// </summary>
-        /// <param name="fromDate"></param>
-        /// <param name="toDate"></param>
-        /// <returns></returns>
+        /// <param name="fromDate">From date.</param>
+        /// <param name="toDate">To date.</param>
+        /// <returns>System.Int32.</returns>
         public static int GetDays(this DateTime fromDate, DateTime toDate)
         {
             return Convert.ToInt32(toDate.Subtract(fromDate).TotalDays);
         }
 
         /// <summary>
+        ///     Yesterdays the specified date.
         /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
+        /// <param name="date">The date.</param>
+        /// <returns>DateTime.</returns>
         public static DateTime Yesterday(this DateTime date)
         {
             return date.AddDays(-1);
         }
 
         /// <summary>
+        ///     Sets the time.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="hours"></param>
-        /// <param name="minutes"></param>
-        /// <param name="seconds"></param>
-        /// <returns></returns>
+        /// <param name="value">The value.</param>
+        /// <param name="hours">The hours.</param>
+        /// <param name="minutes">The minutes.</param>
+        /// <param name="seconds">The seconds.</param>
+        /// <returns>DateTime.</returns>
         public static DateTime SetTime(this DateTime value, int hours, int minutes, int seconds)
         {
             return value.Date.AddHours(hours).AddMinutes(minutes).AddSeconds(seconds);
         }
 
         /// <summary>
+        ///     Tomorrows the specified date.
         /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
+        /// <param name="date">The date.</param>
+        /// <returns>DateTime.</returns>
         public static DateTime Tomorrow(this DateTime date)
         {
             return date.AddDays(1);
         }
 
         /// <summary>
+        ///     Ends the of day.
         /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
+        /// <param name="date">The date.</param>
+        /// <returns>DateTime.</returns>
         public static DateTime EndOfDay(this DateTime date)
         {
             return date.SetTime(23, 59, 59);
         }
 
         /// <summary>
+        ///     Adds the workdays.
         /// </summary>
-        /// <param name="date"></param>
-        /// <param name="workDays"></param>
-        /// <returns></returns>
+        /// <param name="date">The date.</param>
+        /// <param name="workDays">The work days.</param>
+        /// <returns>DateTime.</returns>
         public static DateTime AddWorkdays(this DateTime date, int workDays)
         {
             var tmpDate = date;
@@ -245,7 +258,7 @@ namespace Binarysharp.MemoryManagement.Extensions
                 tmpDate = tmpDate.AddDays(workDays > 0 ? 1 : -1);
                 if (tmpDate.DayOfWeek < DayOfWeek.Saturday &&
                     tmpDate.DayOfWeek > DayOfWeek.Sunday &&
-                    !tmpDate.IsHoliday())
+                    !tmpDate.IsAHoliday())
                     if (workDays > 0)
                         workDays--;
                     else
@@ -255,10 +268,11 @@ namespace Binarysharp.MemoryManagement.Extensions
         }
 
         /// <summary>
+        ///     Determines whether the specified date is a holiday.
         /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        public static bool IsHoliday(this DateTime date)
+        /// <param name="date">The date.</param>
+        /// <returns><c>true</c> if the specified date is a holiday; otherwise, <c>false</c>.</returns>
+        public static bool IsAHoliday(this DateTime date)
         {
             var year = date.Year;
 
@@ -280,9 +294,10 @@ namespace Binarysharp.MemoryManagement.Extensions
         }
 
         /// <summary>
+        ///     Calculates the easter.
         /// </summary>
-        /// <param name="year"></param>
-        /// <returns></returns>
+        /// <param name="year">The year.</param>
+        /// <returns>DateTime.</returns>
         private static DateTime CalculateEaster(int year)
         {
             var a = year%19;
@@ -300,41 +315,26 @@ namespace Binarysharp.MemoryManagement.Extensions
         }
 
         /// <summary>
+        ///     Gets a.
         /// </summary>
-        /// <param name="year"></param>
-        /// <returns></returns>
+        /// <param name="year">The year.</param>
+        /// <returns>System.Int32.</returns>
         private static int GetA(int year)
         {
+            var curyear = year;
             if (year <= 1582)
-            {
                 return 15;
-            }
             if (year <= 1699)
-            {
                 return 22;
-            }
             if (year <= 1899)
-            {
                 return 23;
-            }
             if (year <= 2199)
-            {
                 return 24;
-            }
             if (year <= 2299)
-            {
                 return 25;
-            }
             if (year <= 2399)
-            {
                 return 26;
-            }
-            if (year <= 2499)
-            {
-                return 25;
-            }
-
-            return 0; /* poza zakresem */
+            return year <= 2499 ? 25 : 0;
         }
 
         /// <summary>
@@ -371,13 +371,9 @@ namespace Binarysharp.MemoryManagement.Extensions
             {
                 return 0;
             }
-            if (year <= 2499)
-            {
-                return 1;
-            }
-
-            return 0;
+            return year <= 2499 ? 1 : 0;
         }
+
         #endregion
     }
 }

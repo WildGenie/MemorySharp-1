@@ -15,13 +15,16 @@ namespace Binarysharp.MemoryManagement.Internals
     public interface IApplicableElement : IDisposableState
     {
         #region  Properties
+
         /// <summary>
         ///     States if the element is enabled.
         /// </summary>
         bool IsEnabled { get; set; }
+
         #endregion
 
         #region Methods
+
         /// <summary>
         ///     Disables the element.
         /// </summary>
@@ -31,6 +34,7 @@ namespace Binarysharp.MemoryManagement.Internals
         ///     Enables the element.
         /// </summary>
         void Enable();
+
         #endregion
     }
 }

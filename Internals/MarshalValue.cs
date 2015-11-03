@@ -8,7 +8,7 @@
 */
 
 using System;
-using Binarysharp.MemoryManagement.MemoryExternal.Memory;
+using Binarysharp.MemoryManagement.Memory.Remote;
 
 namespace Binarysharp.MemoryManagement.Internals
 {
@@ -23,6 +23,7 @@ namespace Binarysharp.MemoryManagement.Internals
     public static class MarshalValue
     {
         #region Methods
+
         /// <summary>
         ///     Marshals a given value into the remote process.
         /// </summary>
@@ -34,6 +35,7 @@ namespace Binarysharp.MemoryManagement.Internals
         {
             return new MarshalledValue<T>(memorySharp, value);
         }
+
         #endregion
     }
 
@@ -44,13 +46,16 @@ namespace Binarysharp.MemoryManagement.Internals
     public class MarshalledValue<T> : IMarshalledValue
     {
         #region  Fields
+
         /// <summary>
         ///     The reference of the <see cref="MemorySharp" /> object.
         /// </summary>
         protected readonly MemorySharp MemorySharp;
+
         #endregion
 
         #region Constructors
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="MarshalledValue{T}" /> class.
         /// </summary>
@@ -64,26 +69,11 @@ namespace Binarysharp.MemoryManagement.Internals
             // Marshal the value
             Marshal();
         }
-        #endregion
 
-        #region  Properties
-        /// <summary>
-        ///     The memory allocated where the value is fully written if needed. It can be unused.
-        /// </summary>
-        public RemoteAllocation Allocated { get; private set; }
-
-        /// <summary>
-        ///     The reference of the value. It can be directly the value or a pointer.
-        /// </summary>
-        public IntPtr Reference { get; private set; }
-
-        /// <summary>
-        ///     The initial value.
-        /// </summary>
-        public T Value { get; }
         #endregion
 
         #region  Interface members
+
         /// <summary>
         ///     Releases all resources used by the <see cref="RemoteAllocation" /> object.
         /// </summary>
@@ -97,9 +87,11 @@ namespace Binarysharp.MemoryManagement.Internals
             // Avoid the finalizer
             GC.SuppressFinalize(this);
         }
+
         #endregion
 
         #region Methods
+
         /// <summary>
         ///     Marshals the value into the remote process.
         /// </summary>
@@ -120,13 +112,13 @@ namespace Binarysharp.MemoryManagement.Internals
             {
                 // For all other types
                 // Convert the value into a byte array
-                var byteArray = MarshalType<T>.ObjectToByteArray(Value);
+                var byteArray = SafeMarshalType<T>.ObjectToByteArray(Value);
 
                 // If the value can be stored directly in registers
-                if (MarshalType<T>.CanBeStoredInRegisters)
+                if (SafeMarshalType<T>.CanBeStoredInRegisters)
                 {
                     // Convert the byte array into a pointer
-                    Reference = MarshalType<IntPtr>.ByteArrayToObject(byteArray);
+                    Reference = SafeMarshalType<IntPtr>.ByteArrayToObject(byteArray);
                 }
                 else
                 {
@@ -134,7 +126,7 @@ namespace Binarysharp.MemoryManagement.Internals
                     // the remote process to store the value and get its pointer
 
                     // Allocate memory in the remote process
-                    Allocated = MemorySharp.Memory.Allocate(MarshalType<T>.Size);
+                    Allocated = MemorySharp.Memory.Allocate(SafeMarshalType<T>.Size);
                     // Write the value
                     Allocated.Write(0, Value);
                     // Get the pointer
@@ -142,9 +134,11 @@ namespace Binarysharp.MemoryManagement.Internals
                 }
             }
         }
+
         #endregion
 
         #region Misc
+
         /// <summary>
         ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.
         /// </summary>
@@ -152,6 +146,26 @@ namespace Binarysharp.MemoryManagement.Internals
         {
             Dispose();
         }
+
+        #endregion
+
+        #region  Properties
+
+        /// <summary>
+        ///     The memory allocated where the value is fully written if needed. It can be unused.
+        /// </summary>
+        public RemoteAllocation Allocated { get; private set; }
+
+        /// <summary>
+        ///     The reference of the value. It can be directly the value or a pointer.
+        /// </summary>
+        public IntPtr Reference { get; private set; }
+
+        /// <summary>
+        ///     The initial value.
+        /// </summary>
+        public T Value { get; }
+
         #endregion
     }
 }

@@ -8,7 +8,7 @@
 */
 
 using System;
-using Binarysharp.MemoryManagement.MemoryExternal.Memory;
+using Binarysharp.MemoryManagement.Memory.Remote;
 
 namespace Binarysharp.MemoryManagement.Internals
 {
@@ -18,6 +18,7 @@ namespace Binarysharp.MemoryManagement.Internals
     public interface IMarshalledValue : IDisposable
     {
         #region  Properties
+
         /// <summary>
         ///     The memory allocated where the value is fully written if needed. It can be unused.
         /// </summary>
@@ -27,6 +28,7 @@ namespace Binarysharp.MemoryManagement.Internals
         ///     The reference of the value. It can be directly the value or a pointer.
         /// </summary>
         IntPtr Reference { get; }
+
         #endregion
     }
 }

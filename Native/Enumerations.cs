@@ -12,32 +12,9 @@ using System.Runtime.InteropServices;
 
 namespace Binarysharp.MemoryManagement.Native
 {
-#pragma warning disable 1591
-    /// <summary>
-    ///     Flags used in LoadLibraryEx to determine behaviour when loading library into process
-    /// </summary>
-    [Flags]
-    public enum LoadLibraryExFlags : uint
-    {
-        DontResolveDllReferences = 0x00000001, //#define DONT_RESOLVE_DLL_REFERENCES         0x00000001
-        LoadLibraryAsDatafile = 0x00000002, //#define LOAD_LIBRARY_AS_DATAFILE            0x00000002
-        LoadLibraryWithAlteredSearchPath = 0x00000008, //#define LOAD_WITH_ALTERED_SEARCH_PATH       0x00000008
-        LoadIgnoreCodeAuthzLevel = 0x00000010, //#define LOAD_IGNORE_CODE_AUTHZ_LEVEL        0x00000010
-        LoadLibraryAsImageResource = 0x00000020, //#define LOAD_LIBRARY_AS_IMAGE_RESOURCE      0x00000020
-        LoadLibraryAsDatafileExclusive = 0x00000040 //#define LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE  0x00000040
-    }
-
-    public enum ThreadWaitValue : uint
-    {
-        Object0 = 0x00000000,
-        Abandoned = 0x00000080,
-        Timeout = 0x00000102,
-        Failed = 0xFFFFFFFF,
-        Infinite = 0xFFFFFFFF
-    }
-#pragma warning restore 1591
 
     #region FlashWindowFlags
+
     /// <summary>
     ///     Flash window flags list.
     /// </summary>
@@ -75,11 +52,13 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         Tray = 0x2
     }
+
     #endregion
 
     #region InputTypes
+
     /// <summary>
-    ///     The types used in the function <see cref="NativeMethods.SendInput" /> for input events.
+    ///     The types used in the function <see cref="SafeNativeMethods.SendInput" /> for input events.
     /// </summary>
     public enum InputTypes
     {
@@ -87,9 +66,11 @@ namespace Binarysharp.MemoryManagement.Native
         Keyboard = 1,
         Hardware = 2
     }
+
     #endregion
 
     #region KeyboardFlags
+
     /// <summary>
     ///     The keyboard flags list.
     /// </summary>
@@ -119,9 +100,11 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         Unicode = 4
     }
+
     #endregion
 
     #region Keys
+
     /// <summary>
     ///     The key codes and modifiers list.
     /// </summary>
@@ -323,9 +306,11 @@ namespace Binarysharp.MemoryManagement.Native
         Z = 90,
         Zoom = 0xfb
     }
+
     #endregion
 
     #region MemoryAllocationFlags
+
     /// <summary>
     ///     Memory-allocation options list.
     /// </summary>
@@ -337,7 +322,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     memory pages.
         ///     The function also guarantees that when the caller later initially accesses the memory, the contents will be zero.
         ///     Actual physical pages are not allocated unless/until the virtual addresses are actually accessed.
-        ///     To reserve and commit pages in one step, call <see cref="NativeMethods.VirtualAllocEx" /> with MEM_COMMIT |
+        ///     To reserve and commit pages in one step, call <see cref="SafeNativeMethods.VirtualAllocEx" /> with MEM_COMMIT |
         ///     MEM_RESERVE.
         ///     The function fails if you attempt to commit a page that has not been reserved. The resulting error code is
         ///     ERROR_INVALID_ADDRESS.
@@ -349,7 +334,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// <summary>
         ///     Reserves a range of the process's virtual address space without allocating any actual physical storage in memory or
         ///     in the paging file on disk.
-        ///     You commit reserved pages by calling <see cref="NativeMethods.VirtualAllocEx" /> again with MEM_COMMIT.
+        ///     You commit reserved pages by calling <see cref="SafeNativeMethods.VirtualAllocEx" /> again with MEM_COMMIT.
         ///     To reserve and commit pages in one step, call VirtualAllocEx with MEM_COMMIT | MEM_RESERVE.
         ///     Other memory allocation functions, such as malloc and LocalAlloc, cannot use reserved memory until it has been
         ///     released.
@@ -365,8 +350,8 @@ namespace Binarysharp.MemoryManagement.Native
         ///     range to contain zeros, decommit the memory and then recommit it.
         ///     When you use MEM_RESET, the VirtualAllocEx function ignores the value of fProtect. However, you must still set
         ///     fProtect to a valid protection value, such as PAGE_NOACCESS.
-        ///     <see cref="NativeMethods.VirtualAllocEx" /> returns an error if you use MEM_RESET and the range of memory is mapped
-        ///     to a file.
+        ///     <see cref="SafeNativeMethods.VirtualAllocEx" /> returns an error if you use MEM_RESET and the range of memory is
+        ///     mapped to a file.
         ///     A shared view is only acceptable if it is mapped to a paging file.
         /// </summary>
         Reset = 0x00080000,
@@ -379,7 +364,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, at least some of the data in the address range has been replaced with zeroes.
         ///     This value cannot be used with any other value.
         ///     If MEM_RESET_UNDO is called on an address range which was not MEM_RESET earlier, the behavior is undefined.
-        ///     When you specify MEM_RESET, the <see cref="NativeMethods.VirtualAllocEx" /> function ignores the value of
+        ///     When you specify MEM_RESET, the <see cref="SafeNativeMethods.VirtualAllocEx" /> function ignores the value of
         ///     flProtect.
         ///     However, you must still set flProtect to a valid protection value, such as PAGE_NOACCESS.
         /// </summary>
@@ -404,9 +389,11 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         TopDown = 0x00100000
     }
+
     #endregion
 
     #region MemoryProtectionFlags
+
     /// <summary>
     ///     Memory-protection options list.
     /// </summary>
@@ -444,7 +431,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     An attempt to write to a committed copy-on-write page results in a private copy of the page being made for the
         ///     process.
         ///     The private page is marked as PAGE_EXECUTE_READWRITE, and the change is written to the new page.
-        ///     This flag is not supported by the VirtualAlloc or <see cref="NativeMethods.VirtualAllocEx" /> functions.
+        ///     This flag is not supported by the VirtualAlloc or <see cref="SafeNativeMethods.VirtualAllocEx" /> functions.
         /// </summary>
         ExecuteWriteCopy = 0x80,
 
@@ -477,7 +464,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     The private page is marked as PAGE_READWRITE, and the change is written to the new page.
         ///     If Data Execution Prevention is enabled, attempting to execute code in the committed region results in an access
         ///     violation.
-        ///     This flag is not supported by the VirtualAlloc or <see cref="NativeMethods.VirtualAllocEx" /> functions.
+        ///     This flag is not supported by the VirtualAlloc or <see cref="SafeNativeMethods.VirtualAllocEx" /> functions.
         /// </summary>
         WriteCopy = 0x08,
 
@@ -500,7 +487,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     EXCEPTION_ILLEGAL_INSTRUCTION exception.
         ///     The PAGE_NOCACHE flag cannot be used with the PAGE_GUARD, PAGE_NOACCESS, or PAGE_WRITECOMBINE flags.
         ///     The PAGE_NOCACHE flag can be used only when allocating private memory with the VirtualAlloc,
-        ///     <see cref="NativeMethods.VirtualAllocEx" />, or VirtualAllocExNuma functions.
+        ///     <see cref="SafeNativeMethods.VirtualAllocEx" />, or VirtualAllocExNuma functions.
         ///     To enable non-cached memory access for shared memory, specify the SEC_NOCACHE flag when calling the
         ///     CreateFileMapping function.
         /// </summary>
@@ -513,15 +500,17 @@ namespace Binarysharp.MemoryManagement.Native
         ///     EXCEPTION_ILLEGAL_INSTRUCTION exception.
         ///     The PAGE_WRITECOMBINE flag cannot be specified with the PAGE_NOACCESS, PAGE_GUARD, and PAGE_NOCACHE flags.
         ///     The PAGE_WRITECOMBINE flag can be used only when allocating private memory with the VirtualAlloc,
-        ///     <see cref="NativeMethods.VirtualAllocEx" />, or VirtualAllocExNuma functions.
+        ///     <see cref="SafeNativeMethods.VirtualAllocEx" />, or VirtualAllocExNuma functions.
         ///     To enable write-combined memory access for shared memory, specify the SEC_WRITECOMBINE flag when calling the
         ///     CreateFileMapping function.
         /// </summary>
         WriteCombine = 0x400
     }
+
     #endregion
 
     #region MemoryReleaseFlags
+
     /// <summary>
     ///     Memory-release options list.
     /// </summary>
@@ -549,9 +538,11 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         Release = 0x8000
     }
+
     #endregion
 
     #region MemoryStateFlags
+
     /// <summary>
     ///     Memory-state options list.
     /// </summary>
@@ -577,9 +568,11 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         Reserve = 0x2000
     }
+
     #endregion
 
     #region MemoryTypeFlags
+
     /// <summary>
     ///     Memory-type options list.
     /// </summary>
@@ -606,9 +599,11 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         Private = 0x20000
     }
+
     #endregion
 
     #region MouseFlags
+
     /// <summary>
     ///     The mouse flags list.
     /// </summary>
@@ -691,9 +686,11 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         XUp = 0x100
     }
+
     #endregion
 
     #region PebStructure
+
     /// <summary>
     ///     The structure of the Process Environment Block.
     /// </summary>
@@ -813,9 +810,11 @@ namespace Binarysharp.MemoryManagement.Native
         SystemAssemblyStorageMap = 0x204,
         MinimumStackCommit = 0x208
     }
+
     #endregion
 
     #region ProcessAccessFlags
+
     /// <summary>
     ///     Process access rights list.
     /// </summary>
@@ -882,7 +881,7 @@ namespace Binarysharp.MemoryManagement.Native
         VmOperation = 0x0008,
 
         /// <summary>
-        ///     Required to read memory in a process using <see cref="NativeMethods.ReadProcessMemory" />.
+        ///     Required to read memory in a process using <see cref="SafeNativeMethods.ReadProcessMemory" />.
         /// </summary>
         VmRead = 0x0010,
 
@@ -896,9 +895,31 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         Synchronize = 0x00100000
     }
+
+    #endregion
+
+    #region ProcessArchitectures
+
+    /// <summary>
+    ///     The architectures for a process.
+    /// </summary>
+    public enum ProcessArchitectures
+    {
+        /// <summary>
+        ///     IA-32 (Intel Architecture, 32-bit, sometimes called i386).
+        /// </summary>
+        Ia32,
+
+        /// <summary>
+        ///     x86-64 (also known as x64, x86_64 and amd64).
+        /// </summary>
+        Amd64
+    }
+
     #endregion
 
     #region ProcessInformationClass
+
     /// <summary>
     ///     The type of process information to be retrieved.
     /// </summary>
@@ -928,20 +949,24 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         ProcessImageFileName = 0x1B
     }
+
     #endregion
 
     #region SystemMetrics
+
     /// <summary>
-    ///     The system metrics list used in the function <see cref="NativeMethods.GetSystemMetrics" />.
+    ///     The system metrics list used in the function <see cref="SafeNativeMethods.GetSystemMetrics" />.
     /// </summary>
     public enum SystemMetrics
     {
         CxScreen = 0,
         CyScreen = 1
     }
+
     #endregion
 
     #region TebStructure
+
     /// <summary>
     ///     The structure of the Thread Environment Block.
     /// </summary>
@@ -1180,9 +1205,11 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         ThreadErrorMode = 0xF28
     }
+
     #endregion
 
     #region ThreadAccessFlags
+
     /// <summary>
     ///     Thread access rights list.
     /// </summary>
@@ -1205,7 +1232,7 @@ namespace Binarysharp.MemoryManagement.Native
         DirectImpersonation = 0x0200,
 
         /// <summary>
-        ///     Required to read the context of a thread using <see cref="NativeMethods.GetThreadContext" />.
+        ///     Required to read the context of a thread using <see cref="SafeNativeMethods.GetThreadContext" />.
         /// </summary>
         GetContext = 0x0008,
 
@@ -1221,14 +1248,15 @@ namespace Binarysharp.MemoryManagement.Native
         QueryInformation = 0x0040,
 
         /// <summary>
-        ///     Required to read certain information from the thread objects (see <see cref="NativeMethods.GetThreadContext" />).
+        ///     Required to read certain information from the thread objects (see <see cref="SafeNativeMethods.GetThreadContext" />
+        ///     ).
         ///     A handle that has the THREAD_QUERY_INFORMATION access right is automatically granted
         ///     THREAD_QUERY_LIMITED_INFORMATION.
         /// </summary>
         QueryLimitedInformation = 0x0800,
 
         /// <summary>
-        ///     Required to write the context of a thread using <see cref="NativeMethods.SetThreadContext" />.
+        ///     Required to write the context of a thread using <see cref="SafeNativeMethods.SetThreadContext" />.
         /// </summary>
         SetContext = 0x0010,
 
@@ -1249,22 +1277,24 @@ namespace Binarysharp.MemoryManagement.Native
         SetThreadToken = 0x0080,
 
         /// <summary>
-        ///     Required to suspend or resume a thread (see <see cref="NativeMethods.SuspendThread" /> and
-        ///     <see cref="NativeMethods.ResumeThread" />).
+        ///     Required to suspend or resume a thread (see <see cref="SafeNativeMethods.SuspendThread" /> and
+        ///     <see cref="SafeNativeMethods.ResumeThread" />).
         /// </summary>
         SuspendResume = 0x0002,
 
         /// <summary>
-        ///     Required to terminate a thread using <see cref="NativeMethods.TerminateThread" />.
+        ///     Required to terminate a thread using <see cref="SafeNativeMethods.TerminateThread" />.
         /// </summary>
         Terminate = 0x0001
     }
+
     #endregion
 
     #region ThreadContextFlags
+
     /// <summary>
-    ///     Determines which registers are returned or set when using <see cref="NativeMethods.GetThreadContext" /> or
-    ///     <see cref="NativeMethods.SetThreadContext" />.
+    ///     Determines which registers are returned or set when using <see cref="SafeNativeMethods.GetThreadContext" /> or
+    ///     <see cref="SafeNativeMethods.SetThreadContext" />.
     /// </summary>
     [Flags]
     public enum ThreadContextFlags
@@ -1319,9 +1349,11 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         All = Control | Integer | Segments | FloatingPoint | DebugRegisters | ExtendedRegisters
     }
+
     #endregion
 
     #region ThreadCreationFlags
+
     /// <summary>
     ///     Thread creation options list.
     /// </summary>
@@ -1334,8 +1366,8 @@ namespace Binarysharp.MemoryManagement.Native
         Run = 0x0,
 
         /// <summary>
-        ///     The thread is created in a suspended state, and does not run until the <see cref="NativeMethods.ResumeThread" />
-        ///     function is called.
+        ///     The thread is created in a suspended state, and does not run until the
+        ///     <see cref="SafeNativeMethods.ResumeThread" /> function is called.
         /// </summary>
         Suspended = 0x04,
 
@@ -1345,11 +1377,13 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         StackSizeParamIsAReservation = 0x10000
     }
+
     #endregion
 
     #region TranslationTypes
+
     /// <summary>
-    ///     The translation types used in the function <see cref="NativeMethods.MapVirtualKey" /> for the keys mapping.
+    ///     The translation types used in the function <see cref="SafeNativeMethods.MapVirtualKey" /> for the keys mapping.
     /// </summary>
     public enum TranslationTypes
     {
@@ -1383,11 +1417,13 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         ScanCodeToVirtualKeyEx = 3
     }
+
     #endregion
 
     #region WaitReturnValues
+
     /// <summary>
-    ///     The return values for the function <see cref="NativeMethods.WaitForSingleObject" />.
+    ///     The return values for the function <see cref="SafeNativeMethods.WaitForSingleObject" />.
     /// </summary>
     public enum WaitValues : uint
     {
@@ -1414,9 +1450,11 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         Failed = 0xFFFFFFFF
     }
+
     #endregion
 
     #region WindowsMessages
+
     /// <summary>
     ///     Windows Messages list.
     /// </summary>
@@ -2869,9 +2907,11 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         SysTimer = 0x118
     }
+
     #endregion
 
     #region WindowStates
+
     /// <summary>
     ///     Window states list.
     /// </summary>
@@ -2950,5 +2990,6 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         ForceMinimized = 11
     }
+
     #endregion
 }

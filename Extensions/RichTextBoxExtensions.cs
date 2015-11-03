@@ -9,6 +9,7 @@ namespace Binarysharp.MemoryManagement.Extensions
     public static class RichTextBoxExtensions
     {
         #region Methods
+
         public static void AppendText(this RichTextBox box, string text, Color color, params object[] args)
         {
             text = string.Format(text, args);
@@ -46,10 +47,6 @@ namespace Binarysharp.MemoryManagement.Extensions
             box.Invoke((MethodInvoker) delegate { box.AppendText(text, color, args); });
         }
 
-        private static void InvokeAppendLine(this RichTextBox box, string text, Color color, params object[] args)
-        {
-            box.Invoke((MethodInvoker) delegate { box.AppendLine(text, color, args); });
-        }
         #endregion
     }
 }

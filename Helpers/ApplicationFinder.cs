@@ -12,10 +12,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Mime;
 using System.Reflection;
 using Binarysharp.MemoryManagement.Extensions;
-using Binarysharp.MemoryManagement.MemoryExternal.Windows;
+using Binarysharp.MemoryManagement.Windows;
 
 namespace Binarysharp.MemoryManagement.Helpers
 {
@@ -25,11 +24,14 @@ namespace Binarysharp.MemoryManagement.Helpers
     public static class ApplicationFinder
     {
         #region  Fields
-        private static string _name = string.Empty;
+
+        private static readonly string _name = string.Empty;
         private static string _appDataFolderName = string.Empty;
+
         #endregion
 
         #region  Properties
+
         /// <summary>
         ///     Gets all top-level windows on the screen.
         /// </summary>
@@ -45,12 +47,12 @@ namespace Binarysharp.MemoryManagement.Helpers
         ///     <value>The application path.</value>
         /// </summary>
         public static string ApplicationPath
-            => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            => Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
         /// <summary>
         ///     Gets the application version.
         /// </summary>
-        public static Version ApplicationVersion => Assembly.GetExecutingAssembly().
+        public static Version ApplicationVersion => System.Reflection.Assembly.GetExecutingAssembly().
             GetName().Version;
 
         /// <summary>
@@ -61,24 +63,9 @@ namespace Binarysharp.MemoryManagement.Helpers
         {
             get
             {
-                var asm = Assembly.GetEntryAssembly();
+                var asm = System.Reflection.Assembly.GetEntryAssembly();
                 return asm.IsNull() ? "Inflop.Common" : asm.GetName().Name;
             }
-        }
-
-        /// <summary>
-        ///     Get or set application name. If not set returns <see cref="MediaTypeNames.Application.DefaultApplicationName" />.
-        /// </summary>
-        public static string Name
-        {
-            get
-            {
-                if (_name.IsNull() || _name.IsEmpty())
-                    _name = DefaultApplicationName;
-
-                return _name;
-            }
-            set { _name = value; }
         }
 
         /// <summary>
@@ -96,14 +83,10 @@ namespace Binarysharp.MemoryManagement.Helpers
             set { _appDataFolderName = value; }
         }
 
-        /// <summary>
-        ///     Get full path to application folder name in <see cref="Environment.SpecialFolder.ApplicationData" /> location.
-        /// </summary>
-        public static string AppFolderPath
-            => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppDataFolderName);
         #endregion
 
         #region Methods
+
         /// <summary>
         ///     Returns a new <see cref="Process" /> component, given the identifier of a process.
         /// </summary>
@@ -195,8 +178,10 @@ namespace Binarysharp.MemoryManagement.Helpers
         public static IEnumerable<Process> FromWindowTitleContains(string windowTitle)
         {
             return
-                Windows.Where(window => WindowCore.GetWindowText(window).Contains(windowTitle)).Select(FromWindowHandle);
+                Windows.Where(window => WindowCore.GetWindowText(window).Contains(windowTitle))
+                    .Select(FromWindowHandle);
         }
+
         #endregion
     }
 }

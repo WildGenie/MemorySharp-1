@@ -15,10 +15,12 @@ namespace Binarysharp.MemoryManagement.Internals
     public interface INamedElement : IApplicableElement
     {
         #region  Properties
+
         /// <summary>
         ///     The name of the element.
         /// </summary>
         string Name { get; }
+
         #endregion
     }
 }

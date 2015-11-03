@@ -1,63 +1,33 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using Binarysharp.MemoryManagement.Extensions;
-using Binarysharp.MemoryManagement.Internals;
-using Binarysharp.MemoryManagement.MemoryInternal.Interfaces;
-using Binarysharp.MemoryManagement.MemoryInternal.Memory;
-using Binarysharp.MemoryManagement.MemoryInternal.Modules;
-using Binarysharp.MemoryManagement.MemoryInternal.Threading;
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Binarysharp.MemoryManagement.Hooks;
+using Binarysharp.MemoryManagement.Managment;
+using Binarysharp.MemoryManagement.Memory;
+using Binarysharp.MemoryManagement.Memory.Local;
 
 namespace Binarysharp.MemoryManagement
 {
     /// <summary>
-    ///     Class for memory editing a process.
+    ///     A class providing tools to manage a local processes memory.
     /// </summary>
-    public class MemoryPlus : IDisposable, IEquatable<MemoryPlus>
+    public sealed class MemoryPlus : ProcessMemory, IEquatable<MemoryPlus>
     {
         #region Constructors
+
         /// <summary>
-        ///     Initializes a new instance of the <see cref="MemoryPlus" /> class.
+        ///     Initializes a new instance of the <see cref="ProcessMemory" /> class.
         /// </summary>
-        /// <param name="process">Process to open.</param>
-        public MemoryPlus(IProcess process)
+        /// <param name="process">The process.</param>
+        public MemoryPlus(Process process) : base(process)
         {
-            Process = process;
-            Modules = new ModuleFactory(this);
-            Threads = new ThreadFactory(this);
+            Detours = new DetourManager(this);
+            Hooks = new HookManager(this);
         }
-        #endregion
 
-        #region  Properties
-        /// <summary>
-        ///     The <see cref="IProcess" /> member.
-        /// </summary>
-        public IProcess Process { get; }
-
-        /// <summary>
-        ///     State if the process is running.
-        /// </summary>
-        public bool IsRunning
-            => !Process.SafeHandle.IsInvalid && !Process.SafeHandle.IsClosed && !Process.Native.HasExited;
-
-        /// <summary>
-        ///     Factory for manipulating modules and libraries.
-        /// </summary>
-        public ModuleFactory Modules { get; }
-
-        /// <summary>
-        ///     Factory for manipulating threads.
-        /// </summary>
-        public ThreadFactory Threads { get; }
         #endregion
 
         #region  Interface members
-        /// <summary>
-        /// </summary>
-        public void Dispose()
-        {
-            Process.Dispose();
-        }
 
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified object.
@@ -65,11 +35,69 @@ namespace Binarysharp.MemoryManagement
         public bool Equals(MemoryPlus other)
         {
             if (ReferenceEquals(null, other)) return false;
-            return ReferenceEquals(this, other) || Process.SafeHandle.Equals(other.Process.SafeHandle);
+            return ReferenceEquals(this, other) || Handle.Equals(other.Handle);
         }
+
+        #endregion
+
+        #region  Properties
+
+        /// <summary>
+        ///     A manager for Instances of the <see cref="DetourManager" /> class.
+        /// </summary>
+        /// <value>The Instance of <see cref="DetourManager" />.</value>
+        public DetourManager Detours { get; }
+
+        /// <summary>
+        ///     A manager for hooks that implement the <see cref="IHook" /> Interface.
+        /// </summary>
+        /// <value>The Instance of <see cref="HookManager" />.</value>
+        public HookManager Hooks { get; }
+
         #endregion
 
         #region Methods
+
+        /// <summary>
+        ///     Determines whether the specified object is equal to the current object.
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((MemoryPlus) obj);
+        }
+
+        /// <summary>
+        ///     Implements the ==.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator ==(MemoryPlus left, MemoryPlus right)
+        {
+            return Equals(left, right);
+        }
+
+        /// <summary>
+        ///     Implements the !=.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator !=(MemoryPlus left, MemoryPlus right)
+        {
+            return !Equals(left, right);
+        }
+
+        /// <summary>
+        ///     Serves as a hash function for a particular type.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return Handle.GetHashCode();
+        }
+
         /// <summary>
         ///     Reads the specified amount of bytes from the specified address.
         /// </summary>
@@ -77,16 +105,9 @@ namespace Binarysharp.MemoryManagement
         /// <param name="count">The count.</param>
         /// <param name="isRelative">if set to <c>true</c> [is relative].</param>
         /// <returns>An array of bytes.</returns>
-        public unsafe byte[] ReadBytes(IntPtr address, int count, bool isRelative = false)
+        public override byte[] ReadBytes(IntPtr address, int count, bool isRelative = false)
         {
-            AdjustAddress(ref address, isRelative);
-            var readBytes = new byte[count];
-            var b = (byte*) address;
-            for (var i = 0; i < count; i++)
-            {
-                readBytes[i] = b[i];
-            }
-            return readBytes;
+            return InternalMemoryCore.ReadBytes(address, count, isRelative);
         }
 
         /// <summary>
@@ -96,35 +117,9 @@ namespace Binarysharp.MemoryManagement
         /// <param name="address">The address where the value is read.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         /// <returns>A value.</returns>
-        public T Read<T>(IntPtr address, bool isRelative = false)
+        public override T Read<T>(IntPtr address, bool isRelative = false)
         {
-            AdjustAddress(ref address, isRelative);
-            return InternalMarshals.PtrToStructure<T>(address);
-        }
-
-        /// <summary>
-        ///     Reads the value of a specified type in the process.
-        /// </summary>
-        /// <typeparam name="T">The type of the value.</typeparam>
-        /// <param name="address">The address where the value is read.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        /// <param name="offsets">The offsets to apply in order to the given address.</param>
-        /// <returns>A value.</returns>
-        public T ReadMultilevelPointer<T>(bool isRelative, IntPtr address, params int[] offsets)
-        {
-            AdjustAddress(ref address, isRelative);
-            if (offsets.Length == 0)
-            {
-                throw new InvalidOperationException("Cannot read a value from unspecified addresses.");
-            }
-
-            var temp = Read<IntPtr>(address);
-
-            for (var i = 0; i < offsets.Length - 1; i++)
-            {
-                temp = Read<IntPtr>(temp + offsets[i]);
-            }
-            return Read<T>(temp + offsets[offsets.Length - 1]);
+            return InternalMemoryCore.Read<T>(address, isRelative);
         }
 
         /// <summary>
@@ -135,78 +130,20 @@ namespace Binarysharp.MemoryManagement
         /// <param name="count">The number of cells in the array.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         /// <returns>An array.</returns>
-        public T[] ReadArray<T>(IntPtr address, int count, bool isRelative = false)
+        public override T[] ReadArray<T>(IntPtr address, int count, bool isRelative = false)
         {
-            AdjustAddress(ref address, isRelative);
-            var size = MarshalCache<T>.Size;
-            var ret = new T[count];
-            for (var i = 0; i < count; i++)
-            {
-                ret[i] = Read<T>(address + (i*size));
-            }
-            return ret;
-        }
-
-        /// <summary>
-        ///     Read a string of the supplied encoding from an unmanaged pointer
-        /// </summary>
-        /// <param name="address">Pointer address to read from</param>
-        /// <param name="encoding">Encoding to read</param>
-        /// <param name="maxLength"></param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        /// <returns>A string.</returns>
-        public string ReadString(IntPtr address, Encoding encoding, int maxLength = 256, bool isRelative = false)
-        {
-            var data = ReadBytes(address, maxLength);
-            var text = new string(encoding.GetChars(data));
-            if (text.Contains("\0"))
-                text = text.Substring(0, text.IndexOf('\0'));
-            return text;
-        }
-
-        /// <summary>
-        ///     Writes a string with a specified encoding in the remote process.
-        /// </summary>
-        /// <param name="address">The address where the string is written.</param>
-        /// <param name="text">The text to write.</param>
-        /// <param name="encoding">The encoding used.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        /// <param name="appendNullCharacter"></param>
-        public unsafe void WriteString(IntPtr address, string text, Encoding encoding, bool isRelative = false,
-            bool appendNullCharacter = true)
-        {
-            AdjustAddress(ref address, isRelative);
-            var bytes = encoding.GetBytes(text);
-            if (appendNullCharacter)
-            {
-                bytes = bytes.Concat(encoding.GetBytes(new[] {'\0'})).ToArray();
-            }
-
-            var pDest = (byte*) address.ToPointer();
-            for (var i = 0; i < bytes.Length; i++)
-            {
-                pDest[i] = bytes[i];
-            }
+            return InternalMemoryCore.ReadArray<T>(address, count, isRelative);
         }
 
         /// <summary>
         ///     Writes the specified bytes at the specified address.
         /// </summary>
         /// <param name="address">The address.</param>
-        /// <param name="bytes">The bytes.</param>
+        /// <param name="byteArray">The bytes.</param>
         /// <param name="isRelative">if set to <c>true</c> [is relative].</param>
-        public void WriteBytes(IntPtr address, byte[] bytes, bool isRelative = false)
+        public override void WriteBytes(IntPtr address, byte[] byteArray, bool isRelative = false)
         {
-            AdjustAddress(ref address, isRelative);
-            using (new MemoryProtectionOperation(Process.SafeHandle, address, bytes.Length, 0x40))
-                unsafe
-                {
-                    var ptr = (byte*) address;
-                    for (var i = 0; i < bytes.Length; i++)
-                    {
-                        ptr[i] = bytes[i];
-                    }
-                }
+            InternalMemoryCore.WriteBytes(address, byteArray, isRelative);
         }
 
         /// <summary>
@@ -216,10 +153,9 @@ namespace Binarysharp.MemoryManagement
         /// <param name="address">The address where the value is written.</param>
         /// <param name="value">The value to write.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void Write<T>(IntPtr address, T value, bool isRelative = false)
+        public override void Write<T>(IntPtr address, T value, bool isRelative = false)
         {
-            AdjustAddress(ref address, isRelative);
-            InternalMarshals.StructureToPointerWrite(address, value);
+            InternalMemoryCore.Write(address, value);
         }
 
         /// <summary>
@@ -227,59 +163,93 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         /// <typeparam name="T">The type of the value.</typeparam>
         /// <param name="address">The address where the value is written.</param>
-        /// <param name="value">The array of values to write.</param>
+        /// <param name="arrayOfValues">The array of values to write.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void WriteArray<T>(IntPtr address, T[] value, bool isRelative = false)
+        public override void WriteArray<T>(IntPtr address, T[] arrayOfValues, bool isRelative = false)
         {
-            AdjustAddress(ref address, isRelative);
-            var size = MarshalCache<T>.Size;
-            for (var i = 0; i < value.Length; i++)
-            {
-                var val = value[i];
-                Write(address + (i*size), val);
-            }
+            InternalMemoryCore.WriteArray(address, arrayOfValues);
         }
 
         /// <summary>
-        ///     Helper method to rebase address if needed.
+        ///     Gets the funtion pointer from a delegate.
         /// </summary>
-        /// <param name="address">The address to rebase by ref.</param>
-        /// <param name="isRelative">State if the address is relative to the main module.</param>
-        private void AdjustAddress(ref IntPtr address, bool isRelative)
+        /// <param name="delegate">The delegate to extract the pointer from</param>
+        /// <returns></returns>
+        /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
+        public IntPtr GetFunctionPointer(Delegate @delegate)
+        {
+            return InternalMemoryCore.GetFunctionPointer(@delegate);
+        }
+
+        /// <summary>
+        ///     Gets the VF table entry.
+        /// </summary>
+        /// <param name="address">The address.</param>
+        /// <param name="index">The index.</param>
+        /// <returns></returns>
+        /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
+        public IntPtr GetVirtualTablePointer(IntPtr address, int index)
+        {
+            return InternalMemoryCore.GetVTablePointer(address, index);
+        }
+
+        /// <summary>
+        ///     Creates the proxy memory object.
+        /// </summary>
+        /// <param name="address">The address.</param>
+        /// <param name="isRelative"></param>
+        /// <returns>ProxyPointer.</returns>
+        public ProxyPointer CreateProxyPointer(IntPtr address, bool isRelative = false)
         {
             if (isRelative)
             {
-                address = Rebase(address);
+                address = ToAbsolute(address);
             }
+            return new ProxyPointer(this, address);
         }
 
         /// <summary>
-        ///     Rebases the given address to the main module.
+        ///     Gets a new Instance of the <see cref="ProcessFunction{T}" /> class.
         /// </summary>
-        /// <param name="address">The address to rebase.</param>
-        /// <returns>The rebased address</returns>
-        private IntPtr Rebase(IntPtr address)
+        /// <typeparam name="T">The type.</typeparam>
+        /// <param name="name">The name that represents the function.</param>
+        /// <param name="address">The address where the function is located in memory.</param>
+        /// <param name="isRelative">if set to <c>true</c> [is relative].</param>
+        /// <returns>A new Instance of <see cref="ProcessFunction{T}" />.</returns>
+        public ProcessFunction<T> CreateProcessFunction<T>(IntPtr address, string name = "Default",
+            bool isRelative = false)
         {
-            return Process.ImageBase.Add(address);
+            if (name == "Default")
+            {
+                name = typeof (T).Name;
+            }
+            return new ProcessFunction<T>(name, address);
         }
 
         /// <summary>
-        ///     Determines whether the specified object is equal to the current object.
+        ///     Gets a new Instance of the <see cref="VirtualClass" /> class.
         /// </summary>
-        public override bool Equals(object obj)
+        /// <param name="address">The address where the virtual class is located in memory.</param>
+        /// <param name="isRelative">if set to <c>true</c> [is relative].</param>
+        /// <returns>A new Instance of <see cref="VirtualClass" />.</returns>
+        public VirtualClass CreateVirtualClass(IntPtr address, bool isRelative = false)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((MemorySharp) obj);
+            return new VirtualClass(address);
         }
 
         /// <summary>
-        ///     Serves as a hash function for a particular type.
+        ///     Creates a function.
         /// </summary>
-        public override int GetHashCode()
+        /// <typeparam name="T"></typeparam>
+        /// <param name="address">The address.</param>
+        /// <param name="isRelative">if set to <c>true</c> [address is relative].</param>
+        /// <returns></returns>
+        /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
+        public T CreateFunction<T>(IntPtr address, bool isRelative = false) where T : class
         {
-            return Process.SafeHandle.GetHashCode();
+            return Marshal.GetDelegateForFunctionPointer(isRelative ? ToAbsolute(address) : address, typeof (T)) as T;
         }
+
         #endregion
     }
 }

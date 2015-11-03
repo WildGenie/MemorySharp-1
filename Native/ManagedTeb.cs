@@ -8,8 +8,8 @@
 */
 
 using System;
-using Binarysharp.MemoryManagement.MemoryExternal.Memory;
-using Binarysharp.MemoryManagement.MemoryExternal.Threading;
+using Binarysharp.MemoryManagement.Memory.Remote;
+using Binarysharp.MemoryManagement.Threading;
 
 namespace Binarysharp.MemoryManagement.Native
 {
@@ -19,6 +19,7 @@ namespace Binarysharp.MemoryManagement.Native
     public class ManagedTeb : RemotePointer
     {
         #region Constructors
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ManagedTeb" /> class.
         /// </summary>
@@ -27,9 +28,25 @@ namespace Binarysharp.MemoryManagement.Native
         internal ManagedTeb(MemorySharp memorySharp, IntPtr address) : base(memorySharp, address)
         {
         }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        ///     Finds the Thread Environment Block address of a specified thread.
+        /// </summary>
+        /// <param name="threadHandle">A handle of the thread.</param>
+        /// <returns>A <see cref="IntPtr" /> pointer of the TEB.</returns>
+        public static IntPtr FindTeb(SafeMemoryHandle threadHandle)
+        {
+            return ThreadCore.NtQueryInformationThread(threadHandle).TebBaseAdress;
+        }
+
         #endregion
 
         #region  Properties
+
         /// <summary>
         ///     Current Structured Exception Handling (SEH) frame.
         /// </summary>
@@ -444,18 +461,7 @@ namespace Binarysharp.MemoryManagement.Native
             get { return Read<IntPtr>(TebStructure.ThreadErrorMode); }
             set { Write(TebStructure.ThreadErrorMode, value); }
         }
-        #endregion
 
-        #region Methods
-        /// <summary>
-        ///     Finds the Thread Environment Block address of a specified thread.
-        /// </summary>
-        /// <param name="threadHandle">A handle of the thread.</param>
-        /// <returns>A <see cref="IntPtr" /> pointer of the TEB.</returns>
-        public static IntPtr FindTeb(SafeMemoryHandle threadHandle)
-        {
-            return ThreadCore.NtQueryInformationThread(threadHandle).TebBaseAdress;
-        }
         #endregion
     }
 }

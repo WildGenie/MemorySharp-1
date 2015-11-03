@@ -18,19 +18,22 @@ namespace Binarysharp.MemoryManagement.Helpers
     public static class Randomizer
     {
         #region  Fields
+
         /// <summary>
         ///     Provides random engine.
         /// </summary>
-        private static readonly Random _random = new Random();
+        private static readonly Random Random = new Random();
 
         /// <summary>
         ///     Allowed characters in random strings.
         /// </summary>
-        private static readonly char[] _allowedChars =
+        private static readonly char[] AllowedChars =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".ToCharArray();
+
         #endregion
 
         #region Methods
+
         /// <summary>
         ///     Returns a random number within a specified range.
         /// </summary>
@@ -42,7 +45,7 @@ namespace Binarysharp.MemoryManagement.Helpers
         /// <returns>A 32-bit signed integer greater than or equal to minValue and less than maxValue.</returns>
         public static int GenerateNumber(int minValue, int maxValue)
         {
-            return _random.Next(minValue, maxValue);
+            return Random.Next(minValue, maxValue);
         }
 
         /// <summary>
@@ -55,7 +58,7 @@ namespace Binarysharp.MemoryManagement.Helpers
         /// <returns>A 32-bit signed integer greater than or equal to zero, and less than maxValue.</returns>
         public static int GenerateNumber(int maxValue)
         {
-            return _random.Next(maxValue);
+            return Random.Next(maxValue);
         }
 
         /// <summary>
@@ -64,7 +67,7 @@ namespace Binarysharp.MemoryManagement.Helpers
         /// <returns>A 32-bit signed integer greater than or equal to zero and less than <see cref="int.MaxValue" />.</returns>
         public static int GenerateNumber()
         {
-            return _random.Next();
+            return Random.Next();
         }
 
         /// <summary>
@@ -81,7 +84,7 @@ namespace Binarysharp.MemoryManagement.Helpers
             // Fill the string builder
             for (var i = 0; i < builder.Capacity; i++)
             {
-                builder.Append(_allowedChars[GenerateNumber(_allowedChars.Length - 1)]);
+                builder.Append(AllowedChars[GenerateNumber(AllowedChars.Length - 1)]);
             }
 
             return builder.ToString();
@@ -95,6 +98,7 @@ namespace Binarysharp.MemoryManagement.Helpers
         {
             return Guid.NewGuid();
         }
+
         #endregion
     }
 }

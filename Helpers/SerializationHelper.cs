@@ -19,6 +19,36 @@ namespace Binarysharp.MemoryManagement.Helpers
     public static class SerializationHelper
     {
         #region Methods
+
+        /// <summary>
+        ///     Serializes the specified object and writes the XML document to the specified path.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to serialize.</typeparam>
+        /// <param name="obj">The object to serialize.</param>
+        /// <param name="path">The path where the file is saved.</param>
+        /// <param name="encoding">The encoding to generate.</param>
+        public static void ExportToXmlFile<T>(T obj, string path, Encoding encoding)
+        {
+            // Create the stream to write into the specified file
+            using (var file = new StreamWriter(path, false, encoding))
+            {
+                // Write the content by calling the method to serialize the object
+                file.Write(ExportToXmlString(obj));
+            }
+        }
+
+        /// <summary>
+        ///     Serializes the specified object and writes the XML document to the specified path using
+        ///     <see cref="Encoding.UTF8" /> encoding.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to serialize.</typeparam>
+        /// <param name="obj">The object to serialize.</param>
+        /// <param name="path">The path where the file is saved.</param>
+        public static void ExportToXmlFile<T>(T obj, string path)
+        {
+            ExportToXmlFile(obj, path, Encoding.UTF8);
+        }
+
         /// <summary>
         ///     Serializes the specified object and returns the XML document.
         /// </summary>
@@ -39,35 +69,6 @@ namespace Binarysharp.MemoryManagement.Helpers
         }
 
         /// <summary>
-        ///     Serializes the specified object and writes the XML document to the specified path.
-        /// </summary>
-        /// <typeparam name="T">The type of the object to serialize.</typeparam>
-        /// <param name="obj">The object to serialize.</param>
-        /// <param name="path">The path where the file is saved.</param>
-        /// <param name="encoding">The encoding to generate.</param>
-        public static void ExportToXmlFile<T>(T obj, string path, Encoding encoding)
-        {
-            // Create the stream to write into the specified file
-            using (var file = new StreamWriter(FormatXmlFileNameOrPath(path), false, encoding))
-            {
-                // LogNormal the content by calling the method to serialize the object
-                file.Write(ExportToXmlString(obj));
-            }
-        }
-
-        /// <summary>
-        ///     Serializes the specified object and writes the XML document to the specified path using
-        ///     <see cref="Encoding.UTF8" /> encoding.
-        /// </summary>
-        /// <typeparam name="T">The type of the object to serialize.</typeparam>
-        /// <param name="obj">The object to serialize.</param>
-        /// <param name="path">The path where the file is saved.</param>
-        public static void ExportToXmlFile<T>(T obj, string path)
-        {
-            ExportToXmlFile(obj, path, Encoding.UTF8);
-        }
-
-        /// <summary>
         ///     Deserializes the specified file into an object.
         /// </summary>
         /// <typeparam name="T">The type of the object to deserialize.</typeparam>
@@ -77,9 +78,9 @@ namespace Binarysharp.MemoryManagement.Helpers
         public static T ImportFromXmlFile<T>(string path, Encoding encoding)
         {
             // Create the stream to read the specified file
-            using (var file = new StreamReader(FormatXmlFileNameOrPath(path), encoding))
+            using (var file = new StreamReader(path, encoding))
             {
-                // ReadArray the content of the file and call the method to deserialize the object
+                // Read the content of the file and call the method to deserialize the object
                 return ImportFromXmlString<T>(file.ReadToEnd());
             }
         }
@@ -112,19 +113,6 @@ namespace Binarysharp.MemoryManagement.Helpers
             }
         }
 
-        /// <summary>
-        ///     Attempts to make sure the .xml value is in correctly formatted in the file name paramters.
-        /// </summary>
-        /// <param name="fileName">The file name or file path to format.</param>
-        /// <returns>A formatted name/path+.xml string.</returns>
-        public static string FormatXmlFileNameOrPath(string fileName)
-        {
-            if (!fileName.Contains("Xml") && !fileName.Contains("xml"))
-            {
-                fileName = fileName + ".xml";
-            }
-            return fileName;
-        }
         #endregion
     }
 }

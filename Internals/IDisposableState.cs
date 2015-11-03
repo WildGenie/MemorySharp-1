@@ -17,6 +17,7 @@ namespace Binarysharp.MemoryManagement.Internals
     public interface IDisposableState : IDisposable
     {
         #region  Properties
+
         /// <summary>
         ///     Gets a value indicating whether the element is disposed.
         /// </summary>
@@ -26,6 +27,7 @@ namespace Binarysharp.MemoryManagement.Internals
         ///     Gets a value indicating whether the element must be disposed when the Garbage Collector collects the object.
         /// </summary>
         bool MustBeDisposed { get; }
+
         #endregion
     }
 }

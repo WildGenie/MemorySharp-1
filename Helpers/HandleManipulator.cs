@@ -21,6 +21,7 @@ namespace Binarysharp.MemoryManagement.Helpers
     public static class HandleManipulator
     {
         #region Methods
+
         /// <summary>
         ///     Closes an open object handle.
         /// </summary>
@@ -31,7 +32,7 @@ namespace Binarysharp.MemoryManagement.Helpers
             ValidateAsArgument(handle, "handle");
 
             // Close the handle
-            if (!NativeMethods.CloseHandle(handle))
+            if (!SafeNativeMethods.CloseHandle(handle))
                 throw new Win32Exception("Couldn't close the handle correctly.");
         }
 
@@ -57,7 +58,7 @@ namespace Binarysharp.MemoryManagement.Helpers
             ValidateAsArgument(processHandle, "processHandle");
 
             // Find the process id
-            var ret = NativeMethods.GetProcessId(processHandle);
+            var ret = SafeNativeMethods.GetProcessId(processHandle);
 
             // If the process id is valid
             if (ret != 0)
@@ -98,7 +99,7 @@ namespace Binarysharp.MemoryManagement.Helpers
             ValidateAsArgument(threadHandle, "threadHandle");
 
             // Find the thread id
-            var ret = NativeMethods.GetThreadId(threadHandle);
+            var ret = SafeNativeMethods.GetThreadId(threadHandle);
 
             // If the thread id is valid
             if (ret != 0)
@@ -139,6 +140,7 @@ namespace Binarysharp.MemoryManagement.Helpers
             if (handle.IsClosed || handle.IsInvalid)
                 throw new ArgumentException("The handle is not valid or closed.", argumentName);
         }
+
         #endregion
     }
 }

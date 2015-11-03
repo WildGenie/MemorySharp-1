@@ -5,18 +5,14 @@ namespace Binarysharp.MemoryManagement.Tools
 {
     public class Updater
     {
-        #region Events
-        /// <summary>
-        ///     This event is fired when the <see cref="Start()" /> function is called at every interval.
-        /// </summary>
-        public event EventHandler<DeltaEventArgs> TickEvent;
-        #endregion
-
         #region  Fields
+
         private int _interval;
+
         #endregion
 
         #region Constructors
+
         /// <summary>
         ///     Initializes a new <see cref="Updater" /> instance.
         ///     <remarks>Credits for the class: Zat@ www.unknowncheats.com</remarks>
@@ -30,9 +26,52 @@ namespace Binarysharp.MemoryManagement.Tools
             Interval = tickRate;
             TickCount = 0;
         }
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        ///     This event is fired when the <see cref="Start()" /> function is called at every interval.
+        /// </summary>
+        public event EventHandler<DeltaEventArgs> TickEvent;
+
+        #endregion
+
+        #region Nested
+
+        /// <summary>
+        ///     Event args for the <see cref="Updater" /> class events.
+        /// </summary>
+        public class DeltaEventArgs : EventArgs
+        {
+            #region Constructors
+
+            /// <summary>
+            ///     Initializes a new <see cref="DeltaEventArgs" /> instance.
+            /// </summary>
+            /// <param name="secondsElapsed">Seconds elapsed.</param>
+            public DeltaEventArgs(double secondsElapsed)
+            {
+                SecondsElapsed = secondsElapsed;
+            }
+
+            #endregion
+
+            #region  Properties
+
+            /// <summary>
+            ///     Seconds elapsed.
+            /// </summary>
+            public double SecondsElapsed { get; private set; }
+
+            #endregion
+        }
+
         #endregion
 
         #region  Properties
+
         private Thread Thread { get; set; }
         private bool Work { get; set; }
         private long LastTick { get; set; }
@@ -62,9 +101,11 @@ namespace Binarysharp.MemoryManagement.Tools
         ///     The last recorded frame rate.
         /// </summary>
         public int LastFrameRate { get; private set; }
+
         #endregion
 
         #region Methods
+
         /// <summary>
         ///     Invokes a single action.
         /// </summary>
@@ -146,32 +187,7 @@ namespace Binarysharp.MemoryManagement.Tools
                 Thread.Sleep(Interval);
             }
         }
-        #endregion
 
-        #region Nested
-        /// <summary>
-        ///     Event args for the <see cref="Updater" /> class events.
-        /// </summary>
-        public class DeltaEventArgs : EventArgs
-        {
-            #region Constructors
-            /// <summary>
-            ///     Initializes a new <see cref="DeltaEventArgs" /> instance.
-            /// </summary>
-            /// <param name="secondsElapsed">Seconds elapsed.</param>
-            public DeltaEventArgs(double secondsElapsed)
-            {
-                SecondsElapsed = secondsElapsed;
-            }
-            #endregion
-
-            #region  Properties
-            /// <summary>
-            ///     Seconds elapsed.
-            /// </summary>
-            public double SecondsElapsed { get; private set; }
-            #endregion
-        }
         #endregion
     }
 }

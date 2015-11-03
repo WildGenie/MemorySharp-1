@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Mail;
 using Binarysharp.MemoryManagement.Extensions;
-using Binarysharp.MemoryManagement.Helpers;
+using Binarysharp.MemoryManagement.Logging;
 
 namespace Binarysharp.MemoryManagement.Tools
 {
@@ -14,18 +14,24 @@ namespace Binarysharp.MemoryManagement.Tools
     public class Emailer
     {
         #region Constructors
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Emailer" /> class.
         /// </summary>
         /// <param name="settings">The smpt settings.</param>
-        public Emailer(SmtpSettings settings)
+        public Emailer(SmtpSettings settings, ILog iLog)
         {
             Settings = settings;
             Client = settings.Client;
+            Log = iLog;
         }
+
         #endregion
 
         #region  Properties
+
+        public ILog Log { get; }
+
         /// <summary>
         ///     The smpt settngs.
         /// </summary>
@@ -35,9 +41,11 @@ namespace Binarysharp.MemoryManagement.Tools
         ///     The smtp client.
         /// </summary>
         public SmtpClient Client { get; }
+
         #endregion
 
         #region Methods
+
         /// <summary>
         ///     Allows asynchronous sending email message.
         /// </summary>
@@ -99,12 +107,12 @@ namespace Binarysharp.MemoryManagement.Tools
             }
             catch (SmtpException ex)
             {
-                ex.Log();
+                ex.Log(Log);
                 throw;
             }
             catch (Exception ex)
             {
-                ex.Log();
+                ex.Log(Log);
                 throw;
             }
             finally
@@ -116,6 +124,7 @@ namespace Binarysharp.MemoryManagement.Tools
                 }
             }
         }
+
         #endregion
     }
 }

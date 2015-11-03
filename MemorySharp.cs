@@ -12,54 +12,91 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Binarysharp.MemoryManagement.Assembly;
 using Binarysharp.MemoryManagement.Helpers;
 using Binarysharp.MemoryManagement.Internals;
-using Binarysharp.MemoryManagement.MemoryExternal.Assembly;
-using Binarysharp.MemoryManagement.MemoryExternal.Assembly.CallingConvention;
-using Binarysharp.MemoryManagement.MemoryExternal.Memory;
-using Binarysharp.MemoryManagement.MemoryExternal.Modules;
-using Binarysharp.MemoryManagement.MemoryExternal.Threading;
-using Binarysharp.MemoryManagement.MemoryExternal.Windows;
+using Binarysharp.MemoryManagement.Memory;
+using Binarysharp.MemoryManagement.Memory.Remote;
+using Binarysharp.MemoryManagement.Modules;
 using Binarysharp.MemoryManagement.Native;
+using Binarysharp.MemoryManagement.Threading;
+using Binarysharp.MemoryManagement.Windows;
 
 namespace Binarysharp.MemoryManagement
 {
     /// <summary>
     ///     Class for memory editing a remote process.
     /// </summary>
-    public class MemorySharp : IDisposable, IEquatable<MemorySharp>
+    public class MemorySharp : ProcessMemory, IDisposable, IEquatable<MemorySharp>
     {
         #region Events
+
         /// <summary>
         ///     Raises when the <see cref="MemorySharp" /> object is disposed.
         /// </summary>
         public event EventHandler OnDispose;
+
+        #endregion
+
+        #region Misc
+
+        /// <summary>
+        ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.
+        /// </summary>
+        ~MemorySharp()
+        {
+            Dispose();
+        }
+
         #endregion
 
         #region  Fields
+
         /// <summary>
         ///     The factories embedded inside the library.
         /// </summary>
         protected List<IFactory> Factories;
+
+        /// <summary>
+        ///     The Process Environment Block of the process.
+        /// </summary>
+        /// <remarks>The operation is deferred because it can be potentially slow.</remarks>
+        protected Lazy<ManagedPeb32> InternalPeb32;
+
+        /// <summary>
+        ///     The Process Environment Block of the process.
+        /// </summary>
+        /// <remarks>The operation is deferred because it can be potentially slow.</remarks>
+        protected Lazy<ManagedPeb64> InternalPeb64;
+
         #endregion
 
         #region Constructors
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="MemorySharp" /> class.
         /// </summary>
         /// <param name="process">Process to open.</param>
-        public MemorySharp(Process process)
+        public MemorySharp(Process process) : base(process)
         {
             // Save the reference of the process
-            Native = process;
-            // Open the process with all rights
-            Handle = MemoryCore.OpenProcess(ProcessAccessFlags.AllAccess, process.Id);
-            // Initialize the PEB
-            if (IntPtr.Size == 4)
+            // Use the correct API depending on the architecture of the opened process
+            switch (Architecture)
             {
-                Peb = new ManagedPeb(this, ManagedPeb.FindPeb(Handle));
+                case ProcessArchitectures.Amd64:
+                    NativeDriver = new NativeDriver64();
+                    // Initialize the PEB
+                    //TODO: Convert this peb to be fully managed.
+                    InternalPeb64 = new Lazy<ManagedPeb64>(() => new ManagedPeb64(this));
+                    break;
+                default:
+                    NativeDriver = new NativeDriver32();
+                    // Initialize the PEB
+                    InternalPeb32 = new Lazy<ManagedPeb32>(() => new ManagedPeb32(this));
+                    break;
             }
-
+            // Open the process with all rights
+            SafeHandle = NativeDriver.MemoryCore.OpenProcess(ProcessAccessFlags.AllAccess, process.Id);
             // Create instances of the factories
             Factories = new List<IFactory>();
             Factories.AddRange(
@@ -87,35 +124,52 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         /// <param name="processName">Process name of the process to open.</param>
         public MemorySharp(string processName)
-            : this(ApplicationFinder.FromProcessName(processName).First())
+            : this(ApplicationFinder.FromProcessName(processName).FirstOrDefault())
         {
         }
+
         #endregion
 
         #region  Properties
+
+        /// <summary>
+        ///     Gets the architecture of the process.
+        /// </summary>
+        public ProcessArchitectures Architecture => ArchitectureHelper.GetArchitectureByProcess(Process);
+
         /// <summary>
         ///     Factory for generating assembly code.
         /// </summary>
         public AssemblyFactory Assembly { get; protected set; }
 
         /// <summary>
+        ///     Gets whether the process is 32-bit.
+        /// </summary>
+        public bool Is32BitProcess => Architecture == ProcessArchitectures.Ia32;
+
+        /// <summary>
+        ///     Gets whether the process is 64-bit.
+        /// </summary>
+        public bool Is64BitProcess => Architecture == ProcessArchitectures.Amd64;
+
+        /// <summary>
         ///     Gets whether the process is being debugged.
         /// </summary>
         public bool IsDebugged
         {
-            get { return Peb.BeingDebugged; }
-            set { Peb.BeingDebugged = value; }
+            get { return Peb32.BeingDebugged; }
+            set { Peb32.BeingDebugged = value; }
         }
 
         /// <summary>
         ///     State if the process is running.
         /// </summary>
-        public bool IsRunning => !Handle.IsInvalid && !Handle.IsClosed && !Native.HasExited;
+        public bool IsRunning => !SafeHandle.IsInvalid && !SafeHandle.IsClosed && !Process.HasExited;
 
         /// <summary>
         ///     The remote process handle opened with all rights.
         /// </summary>
-        public SafeMemoryHandle Handle { get; }
+        public SafeMemoryHandle SafeHandle { get; }
 
         /// <summary>
         ///     Factory for manipulating memory space.
@@ -127,20 +181,21 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         public ModuleFactory Modules { get; protected set; }
 
+
         /// <summary>
-        ///     Provide access to the opened process.
+        ///     Gets the native driver to interact with the API system/architecture dependant.
         /// </summary>
-        public Process Native { get; }
+        public NativeDriverBase NativeDriver { get; protected set; }
 
         /// <summary>
         ///     The Process Environment Block of the process.
         /// </summary>
-        public ManagedPeb Peb { get; }
+        public ManagedPeb32 Peb32 => InternalPeb32.Value;
 
         /// <summary>
         ///     Gets the unique identifier for the remote process.
         /// </summary>
-        public int Pid => Native.Id;
+        public int Pid => Process.Id;
 
         /// <summary>
         ///     Gets the specified module in the remote process.
@@ -167,9 +222,11 @@ namespace Binarysharp.MemoryManagement
         ///     Factory for manipulating windows.
         /// </summary>
         public WindowFactory Windows { get; protected set; }
+
         #endregion
 
         #region  Interface members
+
         /// <summary>
         ///     Releases all resources used by the <see cref="MemorySharp" /> object.
         /// </summary>
@@ -182,7 +239,7 @@ namespace Binarysharp.MemoryManagement
             Factories.ForEach(factory => factory.Dispose());
 
             // Close the process handle
-            Handle.Close();
+            SafeHandle.Close();
 
             // Avoid the finalizer
             GC.SuppressFinalize(this);
@@ -194,11 +251,13 @@ namespace Binarysharp.MemoryManagement
         public bool Equals(MemorySharp other)
         {
             if (ReferenceEquals(null, other)) return false;
-            return ReferenceEquals(this, other) || Handle.Equals(other.Handle);
+            return ReferenceEquals(this, other) || SafeHandle.Equals(other.SafeHandle);
         }
+
         #endregion
 
         #region Methods
+
         /// <summary>
         ///     Determines whether the specified object is equal to the current object.
         /// </summary>
@@ -214,7 +273,7 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         public override int GetHashCode()
         {
-            return Handle.GetHashCode();
+            return SafeHandle.GetHashCode();
         }
 
         /// <summary>
@@ -247,11 +306,23 @@ namespace Binarysharp.MemoryManagement
             return new IntPtr(address.ToInt64() - Modules.MainModule.BaseAddress.ToInt64());
         }
 
+        /// <summary>
+        ///     Implements the operator ==.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>The result of the operator.</returns>
         public static bool operator ==(MemorySharp left, MemorySharp right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        ///     Implements the operator !=.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>The result of the operator.</returns>
         public static bool operator !=(MemorySharp left, MemorySharp right)
         {
             return !Equals(left, right);
@@ -264,9 +335,9 @@ namespace Binarysharp.MemoryManagement
         /// <param name="address">The address where the value is read.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         /// <returns>A value.</returns>
-        public T Read<T>(IntPtr address, bool isRelative = false)
+        public override T Read<T>(IntPtr address, bool isRelative = false)
         {
-            return MarshalType<T>.ByteArrayToObject(ReadBytes(address, MarshalType<T>.Size, isRelative));
+            return SafeMarshalType<T>.ByteArrayToObject(ReadBytes(address, SafeMarshalType<T>.Size, isRelative));
         }
 
         /// <summary>
@@ -289,14 +360,14 @@ namespace Binarysharp.MemoryManagement
         /// <param name="count">The number of cells in the array.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         /// <returns>An array.</returns>
-        public T[] Read<T>(IntPtr address, int count, bool isRelative = false)
+        public override T[] ReadArray<T>(IntPtr address, int count, bool isRelative = false)
         {
             // Allocate an array to store the results
             var array = new T[count];
             // Read the array in the remote process
             for (var i = 0; i < count; i++)
             {
-                array[i] = Read<T>(address + MarshalType<T>.Size*i, isRelative);
+                array[i] = Read<T>(address + SafeMarshalType<T>.Size*i, isRelative);
             }
             return array;
         }
@@ -311,7 +382,7 @@ namespace Binarysharp.MemoryManagement
         /// <returns>An array.</returns>
         public T[] Read<T>(Enum address, int count, bool isRelative = false)
         {
-            return Read<T>(new IntPtr(Convert.ToInt64(address)), count, isRelative);
+            return ReadArray<T>(new IntPtr(Convert.ToInt64(address)), count, isRelative);
         }
 
         /// <summary>
@@ -321,9 +392,9 @@ namespace Binarysharp.MemoryManagement
         /// <param name="count">The number of cells.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         /// <returns>The array of bytes.</returns>
-        public byte[] ReadBytes(IntPtr address, int count, bool isRelative = false)
+        public override byte[] ReadBytes(IntPtr address, int count, bool isRelative = false)
         {
-            return MemoryCore.ReadBytes(Handle, isRelative ? MakeAbsolute(address) : address, count);
+            return NativeDriver.MemoryCore.ReadBytes(SafeHandle, isRelative ? MakeAbsolute(address) : address, count);
         }
 
         /// <summary>
@@ -400,9 +471,9 @@ namespace Binarysharp.MemoryManagement
         /// <param name="address">The address where the value is written.</param>
         /// <param name="value">The value to write.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void Write<T>(IntPtr address, T value, bool isRelative = false)
+        public override void Write<T>(IntPtr address, T value, bool isRelative = false)
         {
-            WriteBytes(address, MarshalType<T>.ObjectToByteArray(value), isRelative);
+            WriteBytes(address, SafeMarshalType<T>.ObjectToByteArray(value), isRelative);
         }
 
         /// <summary>
@@ -424,12 +495,12 @@ namespace Binarysharp.MemoryManagement
         /// <param name="address">The address where the values is written.</param>
         /// <param name="array">The array to write.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void Write<T>(IntPtr address, T[] array, bool isRelative = false)
+        public override void WriteArray<T>(IntPtr address, T[] array, bool isRelative = false)
         {
             // Write the array in the remote process
             for (var i = 0; i < array.Length; i++)
             {
-                Write(address + MarshalType<T>.Size*i, array[i], isRelative);
+                Write(address + SafeMarshalType<T>.Size*i, array[i], isRelative);
             }
         }
 
@@ -440,9 +511,9 @@ namespace Binarysharp.MemoryManagement
         /// <param name="address">The address where the values is written.</param>
         /// <param name="array">The array to write.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void Write<T>(Enum address, T[] array, bool isRelative = false)
+        public void WriteArray<T>(Enum address, T[] array, bool isRelative = false)
         {
-            Write(new IntPtr(Convert.ToInt64(address)), array, isRelative);
+            WriteArray(new IntPtr(Convert.ToInt64(address)), array, isRelative);
         }
 
         /// <summary>
@@ -451,30 +522,18 @@ namespace Binarysharp.MemoryManagement
         /// <param name="address">The address where the array is written.</param>
         /// <param name="byteArray">The array of bytes to write.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        protected void WriteBytes(IntPtr address, byte[] byteArray, bool isRelative = false)
+        public override void WriteBytes(IntPtr address, byte[] byteArray, bool isRelative = false)
         {
             // Change the protection of the memory to allow writable
             using (
                 new MemoryProtection(this, isRelative ? MakeAbsolute(address) : address,
-                    MarshalType<byte>.Size*byteArray.Length))
+                    SafeMarshalType<byte>.Size*byteArray.Length))
             {
                 // Write the byte array
-                MemoryCore.WriteBytes(Handle, isRelative ? MakeAbsolute(address) : address, byteArray);
+                NativeDriver.MemoryCore.WriteBytes(SafeHandle, isRelative ? MakeAbsolute(address) : address, byteArray);
             }
         }
 
-        /// <summary>
-        ///     Writes a string with a specified encoding in the remote process.
-        /// </summary>
-        /// <param name="address">The address where the string is written.</param>
-        /// <param name="text">The text to write.</param>
-        /// <param name="encoding">The encoding used.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void WriteString(IntPtr address, string text, Encoding encoding, bool isRelative = false)
-        {
-            // Write the text
-            WriteBytes(address, encoding.GetBytes(text + '\0'), isRelative);
-        }
 
         /// <summary>
         ///     Writes a string with a specified encoding in the remote process.
@@ -494,7 +553,7 @@ namespace Binarysharp.MemoryManagement
         /// <param name="address">The address where the string is written.</param>
         /// <param name="text">The text to write.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void WriteString(IntPtr address, string text, bool isRelative = false)
+        public void WriteString(IntPtr address, string text, bool isRelative = true)
         {
             WriteString(address, text, Encoding.UTF8, isRelative);
         }
@@ -509,59 +568,7 @@ namespace Binarysharp.MemoryManagement
         {
             WriteString(new IntPtr(Convert.ToInt64(address)), text, isRelative);
         }
-        #endregion
-        /// <summary>
-        ///     Executes the assembly code located in the remote process at the specified address.
-        /// </summary>
-        /// <param name="address">The address where the assembly code is located.</param>
-        /// <param name="callingConvention">The calling convention used to execute the assembly code with the parameters.</param>
-        /// <param name="parameters">An array of parameters used to execute the assembly code.</param>
-        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
-        public T Call<T>(IntPtr address, CallingConventions callingConvention, params dynamic[] parameters)
-        {
-            return Assembly.Execute<T>(address, callingConvention, parameters);
-        }
 
-        /// <summary>
-        ///     Executes the assembly code located in the remote process at the specified address.
-        /// </summary>
-        /// <param name="address">The address where the assembly code is located.</param>
-        /// <param name="callingConvention">The calling convention used to execute the assembly code with the parameters.</param>
-        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
-        public T Call<T>(IntPtr address, CallingConventions callingConvention)
-        {
-            return Assembly.Execute<T>(address, callingConvention);
-        }
-
-        /// <summary>
-        ///     Executes the assembly code located in the remote process at the specified address.
-        /// </summary>
-        /// <param name="address">The address where the assembly code is located.</param>
-        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
-        public T Call<T>(IntPtr address)
-        {
-            return Assembly.Execute<T>(address);
-        }
-
-        /// <summary>
-        ///     Executes the assembly code located in the remote process at the specified address.
-        /// </summary>
-        /// <param name="call">The <see cref="RemoteCall" /> structure to use.</param>
-        /// <param name="parameters">An array of parameters used to execute the assembly code.</param>
-        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
-        public T Call<T>(RemoteCall call, params dynamic[] parameters)
-        {
-            return Assembly.Execute<T>(call.Address, call.CallingConvention, parameters);
-        }
-
-        #region Misc
-        /// <summary>
-        ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.
-        /// </summary>
-        ~MemorySharp()
-        {
-            Dispose();
-        }
         #endregion
     }
 }

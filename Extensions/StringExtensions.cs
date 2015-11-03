@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,70 +12,10 @@ namespace Binarysharp.MemoryManagement.Extensions
     public static class StringExtensions
     {
         #region Methods
-        /// <summary>
-        ///     Surrounds text with double quotes.
-        /// </summary>
-        /// <param name="text">The text to quote.</param>
-        /// <returns>A string with double quotes.</returns>
-        public static string SurroundWithDoubleQuotes(this string text)
-        {
-            return SurroundWith(text, "\"");
-        }
 
-        /// <summary>
-        ///     Returns a string as a quote.
-        /// </summary>
-        /// <param name="str">The string.</param>
-        /// <returns>A string.</returns>
-        public static string Quoted(this string str)
-        {
-            return "\"" + str + "\"";
-        }
-
-        /// <summary>
-        ///     Surrounds a string with a given string.
-        /// </summary>
-        /// <param name="text">The string to surround.</param>
-        /// <param name="ends">Where th end the surround.</param>
-        /// <returns>A string surrounded by new text.</returns>
-        public static string SurroundWith(this string text, string ends)
-        {
-            return ends + text + ends;
-        }
-
-        /// <summary>
-        ///     Determines whether the specified string can convert to <see cref="System.Boolean" />.
-        /// </summary>
-        /// <param name="value">The string value to check.</param>
-        /// <returns>Returns <c>true</c> if the conversion of input string was successfull. Otherwise, it returns <c>false</c>.</returns>
-        /// <remarks>
-        ///     Based on <see cref="BooleanExtensions.BooleanMapping" />
-        /// </remarks>
-        public static bool IsBoolean(this string value)
-        {
-            var itemValue =
-                BooleanExtensions.BooleanMapping.FirstOrDefault(v => v.Key == value.RemoveWhiteSpaces().ToUpperTrim());
-            return !itemValue.IsDefault();
-        }
-
-        /// <summary>
-        ///     Converts input string to <see cref="System.Boolean" />.
-        /// </summary>
-        /// <param name="value">The string value to convert.</param>
-        /// <returns>Returns <c>true</c> if the conversion of input string was successfull. Otherwise, it returns <c>false</c>.</returns>
-        /// <remarks>
-        ///     Convertion is based on <see cref="BooleanExtensions.BooleanMapping" />.
-        /// </remarks>
-        public static bool ToBoolean(this string value)
-        {
-            var result = false;
-            var itemValue =
-                BooleanExtensions.BooleanMapping.FirstOrDefault(v => v.Key == value.RemoveWhiteSpaces().ToUpperTrim());
-            if (!itemValue.IsDefault())
-                result = itemValue.Value;
-
-            return result;
-        }
+        public static string SurroundWithDoubleQuotes(this string text) => SurroundWith(text, "\"");
+        public static string Quoted(this string str) => "\"" + str + "\"";
+        public static string SurroundWith(this string text, string ends) => ends + text + ends;
 
         /// <summary>
         ///     Determines whether the specified string can convert to <see cref="System.Decimal" />.
@@ -85,7 +24,7 @@ namespace Binarysharp.MemoryManagement.Extensions
         /// <returns>Returns <c>true</c> if the conversion of input string was successfull. Otherwise, it returns <c>false</c>.</returns>
         public static bool IsDecimal(this string value)
         {
-            decimal result = 0;
+            decimal result;
             return decimal.TryParse(value.Replace(".", ","), NumberStyles.Currency, CultureInfo.CurrentCulture,
                 out result);
         }
@@ -101,11 +40,10 @@ namespace Binarysharp.MemoryManagement.Extensions
         public static decimal ToDecimal(this string value)
         {
             decimal result = 0;
-            if (decimal.TryParse(value.Replace(".", ","), NumberStyles.Currency, CultureInfo.CurrentCulture,
-                out result))
-                return result;
-
-            return default(decimal);
+            return decimal.TryParse(value.Replace(".", ","), NumberStyles.Currency, CultureInfo.CurrentCulture,
+                out result)
+                ? result
+                : default(decimal);
         }
 
         /// <summary>
@@ -228,7 +166,7 @@ namespace Binarysharp.MemoryManagement.Extensions
         ///     If <c>null</c> then use <see cref="Encoding">Inflop.Common.Settings.Default.Encoding</see>.
         /// </param>
         /// <returns></returns>
-        public static string ToSHA256Hash(this string value, Encoding encoding)
+        public static string ToSha256Hash(this string value, Encoding encoding)
         {
             var e = encoding ?? Encoding.UTF8;
             byte[] hashValue = null;
@@ -272,7 +210,7 @@ namespace Binarysharp.MemoryManagement.Extensions
         /// </summary>
         /// <param name="value">The input string to check.</param>
         /// <returns>Returns <see langword="true" /> if valid, otherwise returns <see langword="false" />.</returns>
-        public static bool IsValidNIP(this string value)
+        public static bool IsValidNip(this string value)
         {
             int[] weights = {6, 5, 7, 2, 3, 4, 5, 6, 7};
             var result = false;
@@ -295,7 +233,7 @@ namespace Binarysharp.MemoryManagement.Extensions
         /// </summary>
         /// <param name="value">The input string to check.</param>
         /// <returns>Returns <see langword="true" /> if valid, otherwise returns <see langword="false" />.</returns>
-        public static bool IsValidREGON(this string value)
+        public static bool IsValidRegon(this string value)
         {
             int controlSum;
             if (value.Length == 7 || value.Length == 9)
@@ -329,7 +267,7 @@ namespace Binarysharp.MemoryManagement.Extensions
         /// </summary>
         /// <param name="value">The input string to check.</param>
         /// <returns>Returns <see langword="true" /> if valid, otherwise returns <see langword="false" />.</returns>
-        public static bool IsValidPESEL(this string value)
+        public static bool IsValidPesel(this string value)
         {
             int[] weights = {1, 3, 7, 9, 1, 3, 7, 9, 1, 3};
             var result = false;
@@ -395,6 +333,7 @@ namespace Binarysharp.MemoryManagement.Extensions
                 return default(T);
             }
         }
+
         #endregion
     }
 }

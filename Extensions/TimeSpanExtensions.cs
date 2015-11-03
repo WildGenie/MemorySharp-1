@@ -8,15 +8,12 @@ namespace Binarysharp.MemoryManagement.Extensions
     public static class TimeSpanExtensions
     {
         #region Methods
-        public static DateTime ToDateTime(this TimeSpan self)
-        {
-            return new DateTime(1, 1, 1).Add(self);
-        }
+
+        public static DateTime ToDateTime(this TimeSpan self) => new DateTime(1, 1, 1).Add(self);
 
         public static TimeSpan TrimMilliseconds(this TimeSpan self)
-        {
-            return self.Add(TimeSpan.FromMilliseconds(-self.Milliseconds));
-        }
+            => self.Add(TimeSpan.FromMilliseconds(-self.Milliseconds));
+
         #endregion
     }
 }

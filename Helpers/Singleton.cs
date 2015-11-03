@@ -16,10 +16,12 @@ namespace Binarysharp.MemoryManagement.Helpers
     public static class Singleton<T> where T : new()
     {
         #region  Fields
+
         /// <summary>
         ///     Gets the singleton of the given type.
         /// </summary>
         public static readonly T Instance = new T();
+
         #endregion
     }
 }

@@ -18,6 +18,7 @@ using System;
 using System.Collections;
 using System.Text;
 using Binarysharp.MemoryManagement.Helpers;
+using Binarysharp.MemoryManagement.Logging;
 using Binarysharp.MemoryManagement.Tools;
 
 namespace Binarysharp.MemoryManagement.Extensions
@@ -28,19 +29,22 @@ namespace Binarysharp.MemoryManagement.Extensions
     public static class ExceptionExtensions
     {
         #region  Fields
+
         /// <summary>
         /// </summary>
         private static int _exceptionLevel;
+
         #endregion
 
         #region Methods
+
         /// <summary>
         ///     Logs full information about the exception.
         /// </summary>
         /// <param name="ex">Thrown an exception to be logged.</param>
-        public static void Log(this Exception ex)
+        public static void Log(this Exception ex, ILog log)
         {
-            Logger.Log.Error(ex.FullInfo());
+            log.LogError(ex.ExtractDetailedInformation());
         }
 
         /// <summary>
@@ -49,7 +53,7 @@ namespace Binarysharp.MemoryManagement.Extensions
         /// <param name="ex">Thrown an exception to be reported.</param>
         /// <param name="htmlFormatted">Replace newline to HTML tag. Default <c>false</c>. </param>
         /// <returns></returns>
-        public static string FullInfo(this Exception ex, bool htmlFormatted = false)
+        public static string ExtractDetailedInformation(this Exception ex, bool htmlFormatted = false)
         {
             var sb = new StringBuilder();
             var boldFontTagOpen = htmlFormatted ? "<b>" : "";
@@ -83,7 +87,7 @@ namespace Binarysharp.MemoryManagement.Extensions
 
             while (innerException.IsNotNull())
             {
-                sb.Append(innerException.FullInfo());
+                sb.Append(innerException.ExtractDetailedInformation());
                 innerException = _exceptionLevel > 1 ? innerException?.InnerException : null;
             }
 
@@ -95,22 +99,15 @@ namespace Binarysharp.MemoryManagement.Extensions
         }
 
         /// <summary>
-        ///     Sends an email with <see cref="ExceptionExtensions.FullInfo(Exception, bool)" /> to address defined in the
+        ///     Sends an email with <see cref="ExtractDetailedInformation" /> to address defined in the emailer.
         /// </summary>
         /// <param name="ex">Thrown an exception to be reported.</param>
         /// <param name="emailer">The emailer Instance.</param>
-        public static void SendToEmail(this Exception ex, Emailer emailer)
+        public static void SendDetailedInfoSendToEmail(this Exception ex, Emailer emailer)
         {
-            emailer.SendMe($"{ApplicationFinder.Name} - {ex.GetType()}{ex.FullInfo(true)}", "Exception log");
-        }
-
-        /// <summary>
-        ///     Logs the exception.
-        /// </summary>
-        /// <param name="exception">The exception.</param>
-        public static void LogException(this Exception exception)
-        {
-            Logger.Log.Error(exception.ToString());
+            emailer.SendMe(
+                $"{ApplicationFinder.DefaultApplicationName} - {ex.GetType()}{ex.ExtractDetailedInformation(true)}",
+                "Exception log");
         }
 
         /// <summary>
@@ -158,6 +155,7 @@ namespace Binarysharp.MemoryManagement.Extensions
             if (exception == null) return string.Empty;
             return exception.InnerException?.ToString() ?? exception.ToString();
         }
+
         #endregion
     }
 }
