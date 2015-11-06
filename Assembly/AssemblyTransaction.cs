@@ -9,7 +9,8 @@
 
 using System;
 using System.Text;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Core.Marshaling;
+using Binarysharp.MemoryManagement.RemoteProcess;
 
 namespace Binarysharp.MemoryManagement.Assembly
 {
@@ -19,7 +20,58 @@ namespace Binarysharp.MemoryManagement.Assembly
     /// </summary>
     public class AssemblyTransaction : IDisposable
     {
-        #region  Interface members
+        /// <summary>
+        ///     The reference of the <see cref="MemorySharp" /> object.
+        /// </summary>
+        protected readonly MemorySharp MemorySharp;
+
+        /// <summary>
+        ///     The exit code of the thread created to execute the assembly code.
+        /// </summary>
+        protected IntPtr ExitCode;
+
+        /// <summary>
+        ///     The builder contains all the mnemonics inserted by the user.
+        /// </summary>
+        protected StringBuilder Mnemonics;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="AssemblyTransaction" /> class.
+        /// </summary>
+        /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
+        /// <param name="address">The address where the assembly code is injected.</param>
+        /// <param name="autoExecute">Indicates whether the assembly code is executed once the object is disposed.</param>
+        public AssemblyTransaction(MemorySharp memorySharp, IntPtr address, bool autoExecute)
+        {
+            // Save the parameters
+            MemorySharp = memorySharp;
+            IsAutoExecuted = autoExecute;
+            Address = address;
+            // Initialize the string builder
+            Mnemonics = new StringBuilder();
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="AssemblyTransaction" /> class.
+        /// </summary>
+        /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
+        /// <param name="autoExecute">Indicates whether the assembly code is executed once the object is disposed.</param>
+        public AssemblyTransaction(MemorySharp memorySharp, bool autoExecute)
+            : this(memorySharp, IntPtr.Zero, autoExecute)
+        {
+        }
+
+        /// <summary>
+        ///     The address where to assembly code is assembled.
+        /// </summary>
+        public IntPtr Address { get; }
+
+        /// <summary>
+        ///     Gets the value indicating whether the assembly code is executed once the object is disposed.
+        /// </summary>
+        public bool IsAutoExecuted { get; set; }
+
+        #region IDisposable Members
 
         /// <summary>
         ///     Releases all resources used by the <see cref="AssemblyTransaction" /> object.
@@ -49,71 +101,6 @@ namespace Binarysharp.MemoryManagement.Assembly
         }
 
         #endregion
-
-        #region  Fields
-
-        /// <summary>
-        ///     The reference of the <see cref="MemorySharp" /> object.
-        /// </summary>
-        protected readonly MemorySharp MemorySharp;
-
-        /// <summary>
-        ///     The exit code of the thread created to execute the assembly code.
-        /// </summary>
-        protected IntPtr ExitCode;
-
-        /// <summary>
-        ///     The builder contains all the mnemonics inserted by the user.
-        /// </summary>
-        protected StringBuilder Mnemonics;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="AssemblyTransaction" /> class.
-        /// </summary>
-        /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
-        /// <param name="address">The address where the assembly code is injected.</param>
-        /// <param name="autoExecute">Indicates whether the assembly code is executed once the object is disposed.</param>
-        public AssemblyTransaction(MemorySharp memorySharp, IntPtr address, bool autoExecute)
-        {
-            // Save the parameters
-            MemorySharp = memorySharp;
-            IsAutoExecuted = autoExecute;
-            Address = address;
-            // Initialize the string builder
-            Mnemonics = new StringBuilder();
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="AssemblyTransaction" /> class.
-        /// </summary>
-        /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
-        /// <param name="autoExecute">Indicates whether the assembly code is executed once the object is disposed.</param>
-        public AssemblyTransaction(MemorySharp memorySharp, bool autoExecute)
-            : this(memorySharp, IntPtr.Zero, autoExecute)
-        {
-        }
-
-        #endregion
-
-        #region  Properties
-
-        /// <summary>
-        ///     The address where to assembly code is assembled.
-        /// </summary>
-        public IntPtr Address { get; }
-
-        /// <summary>
-        ///     Gets the value indicating whether the assembly code is executed once the object is disposed.
-        /// </summary>
-        public bool IsAutoExecuted { get; set; }
-
-        #endregion
-
-        #region Methods
 
         /// <summary>
         ///     Adds a mnemonic to the transaction.
@@ -147,7 +134,7 @@ namespace Binarysharp.MemoryManagement.Assembly
         /// </summary>
         public T GetExitCode<T>()
         {
-            return SafeMarshalType<T>.PtrToObject(MemorySharp, ExitCode);
+            return RemoteMarshal<T>.PtrToObject(MemorySharp, ExitCode);
         }
 
         /// <summary>
@@ -160,7 +147,5 @@ namespace Binarysharp.MemoryManagement.Assembly
         {
             Mnemonics.Insert(index, string.Format(asm, args));
         }
-
-        #endregion
     }
 }

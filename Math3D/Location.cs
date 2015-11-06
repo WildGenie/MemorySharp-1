@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 
@@ -51,6 +52,21 @@ namespace Binarysharp.MemoryManagement.Math3D
         }
 
         /// <summary>
+        ///     The length.
+        /// </summary>
+        public double Length => Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2));
+
+        /// <summary>
+        ///     Gets the <code>float</code> angle of the vector.
+        /// </summary>
+        public float Angle => (float) Math.Atan2(Y, X);
+
+        /// <summary>
+        ///     Gets a new location instance with 0,0,0 as te values.
+        /// </summary>
+        public static Location Zero => new Location(0, 0, 0);
+
+        /// <summary>
         ///     Distances to.
         /// </summary>
         /// <param name="loc">The loc.</param>
@@ -71,11 +87,6 @@ namespace Binarysharp.MemoryManagement.Math3D
         {
             return Math.Sqrt(Math.Pow(X - loc.X, 2) + Math.Pow(Y - loc.Y, 2));
         }
-
-        /// <summary>
-        ///     The length.
-        /// </summary>
-        public double Length => Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2));
 
         /// <summary>
         ///     Normalizes this instance.
@@ -118,8 +129,6 @@ namespace Binarysharp.MemoryManagement.Math3D
             return new Vector3(X, Y, Z);
         }
 
-        public float Angle => (float) Math.Atan2(Y, X);
-
         /// <summary>
         ///     Equalses the specified object.
         /// </summary>
@@ -131,15 +140,15 @@ namespace Binarysharp.MemoryManagement.Math3D
                 return false;
 
             var loc = (Location) obj;
-            if (loc.X != X || loc.Y != Y || loc.Z != Z)
-                return false;
-            return true;
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            return loc.X == X && loc.Y == Y && loc.Z == Z;
         }
 
         /// <summary>
         ///     Gets the hash code.
         /// </summary>
         /// <returns>System.Int32.</returns>
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             return X.GetHashCode() | Y.GetHashCode() | Z.GetHashCode();
@@ -184,7 +193,5 @@ namespace Binarysharp.MemoryManagement.Math3D
         {
             return !a.Equals(b);
         }
-
-        public static Location Zero => new Location(0, 0, 0);
     }
 }

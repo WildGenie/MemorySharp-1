@@ -16,8 +16,6 @@ namespace Binarysharp.MemoryManagement.Assembly.CallingConvention
     /// </summary>
     public interface ICallingConvention
     {
-        #region  Properties
-
         /// <summary>
         ///     The name of the calling convention.
         /// </summary>
@@ -27,10 +25,6 @@ namespace Binarysharp.MemoryManagement.Assembly.CallingConvention
         ///     Defines which function performs the clean-up task.
         /// </summary>
         CleanupTypes Cleanup { get; }
-
-        #endregion
-
-        #region Methods
 
         /// <summary>
         ///     Formats the given parameters to call a function.
@@ -52,7 +46,5 @@ namespace Binarysharp.MemoryManagement.Assembly.CallingConvention
         /// <param name="nbParameters">The number of parameters to clean.</param>
         /// <returns>The mnemonics to clean a given number of parameters.</returns>
         string FormatCleaning(int nbParameters);
-
-        #endregion
     }
 }

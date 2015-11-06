@@ -8,35 +8,18 @@ namespace Binarysharp.MemoryManagement.Math3D
     /// <summary>
     ///     Class that holds information about a 2d-coordinate and offers some basic operations.
     /// </summary>
+    [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
     public struct Vector2
     {
-        #region VARIABLES
-
+        /// <summary>
+        ///     The x
+        /// </summary>
         public float X;
+
+        /// <summary>
+        ///     The y
+        /// </summary>
         public float Y;
-
-        #endregion VARIABLES
-
-        #region PROPERTIES
-
-        /// <summary>
-        ///     Returns a new Vector3 at (1,0)
-        /// </summary>
-        public static Vector2 UnitX => new Vector2(1, 0);
-
-        /// <summary>
-        ///     Returns a new Vector2 at (0,1)
-        /// </summary>
-        public static Vector2 UnitY => new Vector2(0, 1);
-
-        /// <summary>
-        ///     Returns a new Vector2 at (0,0)
-        /// </summary>
-        public static Vector2 Zero => new Vector2(0, 0);
-
-        #endregion PROPERTIES
-
-        #region CONSTRUCTOR
 
         /// <summary>
         ///     Initializes a new Vector2 using the given values
@@ -65,38 +48,26 @@ namespace Binarysharp.MemoryManagement.Math3D
         {
         }
 
-        #endregion CONSTRUCTOR
-
-        #region METHODS
+        /// <summary>
+        ///     Returns a new Vector3 at (1,0)
+        /// </summary>
+        public static Vector2 UnitX => new Vector2(1, 0);
 
         /// <summary>
-        ///     Returns the distance from this Vector2 to the given Vector2
+        ///     Returns a new Vector2 at (0,1)
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public float DistanceTo(Vector2 other) => (this + other).Length();
-
-        public override bool Equals(object obj)
-        {
-            var vec = (Vector2) obj;
-            return GetHashCode() == vec.GetHashCode();
-        }
-
-        public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();
+        public static Vector2 UnitY => new Vector2(0, 1);
 
         /// <summary>
-        ///     Returns the length of this Vector2
+        ///     Returns a new Vector2 at (0,0)
         /// </summary>
-        /// <returns></returns>
-        public float Length() => (float) Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2));
+        public static Vector2 Zero => new Vector2(0, 0);
 
-        public override string ToString()
-            => $"[X={X.ToString(CultureInfo.InvariantCulture)}, Y={Y.ToString(CultureInfo.InvariantCulture)}]";
-
-        #endregion METHODS
-
-        #region OPERATORS
-
+        /// <summary>
+        ///     Indexor for the vector <code>float x,y,z</code>
+        /// </summary>
+        /// <param name="i"></param>
+        /// <exception cref="IndexOutOfRangeException"></exception>
         public float this[int i]
         {
             get
@@ -131,14 +102,88 @@ namespace Binarysharp.MemoryManagement.Math3D
             }
         }
 
+        /// <summary>
+        ///     Returns the distance from this Vector2 to the given Vector2
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public float DistanceTo(Vector2 other) => (this + other).Length();
+
+        /// <summary>
+        ///     Determines whether the specified object is equal to the current object.
+        /// </summary>
+        /// <returns>
+        ///     true if the specified object  is equal to the current object; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The object to compare with the current object. </param>
+        /// <filterpriority>2</filterpriority>
+        public override bool Equals(object obj)
+        {
+            var vec = (Vector2) obj;
+            return GetHashCode() == vec.GetHashCode();
+        }
+
+        /// <summary>
+        ///     Serves as the default hash function.
+        /// </summary>
+        /// <returns>
+        ///     A hash code for the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();
+
+        /// <summary>
+        ///     Returns the length of this Vector2
+        /// </summary>
+        /// <returns></returns>
+        public float Length() => (float) Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2));
+
+        /// <summary>
+        ///     To the string.
+        /// </summary>
+        /// <returns>System.String.</returns>
+        public override string ToString()
+            => $"[X={X.ToString(CultureInfo.InvariantCulture)}, Y={Y.ToString(CultureInfo.InvariantCulture)}]";
+
+        /// <summary>
+        ///     Implements the operator -.
+        /// </summary>
+        /// <param name="v1">The v1.</param>
+        /// <param name="v2">The v2.</param>
+        /// <returns>The result of the operator.</returns>
         public static Vector2 operator -(Vector2 v1, Vector2 v2) => new Vector2(v1.X - v2.X, v1.Y - v2.Y);
+
+        /// <summary>
+        ///     Implements the operator !=.
+        /// </summary>
+        /// <param name="v1">The v1.</param>
+        /// <param name="v2">The v2.</param>
+        /// <returns>The result of the operator.</returns>
         public static bool operator !=(Vector2 v1, Vector2 v2) => !(v1 == v2);
+
+        /// <summary>
+        ///     Implements the operator *.
+        /// </summary>
+        /// <param name="v1">The v1.</param>
+        /// <param name="scalar">The scalar.</param>
+        /// <returns>The result of the operator.</returns>
         public static Vector2 operator *(Vector2 v1, float scalar) => new Vector2(v1.X*scalar, v1.Y*scalar);
+
+        /// <summary>
+        ///     Implements the operator +.
+        /// </summary>
+        /// <param name="v1">The v1.</param>
+        /// <param name="v2">The v2.</param>
+        /// <returns>The result of the operator.</returns>
         public static Vector2 operator +(Vector2 v1, Vector2 v2) => new Vector2(v1.X + v2.X, v1.Y + v2.Y);
 
+        /// <summary>
+        ///     Implements the operator ==.
+        /// </summary>
+        /// <param name="v1">The v1.</param>
+        /// <param name="v2">The v2.</param>
+        /// <returns>The result of the operator.</returns>
         [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
         public static bool operator ==(Vector2 v1, Vector2 v2) => v1.X == v2.X && v1.Y == v2.Y;
-
-        #endregion OPERATORS
     }
 }

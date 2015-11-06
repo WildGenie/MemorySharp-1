@@ -7,7 +7,7 @@
  * See the file LICENSE for more information.
 */
 
-using Binarysharp.MemoryManagement.Memory.Remote;
+using Binarysharp.MemoryManagement.RemoteProcess.Memory;
 
 namespace Binarysharp.MemoryManagement.Native
 {
@@ -16,8 +16,6 @@ namespace Binarysharp.MemoryManagement.Native
     /// </summary>
     public sealed class NativeDriver32 : NativeDriverBase
     {
-        #region Constructors
-
         /// <summary>
         ///     Initializes a new instance of the class <see cref="NativeDriver32" />.
         /// </summary>
@@ -27,15 +25,9 @@ namespace Binarysharp.MemoryManagement.Native
             MemoryCore = new MemoryCore32();
         }
 
-        #endregion
-
-        #region  Properties
-
         /// <summary>
         ///     Memory interaction for 32-bit architecture.
         /// </summary>
         public override IMemoryCore MemoryCore { get; protected set; }
-
-        #endregion
     }
 }

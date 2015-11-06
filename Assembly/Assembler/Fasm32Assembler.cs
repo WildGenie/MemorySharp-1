@@ -18,7 +18,7 @@ namespace Binarysharp.MemoryManagement.Assembly.Assembler
     /// </summary>
     public class Fasm32Assembler : IAssembler
     {
-        #region  Interface members
+        #region IAssembler Members
 
         /// <summary>
         ///     Assemble the specified assembly code.

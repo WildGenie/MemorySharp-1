@@ -12,9 +12,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Binarysharp.MemoryManagement.Assembly.Assembler;
 using Binarysharp.MemoryManagement.Assembly.CallingConvention;
-using Binarysharp.MemoryManagement.Internals;
-using Binarysharp.MemoryManagement.Memory.Remote;
-using Binarysharp.MemoryManagement.Threading;
+using Binarysharp.MemoryManagement.Core.Marshaling;
+using Binarysharp.MemoryManagement.Managment.Builders;
+using Binarysharp.MemoryManagement.RemoteProcess;
+using Binarysharp.MemoryManagement.RemoteProcess.Memory;
+using Binarysharp.MemoryManagement.RemoteProcess.Threading;
 
 namespace Binarysharp.MemoryManagement.Assembly
 {
@@ -23,16 +25,10 @@ namespace Binarysharp.MemoryManagement.Assembly
     /// </summary>
     public class AssemblyFactory : IFactory
     {
-        #region  Fields
-
         /// <summary>
         ///     The reference of the <see cref="MemorySharp" /> object.
         /// </summary>
         protected readonly MemorySharp MemorySharp;
-
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="AssemblyFactory" /> class.
@@ -46,18 +42,12 @@ namespace Binarysharp.MemoryManagement.Assembly
             Assembler = new Fasm32Assembler();
         }
 
-        #endregion
-
-        #region  Properties
-
         /// <summary>
         ///     The assembler used by the factory.
         /// </summary>
         public IAssembler Assembler { get; set; }
 
-        #endregion
-
-        #region  Interface members
+        #region IFactory Members
 
         /// <summary>
         ///     Releases all resources used by the <see cref="AssemblyFactory" /> object.
@@ -68,8 +58,6 @@ namespace Binarysharp.MemoryManagement.Assembly
         }
 
         #endregion
-
-        #region Methods
 
         /// <summary>
         ///     Begins a new transaction to inject and execute assembly code into the process at the specified address.
@@ -521,7 +509,5 @@ namespace Binarysharp.MemoryManagement.Assembly
         {
             return InjectAndExecuteAsync<IntPtr>(asm);
         }
-
-        #endregion
     }
 }

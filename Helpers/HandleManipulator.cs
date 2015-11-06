@@ -1,13 +1,4 @@
-﻿/*
- * MemorySharp Library
- * http://www.binarysharp.com/
- *
- * Copyright (C) 2012-2014 Jämes Ménétrey (a.k.a. ZenLulz).
- * This library is released under the MIT License.
- * See the file LICENSE for more information.
-*/
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -20,8 +11,6 @@ namespace Binarysharp.MemoryManagement.Helpers
     /// </summary>
     public static class HandleManipulator
     {
-        #region Methods
-
         /// <summary>
         ///     Closes an open object handle.
         /// </summary>
@@ -140,7 +129,5 @@ namespace Binarysharp.MemoryManagement.Helpers
             if (handle.IsClosed || handle.IsInvalid)
                 throw new ArgumentException("The handle is not valid or closed.", argumentName);
         }
-
-        #endregion
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Binarysharp.MemoryManagement.Patterns
+﻿namespace Binarysharp.MemoryManagement.Core.Shared.Patterns
 {
     /// <summary>
     ///     A class that represents basic pattrn scanning properties.

@@ -8,7 +8,7 @@
 */
 
 using System;
-using Binarysharp.MemoryManagement.Memory.Remote;
+using Binarysharp.MemoryManagement.RemoteProcess.Memory;
 
 namespace Binarysharp.MemoryManagement.Native
 {
@@ -17,16 +17,21 @@ namespace Binarysharp.MemoryManagement.Native
     /// </summary>
     public abstract class NativeDriverBase
     {
-        #region  Fields
-
         /// <summary>
         ///     The default native driver.
         /// </summary>
         private static readonly Lazy<NativeDriverBase> DefaultDriver = new Lazy<NativeDriverBase>(GetDefaultNativeDriver);
 
-        #endregion
+        /// <summary>
+        ///     Gets the default native driver.
+        /// </summary>
+        /// <remarks>The type of this driver depends on the architecture of the application that uses MemorySharp.</remarks>
+        public static NativeDriverBase Default => DefaultDriver.Value;
 
-        #region Methods
+        /// <summary>
+        ///     The memory interaction.
+        /// </summary>
+        public abstract IMemoryCore MemoryCore { get; protected set; }
 
         /// <summary>
         ///     Determines which native driver must be used as default.
@@ -43,22 +48,5 @@ namespace Binarysharp.MemoryManagement.Native
             // Else use a 32-bit driver
             return new NativeDriver32();
         }
-
-        #endregion
-
-        #region  Properties
-
-        /// <summary>
-        ///     Gets the default native driver.
-        /// </summary>
-        /// <remarks>The type of this driver depends on the architecture of the application that uses MemorySharp.</remarks>
-        public static NativeDriverBase Default => DefaultDriver.Value;
-
-        /// <summary>
-        ///     The memory interaction.
-        /// </summary>
-        public abstract IMemoryCore MemoryCore { get; protected set; }
-
-        #endregion
     }
 }

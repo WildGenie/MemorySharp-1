@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Binarysharp.MemoryManagement.Internals;
-using Binarysharp.MemoryManagement.Memory;
-using Binarysharp.MemoryManagement.Modules;
+using Binarysharp.MemoryManagement.Managment.Builders;
+using Binarysharp.MemoryManagement.RemoteProcess.Modules;
 
-namespace Binarysharp.MemoryManagement.Patterns
+namespace Binarysharp.MemoryManagement.Core.Shared.Patterns
 {
     /// <summary>
     /// </summary>
     public class PatternFactory : IFactory
     {
         /// <summary>
-        ///     The reference of the <see cref="Memory.ProcessMemory" /> object.
+        ///     The reference of the <see cref="Core.Shared.ProcessMemory" /> object.
         /// </summary>
         protected readonly ProcessMemory ProcessMemory;
 
@@ -46,6 +45,8 @@ namespace Binarysharp.MemoryManagement.Patterns
             set { ModuleData = value; }
         }
 
+        #region IFactory Members
+
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -53,6 +54,8 @@ namespace Binarysharp.MemoryManagement.Patterns
         {
             // Nothing at the moment.
         }
+
+        #endregion
 
         /// <summary>
         ///     Adds all pointers found from scanning a xml file to a given dictonary using the IDictonary interface.
@@ -62,7 +65,7 @@ namespace Binarysharp.MemoryManagement.Patterns
         public void CollectXmlPatternScanResults(string xmlFileNameOrPath,
             IDictionary<string, IntPtr> thePointerDictionary)
         {
-            var patterns = PatternCore.LoadXmlPatternFile(xmlFileNameOrPath);
+            var patterns = PatternData.LoadXmlPatternFile(xmlFileNameOrPath);
             foreach (var pattern in patterns)
             {
                 thePointerDictionary.Add(pattern.Description, Find(pattern).Address);
@@ -92,8 +95,8 @@ namespace Binarysharp.MemoryManagement.Patterns
         /// <returns>A new <see cref="ScanResult" /></returns>
         public ScanResult Find(string patternText, int offsetToAdd, bool isOffsetMode, bool reBase)
         {
-            var bytes = PatternCore.GetBytesFromDwordPattern(patternText);
-            var mask = PatternCore.GetMaskFromDwordPattern(patternText);
+            var bytes = PatternData.GetBytesFromDwordPattern(patternText);
+            var mask = PatternData.GetMaskFromDwordPattern(patternText);
             return Find(bytes, mask, offsetToAdd, isOffsetMode, reBase);
         }
 

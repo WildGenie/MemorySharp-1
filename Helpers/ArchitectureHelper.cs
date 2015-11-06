@@ -1,13 +1,4 @@
-﻿/*
- * MemorySharp Library
- * http://www.binarysharp.com/
- *
- * Copyright (C) 2012-2014 Jämes Ménétrey (a.k.a. ZenLulz).
- * This library is released under the MIT License.
- * See the file LICENSE for more information.
-*/
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using Binarysharp.MemoryManagement.Native;
@@ -19,8 +10,6 @@ namespace Binarysharp.MemoryManagement.Helpers
     /// </summary>
     public static class ArchitectureHelper
     {
-        #region  Properties
-
         /// <summary>
         ///     Determines whether the current process is a 32-bit process.
         /// </summary>
@@ -40,10 +29,6 @@ namespace Binarysharp.MemoryManagement.Helpers
         ///     Determines whether the current operating system is a 64-bit operating system.
         /// </summary>
         public static bool Is64BitOperatingSystem => Environment.Is64BitOperatingSystem;
-
-        #endregion
-
-        #region Methods
 
         /// <summary>
         ///     Determines whether the specified process is running under WOW64.
@@ -87,7 +72,5 @@ namespace Binarysharp.MemoryManagement.Helpers
 
             return architecture;
         }
-
-        #endregion
     }
 }

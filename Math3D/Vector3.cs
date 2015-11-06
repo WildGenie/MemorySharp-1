@@ -25,26 +25,6 @@ namespace Binarysharp.MemoryManagement.Math3D
         public float Z;
 
         /// <summary>
-        ///     Returns a new Vector3 at (1,0,0).
-        /// </summary>
-        public static Vector3 UnitX => new Vector3(1, 0, 0);
-
-        /// <summary>
-        ///     Returns a new Vector3 at (0,1,0).
-        /// </summary>
-        public static Vector3 UnitY => new Vector3(0, 1, 0);
-
-        /// <summary>
-        ///     Returns a new Vector3 at (0,0,1).
-        /// </summary>
-        public static Vector3 UnitZ => new Vector3(0, 0, 1);
-
-        /// <summary>
-        ///     Returns a new Vector3 at (0,0,0).
-        /// </summary>
-        public static Vector3 Zero => new Vector3(0, 0, 0);
-
-        /// <summary>
         ///     Initializes a new Vector3 using the given values.
         /// </summary>
         /// <param name="x">The X location of the vector3.</param>
@@ -71,6 +51,72 @@ namespace Binarysharp.MemoryManagement.Math3D
         /// <param name="values">An array of floats containing [0] X float [1] Y float [2] Z float.</param>
         public Vector3(IReadOnlyList<float> values) : this(values[0], values[1], values[2])
         {
+        }
+
+        /// <summary>
+        ///     Returns a new Vector3 at (1,0,0).
+        /// </summary>
+        public static Vector3 UnitX => new Vector3(1, 0, 0);
+
+        /// <summary>
+        ///     Returns a new Vector3 at (0,1,0).
+        /// </summary>
+        public static Vector3 UnitY => new Vector3(0, 1, 0);
+
+        /// <summary>
+        ///     Returns a new Vector3 at (0,0,1).
+        /// </summary>
+        public static Vector3 UnitZ => new Vector3(0, 0, 1);
+
+        /// <summary>
+        ///     Returns a new Vector3 at (0,0,0).
+        /// </summary>
+        public static Vector3 Zero => new Vector3(0, 0, 0);
+
+        /// <summary>
+        ///     Indexer.
+        /// </summary>
+        /// <param name="i">Index of the X-Y-Z float array.</param>
+        /// <exception cref="IndexOutOfRangeException">The index accsessed was > [0]/[1]/[3].</exception>
+        public float this[int i]
+        {
+            get
+            {
+                switch (i)
+                {
+                    case 0:
+                        return X;
+
+                    case 1:
+                        return Y;
+
+                    case 2:
+                        return Z;
+
+                    default:
+                        throw new IndexOutOfRangeException();
+                }
+            }
+            set
+            {
+                switch (i)
+                {
+                    case 0:
+                        X = value;
+                        break;
+
+                    case 1:
+                        Y = value;
+                        break;
+
+                    case 2:
+                        Z = value;
+                        break;
+
+                    default:
+                        throw new IndexOutOfRangeException();
+                }
+            }
         }
 
         /// <summary>
@@ -123,52 +169,6 @@ namespace Binarysharp.MemoryManagement.Math3D
         public override string ToString()
         {
             return $"[X={X}, Y={Y}, Z={Z}]";
-        }
-
-        /// <summary>
-        ///     Indexer.
-        /// </summary>
-        /// <param name="i">Index of the X-Y-Z float array.</param>
-        /// <exception cref="IndexOutOfRangeException">The index accsessed was > [0]/[1]/[3].</exception>
-        public float this[int i]
-        {
-            get
-            {
-                switch (i)
-                {
-                    case 0:
-                        return X;
-
-                    case 1:
-                        return Y;
-
-                    case 2:
-                        return Z;
-
-                    default:
-                        throw new IndexOutOfRangeException();
-                }
-            }
-            set
-            {
-                switch (i)
-                {
-                    case 0:
-                        X = value;
-                        break;
-
-                    case 1:
-                        Y = value;
-                        break;
-
-                    case 2:
-                        Z = value;
-                        break;
-
-                    default:
-                        throw new IndexOutOfRangeException();
-                }
-            }
         }
 #pragma warning disable 1591
         public static Vector3 operator -(Vector3 v1, Vector3 v2) => new Vector3(v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z);

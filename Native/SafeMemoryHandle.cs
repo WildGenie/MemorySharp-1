@@ -20,26 +20,6 @@ namespace Binarysharp.MemoryManagement.Native
     [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
     public sealed class SafeMemoryHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
-        #region Methods
-
-        /// <summary>
-        ///     Executes the code required to free the handle.
-        /// </summary>
-        /// <returns>
-        ///     True if the handle is released successfully; otherwise, in the event of a catastrophic failure, false. In this
-        ///     case, it generates a releaseHandleFailed MDA Managed Debugging Assistant.
-        /// </returns>
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        protected override bool ReleaseHandle()
-        {
-            // Check whether the handle is set AND whether the handle has been successfully closed
-            return handle != IntPtr.Zero && SafeNativeMethods.CloseHandle(handle);
-        }
-
-        #endregion
-
-        #region Constructors
-
         /// <summary>
         ///     Parameterless constructor for handles built by the system (like <see cref="SafeNativeMethods.OpenProcess" />).
         /// </summary>
@@ -56,6 +36,18 @@ namespace Binarysharp.MemoryManagement.Native
             SetHandle(handle);
         }
 
-        #endregion
+        /// <summary>
+        ///     Executes the code required to free the handle.
+        /// </summary>
+        /// <returns>
+        ///     True if the handle is released successfully; otherwise, in the event of a catastrophic failure, false. In this
+        ///     case, it generates a releaseHandleFailed MDA Managed Debugging Assistant.
+        /// </returns>
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+        protected override bool ReleaseHandle()
+        {
+            // Check whether the handle is set AND whether the handle has been successfully closed
+            return handle != IntPtr.Zero && SafeNativeMethods.CloseHandle(handle);
+        }
     }
 }

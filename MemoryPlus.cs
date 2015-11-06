@@ -1,10 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Binarysharp.MemoryManagement.Hooks;
-using Binarysharp.MemoryManagement.Managment;
-using Binarysharp.MemoryManagement.Memory;
-using Binarysharp.MemoryManagement.Memory.Local;
+using Binarysharp.MemoryManagement.Core;
+using Binarysharp.MemoryManagement.Core.Shared;
+using Binarysharp.MemoryManagement.LocalProcess;
+using Binarysharp.MemoryManagement.LocalProcess.Hooks;
+using Binarysharp.MemoryManagement.LocalProcess.Objects;
 
 namespace Binarysharp.MemoryManagement
 {
@@ -13,8 +14,6 @@ namespace Binarysharp.MemoryManagement
     /// </summary>
     public sealed class MemoryPlus : ProcessMemory, IEquatable<MemoryPlus>
     {
-        #region Constructors
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProcessMemory" /> class.
         /// </summary>
@@ -24,23 +23,6 @@ namespace Binarysharp.MemoryManagement
             Detours = new DetourManager(this);
             Hooks = new HookManager(this);
         }
-
-        #endregion
-
-        #region  Interface members
-
-        /// <summary>
-        ///     Returns a value indicating whether this instance is equal to a specified object.
-        /// </summary>
-        public bool Equals(MemoryPlus other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            return ReferenceEquals(this, other) || Handle.Equals(other.Handle);
-        }
-
-        #endregion
-
-        #region  Properties
 
         /// <summary>
         ///     A manager for Instances of the <see cref="DetourManager" /> class.
@@ -54,49 +36,18 @@ namespace Binarysharp.MemoryManagement
         /// <value>The Instance of <see cref="HookManager" />.</value>
         public HookManager Hooks { get; }
 
+        #region IEquatable<MemoryPlus> Members
+
+        /// <summary>
+        ///     Returns a value indicating whether this instance is equal to a specified object.
+        /// </summary>
+        public bool Equals(MemoryPlus other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return ReferenceEquals(this, other) || Handle.Equals(other.Handle);
+        }
+
         #endregion
-
-        #region Methods
-
-        /// <summary>
-        ///     Determines whether the specified object is equal to the current object.
-        /// </summary>
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((MemoryPlus) obj);
-        }
-
-        /// <summary>
-        ///     Implements the ==.
-        /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>The result of the operator.</returns>
-        public static bool operator ==(MemoryPlus left, MemoryPlus right)
-        {
-            return Equals(left, right);
-        }
-
-        /// <summary>
-        ///     Implements the !=.
-        /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>The result of the operator.</returns>
-        public static bool operator !=(MemoryPlus left, MemoryPlus right)
-        {
-            return !Equals(left, right);
-        }
-
-        /// <summary>
-        ///     Serves as a hash function for a particular type.
-        /// </summary>
-        public override int GetHashCode()
-        {
-            return Handle.GetHashCode();
-        }
 
         /// <summary>
         ///     Reads the specified amount of bytes from the specified address.
@@ -107,7 +58,7 @@ namespace Binarysharp.MemoryManagement
         /// <returns>An array of bytes.</returns>
         public override byte[] ReadBytes(IntPtr address, int count, bool isRelative = false)
         {
-            return InternalMemoryCore.ReadBytes(address, count, isRelative);
+            return LocalMemoryCore.ReadBytes(address, count, isRelative);
         }
 
         /// <summary>
@@ -119,7 +70,7 @@ namespace Binarysharp.MemoryManagement
         /// <returns>A value.</returns>
         public override T Read<T>(IntPtr address, bool isRelative = false)
         {
-            return InternalMemoryCore.Read<T>(address, isRelative);
+            return LocalMemoryCore.Read<T>(address, isRelative);
         }
 
         /// <summary>
@@ -132,7 +83,7 @@ namespace Binarysharp.MemoryManagement
         /// <returns>An array.</returns>
         public override T[] ReadArray<T>(IntPtr address, int count, bool isRelative = false)
         {
-            return InternalMemoryCore.ReadArray<T>(address, count, isRelative);
+            return LocalMemoryCore.ReadArray<T>(address, count, isRelative);
         }
 
         /// <summary>
@@ -143,7 +94,7 @@ namespace Binarysharp.MemoryManagement
         /// <param name="isRelative">if set to <c>true</c> [is relative].</param>
         public override void WriteBytes(IntPtr address, byte[] byteArray, bool isRelative = false)
         {
-            InternalMemoryCore.WriteBytes(address, byteArray, isRelative);
+            LocalMemoryCore.WriteBytes(address, byteArray, isRelative);
         }
 
         /// <summary>
@@ -155,7 +106,7 @@ namespace Binarysharp.MemoryManagement
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         public override void Write<T>(IntPtr address, T value, bool isRelative = false)
         {
-            InternalMemoryCore.Write(address, value);
+            LocalMemoryCore.Write(address, value);
         }
 
         /// <summary>
@@ -167,7 +118,7 @@ namespace Binarysharp.MemoryManagement
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         public override void WriteArray<T>(IntPtr address, T[] arrayOfValues, bool isRelative = false)
         {
-            InternalMemoryCore.WriteArray(address, arrayOfValues);
+            LocalMemoryCore.WriteArray(address, arrayOfValues);
         }
 
         /// <summary>
@@ -178,7 +129,7 @@ namespace Binarysharp.MemoryManagement
         /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
         public IntPtr GetFunctionPointer(Delegate @delegate)
         {
-            return InternalMemoryCore.GetFunctionPointer(@delegate);
+            return LocalMemoryCore.GetFunctionPointer(@delegate);
         }
 
         /// <summary>
@@ -190,7 +141,7 @@ namespace Binarysharp.MemoryManagement
         /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
         public IntPtr GetVirtualTablePointer(IntPtr address, int index)
         {
-            return InternalMemoryCore.GetVTablePointer(address, index);
+            return LocalMemoryCore.GetVTablePointer(address, index);
         }
 
         /// <summary>
@@ -250,6 +201,44 @@ namespace Binarysharp.MemoryManagement
             return Marshal.GetDelegateForFunctionPointer(isRelative ? ToAbsolute(address) : address, typeof (T)) as T;
         }
 
-        #endregion
+        /// <summary>
+        ///     Serves as a hash function for a particular type.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return Handle.GetHashCode();
+        }
+
+        /// <summary>
+        ///     Determines whether the specified object is equal to the current object.
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((MemoryPlus) obj);
+        }
+
+        /// <summary>
+        ///     Implements the ==.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator ==(MemoryPlus left, MemoryPlus right)
+        {
+            return Equals(left, right);
+        }
+
+        /// <summary>
+        ///     Implements the !=.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator !=(MemoryPlus left, MemoryPlus right)
+        {
+            return !Equals(left, right);
+        }
     }
 }

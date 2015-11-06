@@ -13,70 +13,44 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Binarysharp.MemoryManagement.Assembly;
+using Binarysharp.MemoryManagement.Core.Marshaling;
+using Binarysharp.MemoryManagement.Core.Shared;
 using Binarysharp.MemoryManagement.Helpers;
-using Binarysharp.MemoryManagement.Internals;
-using Binarysharp.MemoryManagement.Memory;
-using Binarysharp.MemoryManagement.Memory.Remote;
-using Binarysharp.MemoryManagement.Modules;
+using Binarysharp.MemoryManagement.Managment.Builders;
 using Binarysharp.MemoryManagement.Native;
-using Binarysharp.MemoryManagement.Threading;
-using Binarysharp.MemoryManagement.Windows;
+using Binarysharp.MemoryManagement.RemoteProcess.Memory;
+using Binarysharp.MemoryManagement.RemoteProcess.Modules;
+using Binarysharp.MemoryManagement.RemoteProcess.Threading;
+using Binarysharp.MemoryManagement.RemoteProcess.Windows;
 
 namespace Binarysharp.MemoryManagement
 {
     /// <summary>
     ///     Class for memory editing a remote process.
     /// </summary>
-    public class MemorySharp : ProcessMemory, IDisposable, IEquatable<MemorySharp>
+    public class MemorySharp : ProcessMemory, IEquatable<MemorySharp>
     {
-        #region Events
-
-        /// <summary>
-        ///     Raises when the <see cref="MemorySharp" /> object is disposed.
-        /// </summary>
-        public event EventHandler OnDispose;
-
-        #endregion
-
-        #region Misc
-
-        /// <summary>
-        ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.
-        /// </summary>
-        ~MemorySharp()
-        {
-            Dispose();
-        }
-
-        #endregion
-
-        #region  Fields
-
         /// <summary>
         ///     The factories embedded inside the library.
         /// </summary>
         protected List<IFactory> Factories;
 
         /// <summary>
-        ///     The Process Environment Block of the process.
+        ///     The ProcessUpdateData Environment Block of the process.
         /// </summary>
         /// <remarks>The operation is deferred because it can be potentially slow.</remarks>
         protected Lazy<ManagedPeb32> InternalPeb32;
 
         /// <summary>
-        ///     The Process Environment Block of the process.
+        ///     The ProcessUpdateData Environment Block of the process.
         /// </summary>
         /// <remarks>The operation is deferred because it can be potentially slow.</remarks>
         protected Lazy<ManagedPeb64> InternalPeb64;
 
-        #endregion
-
-        #region Constructors
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="MemorySharp" /> class.
         /// </summary>
-        /// <param name="process">Process to open.</param>
+        /// <param name="process">ProcessUpdateData to open.</param>
         public MemorySharp(Process process) : base(process)
         {
             // Save the reference of the process
@@ -113,7 +87,7 @@ namespace Binarysharp.MemoryManagement
         /// <summary>
         ///     Initializes a new instance of the <see cref="MemorySharp" /> class.
         /// </summary>
-        /// <param name="processId">Process id of the process to open.</param>
+        /// <param name="processId">ProcessUpdateData id of the process to open.</param>
         public MemorySharp(int processId)
             : this(ApplicationFinder.FromProcessId(processId))
         {
@@ -122,15 +96,11 @@ namespace Binarysharp.MemoryManagement
         /// <summary>
         ///     Initializes a new instance of the <see cref="MemorySharp" /> class.
         /// </summary>
-        /// <param name="processName">Process name of the process to open.</param>
+        /// <param name="processName">ProcessUpdateData name of the process to open.</param>
         public MemorySharp(string processName)
             : this(ApplicationFinder.FromProcessName(processName).FirstOrDefault())
         {
         }
-
-        #endregion
-
-        #region  Properties
 
         /// <summary>
         ///     Gets the architecture of the process.
@@ -181,14 +151,13 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         public ModuleFactory Modules { get; protected set; }
 
-
         /// <summary>
         ///     Gets the native driver to interact with the API system/architecture dependant.
         /// </summary>
         public NativeDriverBase NativeDriver { get; protected set; }
 
         /// <summary>
-        ///     The Process Environment Block of the process.
+        ///     The ProcessUpdateData Environment Block of the process.
         /// </summary>
         public ManagedPeb32 Peb32 => InternalPeb32.Value;
 
@@ -223,14 +192,23 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         public WindowFactory Windows { get; protected set; }
 
-        #endregion
+        #region IEquatable<MemorySharp> Members
 
-        #region  Interface members
+        /// <summary>
+        ///     Returns a value indicating whether this instance is equal to a specified object.
+        /// </summary>
+        public bool Equals(MemorySharp other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return ReferenceEquals(this, other) || SafeHandle.Equals(other.SafeHandle);
+        }
+
+        #endregion
 
         /// <summary>
         ///     Releases all resources used by the <see cref="MemorySharp" /> object.
         /// </summary>
-        public virtual void Dispose()
+        public override void Dispose()
         {
             // Raise the event OnDispose
             OnDispose?.Invoke(this, new EventArgs());
@@ -246,17 +224,9 @@ namespace Binarysharp.MemoryManagement
         }
 
         /// <summary>
-        ///     Returns a value indicating whether this instance is equal to a specified object.
+        ///     Raises when the <see cref="MemorySharp" /> object is disposed.
         /// </summary>
-        public bool Equals(MemorySharp other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            return ReferenceEquals(this, other) || SafeHandle.Equals(other.SafeHandle);
-        }
-
-        #endregion
-
-        #region Methods
+        public event EventHandler OnDispose;
 
         /// <summary>
         ///     Determines whether the specified object is equal to the current object.
@@ -337,7 +307,7 @@ namespace Binarysharp.MemoryManagement
         /// <returns>A value.</returns>
         public override T Read<T>(IntPtr address, bool isRelative = false)
         {
-            return SafeMarshalType<T>.ByteArrayToObject(ReadBytes(address, SafeMarshalType<T>.Size, isRelative));
+            return RemoteMarshal<T>.ByteArrayToObject(ReadBytes(address, RemoteMarshal<T>.Size, isRelative));
         }
 
         /// <summary>
@@ -367,7 +337,7 @@ namespace Binarysharp.MemoryManagement
             // Read the array in the remote process
             for (var i = 0; i < count; i++)
             {
-                array[i] = Read<T>(address + SafeMarshalType<T>.Size*i, isRelative);
+                array[i] = Read<T>(address + RemoteMarshal<T>.Size*i, isRelative);
             }
             return array;
         }
@@ -473,7 +443,7 @@ namespace Binarysharp.MemoryManagement
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         public override void Write<T>(IntPtr address, T value, bool isRelative = false)
         {
-            WriteBytes(address, SafeMarshalType<T>.ObjectToByteArray(value), isRelative);
+            WriteBytes(address, RemoteMarshal<T>.ObjectToByteArray(value), isRelative);
         }
 
         /// <summary>
@@ -500,7 +470,7 @@ namespace Binarysharp.MemoryManagement
             // Write the array in the remote process
             for (var i = 0; i < array.Length; i++)
             {
-                Write(address + SafeMarshalType<T>.Size*i, array[i], isRelative);
+                Write(address + RemoteMarshal<T>.Size*i, array[i], isRelative);
             }
         }
 
@@ -527,7 +497,7 @@ namespace Binarysharp.MemoryManagement
             // Change the protection of the memory to allow writable
             using (
                 new MemoryProtection(this, isRelative ? MakeAbsolute(address) : address,
-                    SafeMarshalType<byte>.Size*byteArray.Length))
+                    RemoteMarshal<byte>.Size*byteArray.Length))
             {
                 // Write the byte array
                 NativeDriver.MemoryCore.WriteBytes(SafeHandle, isRelative ? MakeAbsolute(address) : address, byteArray);
@@ -569,6 +539,12 @@ namespace Binarysharp.MemoryManagement
             WriteString(new IntPtr(Convert.ToInt64(address)), text, isRelative);
         }
 
-        #endregion
+        /// <summary>
+        ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.
+        /// </summary>
+        ~MemorySharp()
+        {
+            Dispose();
+        }
     }
 }

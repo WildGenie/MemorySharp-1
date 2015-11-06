@@ -16,8 +16,6 @@ namespace Binarysharp.MemoryManagement.Assembly.Assembler
     /// </summary>
     public interface IAssembler
     {
-        #region Methods
-
         /// <summary>
         ///     Assemble the specified assembly code.
         /// </summary>
@@ -32,7 +30,5 @@ namespace Binarysharp.MemoryManagement.Assembly.Assembler
         /// <param name="baseAddress">The address where the code is rebased.</param>
         /// <returns>An array of bytes containing the assembly code.</returns>
         byte[] Assemble(string asm, IntPtr baseAddress);
-
-        #endregion
     }
 }

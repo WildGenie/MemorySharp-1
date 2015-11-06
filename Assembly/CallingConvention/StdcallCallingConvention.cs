@@ -18,7 +18,7 @@ namespace Binarysharp.MemoryManagement.Assembly.CallingConvention
     /// </summary>
     public class StdcallCallingConvention : ICallingConvention
     {
-        #region  Properties
+        #region ICallingConvention Members
 
         /// <summary>
         ///     The name of the calling convention.
@@ -29,10 +29,6 @@ namespace Binarysharp.MemoryManagement.Assembly.CallingConvention
         ///     Defines which function performs the clean-up task.
         /// </summary>
         public CleanupTypes Cleanup => CleanupTypes.Callee;
-
-        #endregion
-
-        #region  Interface members
 
         /// <summary>
         ///     Formats the given parameters to call a function.

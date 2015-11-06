@@ -27,8 +27,6 @@ namespace Binarysharp.MemoryManagement.Native
 
         #endregion
 
-        #region Methods
-
         /// <summary>
         ///     TODO: Document.
         ///     For now see msdn for <code>RtlMoveMemory</code>.
@@ -62,7 +60,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     PROCESS_QUERY_INFORMATION,
         ///     PROCESS_VM_OPERATION, PROCESS_VM_WRITE, and PROCESS_VM_READ access rights, and may fail without these rights on
         ///     certain platforms.
-        ///     For more information, see Process Security and Access Rights.
+        ///     For more information, see ProcessUpdateData Security and Access Rights.
         /// </param>
         /// <param name="lpThreadAttributes">
         ///     A pointer to a SECURITY_ATTRIBUTES structure that specifies a security descriptor for the new thread and determines
@@ -194,7 +192,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// <param name="hProcess">
         ///     A handle to the process. The handle must have the PROCESS_QUERY_INFORMATION or PROCESS_QUERY_LIMITED_INFORMATION
         ///     access right.
-        ///     For more information, see Process Security and Access Rights.
+        ///     For more information, see ProcessUpdateData Security and Access Rights.
         /// </param>
         /// <returns>
         ///     If the function succeeds, the return value is a process id to the specified handle.
@@ -641,7 +639,11 @@ namespace Binarysharp.MemoryManagement.Native
         ///     mouse input stream.
         /// </param>
         /// <param name="cbSize">
-        ///     The size, in bytes, of an <see cref="Input" /> structure. If <see cref="cbSize" /> is not the size of an
+        ///     The size, in bytes, of an <see cref="Input" /> structure. If
+        ///     <see>
+        ///         <cref>cbSize</cref>
+        ///     </see>
+        ///     is not the size of an
         ///     <see cref="Input" /> structure, the function fails.
         /// </param>
         /// <returns>
@@ -825,7 +827,8 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         /// <param name="hProcess">
         ///     The handle to a process. The function allocates memory within the virtual address space of this process.
-        ///     The handle must have the PROCESS_VM_OPERATION access right. For more information, see Process Security and Access
+        ///     The handle must have the PROCESS_VM_OPERATION access right. For more information, see ProcessUpdateData Security
+        ///     and Access
         ///     Rights.
         /// </param>
         /// <param name="lpAddress">
@@ -862,7 +865,8 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         /// <param name="hProcess">
         ///     A handle to a process. The function frees memory within the virtual address space of the process.
-        ///     The handle must have the PROCESS_VM_OPERATION access right. For more information, see Process Security and Access
+        ///     The handle must have the PROCESS_VM_OPERATION access right. For more information, see ProcessUpdateData Security
+        ///     and Access
         ///     Rights.
         /// </param>
         /// <param name="lpAddress">
@@ -900,7 +904,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// <param name="hProcess">
         ///     A handle to the process whose memory protection is to be changed. The handle must have the PROCESS_VM_OPERATION
         ///     access right.
-        ///     For more information, see Process Security and Access Rights.
+        ///     For more information, see ProcessUpdateData Security and Access Rights.
         /// </param>
         /// <param name="lpAddress">
         ///     A pointer to the base address of the region of pages whose access protection attributes are to be changed.
@@ -955,7 +959,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     A handle to the process whose memory information is queried.
         ///     The handle must have been opened with the PROCESS_QUERY_INFORMATION access right, which enables using the handle to
         ///     read information from the process object.
-        ///     For more information, see Process Security and Access Rights.
+        ///     For more information, see ProcessUpdateData Security and Access Rights.
         /// </param>
         /// <param name="lpAddress">
         ///     A pointer to the base address of the region of pages to be queried.
@@ -1056,26 +1060,6 @@ namespace Binarysharp.MemoryManagement.Native
         public static extern int CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, int msg, int wParam, int lParam);
 
         /// <summary>
-        ///     Sets the window long32.
-        /// </summary>
-        /// <param name="hWnd">The h WND.</param>
-        /// <param name="nIndex">Index of the n.</param>
-        /// <param name="dwNewLong">The dw new long.</param>
-        /// <returns>System.Int32.</returns>
-        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
-        private static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
-
-        /// <summary>
-        ///     Sets the window long PTR64.
-        /// </summary>
-        /// <param name="hWnd">The h WND.</param>
-        /// <param name="nIndex">Index of the n.</param>
-        /// <param name="dwNewLong">The dw new long.</param>
-        /// <returns>IntPtr.</returns>
-        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
-        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
-        /// <summary>
         ///     Changes an attribute of the specified window. The function also sets the 32-bit (long) value at the specified
         ///     offset into the extra window memory.
         /// </summary>
@@ -1094,6 +1078,24 @@ namespace Binarysharp.MemoryManagement.Native
                 : new IntPtr(SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32()));
         }
 
-        #endregion
+        /// <summary>
+        ///     Sets the window long32.
+        /// </summary>
+        /// <param name="hWnd">The h WND.</param>
+        /// <param name="nIndex">Index of the n.</param>
+        /// <param name="dwNewLong">The dw new long.</param>
+        /// <returns>System.Int32.</returns>
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        private static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        /// <summary>
+        ///     Sets the window long PTR64.
+        /// </summary>
+        /// <param name="hWnd">The h WND.</param>
+        /// <param name="nIndex">Index of the n.</param>
+        /// <param name="dwNewLong">The dw new long.</param>
+        /// <returns>IntPtr.</returns>
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
     }
 }

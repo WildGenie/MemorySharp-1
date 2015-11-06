@@ -1,14 +1,12 @@
-﻿using Binarysharp.MemoryManagement.Memory.Remote;
+﻿using Binarysharp.MemoryManagement.RemoteProcess.Memory;
 
 namespace Binarysharp.MemoryManagement.Native
 {
     /// <summary>
-    ///     Class representing the Process Environment Block of a remote process.
+    ///     Class representing the ProcessUpdateData Environment Block of a remote process.
     /// </summary>
     public class ManagedPeb64 : RemotePointer
     {
-        #region Constructors
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="ManagedPeb32" /> class.
         /// </summary>
@@ -19,10 +17,6 @@ namespace Binarysharp.MemoryManagement.Native
                 memorySharp.NativeDriver.MemoryCore.QueryInformationProcess(memorySharp.SafeHandle).PebBaseAddress)
         {
         }
-
-        #endregion
-
-        #region  Properties
 
         /// <summary>
         ///     Returns the read <see cref="Peb64" /> structure.
@@ -41,7 +35,5 @@ namespace Binarysharp.MemoryManagement.Native
         ///     </remarks>
         /// </summary>
         public PebLdrData64 NativePebLdrData => MemorySharp.Read<PebLdrData64>(NativePeb.pLdr);
-
-        #endregion
     }
 }

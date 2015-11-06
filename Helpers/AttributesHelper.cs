@@ -3,10 +3,11 @@ using System.Runtime.InteropServices;
 
 namespace Binarysharp.MemoryManagement.Helpers
 {
+    /// <summary>
+    ///     Static class for extracting and verifying  Attribute information.
+    /// </summary>
     public class AttributesHelper
     {
-        #region Methods
-
         /// <summary>
         ///     Determines whether the specified item has attrib.
         /// </summary>
@@ -16,10 +17,11 @@ namespace Binarysharp.MemoryManagement.Helpers
         ///     <c>true</c> if the specified item has attrib; otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>Created 2012-01-16 19:28 by Nesox.</remarks>
-        internal static bool HasAttrib<T>(Type item)
+        public static bool HasAttribute<T>(Type item)
         {
             return item.GetCustomAttributes(typeof (T), true).Length != 0;
         }
+
 
         /// <summary>
         ///     Determines whether [has UFP attribute] [the specified d].
@@ -44,9 +46,7 @@ namespace Binarysharp.MemoryManagement.Helpers
         /// <remarks>Created 2012-01-16 19:28 by Nesox.</remarks>
         internal static bool HasUfpAttribute(Type t)
         {
-            return HasAttrib<UnmanagedFunctionPointerAttribute>(t);
+            return HasAttribute<UnmanagedFunctionPointerAttribute>(t);
         }
-
-        #endregion
     }
 }
