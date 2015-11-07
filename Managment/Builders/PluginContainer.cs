@@ -21,8 +21,6 @@ namespace Binarysharp.MemoryManagement.Managment.Builders
             Plugin = plugin;
         }
 
-        #region IPlugin Members
-
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -112,7 +110,5 @@ namespace Binarysharp.MemoryManagement.Managment.Builders
         {
             Plugin.Initialize();
         }
-
-        #endregion
     }
 }

@@ -37,8 +37,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
         /// </summary>
         public override bool IsValid => base.IsValid && Information.State != MemoryStateFlags.Free;
 
-        #region IEquatable<RemoteRegion> Members
-
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified object.
         /// </summary>
@@ -49,8 +47,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
                    (BaseAddress.Equals(other.BaseAddress) && MemorySharp.Equals(other.MemorySharp) &&
                     Information.RegionSize.Equals(other.Information.RegionSize));
         }
-
-        #endregion
 
         /// <summary>
         ///     Changes the protection of the n next bytes in remote process.

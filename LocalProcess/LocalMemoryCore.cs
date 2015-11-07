@@ -2,10 +2,12 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using Binarysharp.MemoryManagement.Core.Marshaling;
-using Binarysharp.MemoryManagement.Helpers;
+using Binarysharp.MemoryManagement.Common.Helpers;
+using Binarysharp.MemoryManagement.LocalProcess.Extensions;
+using Binarysharp.MemoryManagement.LocalProcess.Internals;
 using Binarysharp.MemoryManagement.LocalProcess.Objects;
-using Binarysharp.MemoryManagement.MemoryExtensions;
+using Binarysharp.MemoryManagement.RemoteProcess;
+using Binarysharp.MemoryManagement.RemoteProcess.Extensions;
 
 namespace Binarysharp.MemoryManagement.LocalProcess
 {
@@ -14,7 +16,8 @@ namespace Binarysharp.MemoryManagement.LocalProcess
     /// </summary>
     public static class LocalMemoryCore
     {
-        private static readonly IntPtr ImageBase = Process.GetCurrentProcess().ImageBase();
+        internal static readonly IntPtr ImageBase = Process.GetCurrentProcess().ImageBase();
+        internal static IntPtr Rebase(this IntPtr address) => ImageBase.Add(address);
 
         /// <summary>
         ///     Reads the value of a specified type in the process.
@@ -236,7 +239,5 @@ namespace Binarysharp.MemoryManagement.LocalProcess
         {
             return Marshal.GetDelegateForFunctionPointer(address, typeof (T)) as T;
         }
-
-        private static IntPtr Rebase(this IntPtr address) => ImageBase.Add(address);
     }
 }

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Binarysharp.MemoryManagement.MemoryExtensions;
+using Binarysharp.MemoryManagement.LocalProcess.Extensions;
 using Binarysharp.MemoryManagement.Native;
 using Binarysharp.MemoryManagement.RemoteProcess;
 using Binarysharp.MemoryManagement.RemoteProcess.Modules;
 
-namespace Binarysharp.MemoryManagement.Core.Shared.Patterns
+namespace Binarysharp.MemoryManagement.Patterns
 {
     /// <summary>
     ///     Class containing tools and values to perform various types of ProcessModulePattern scans on the given

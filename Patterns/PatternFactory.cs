@@ -4,14 +4,14 @@ using System.Linq;
 using Binarysharp.MemoryManagement.Managment.Builders;
 using Binarysharp.MemoryManagement.RemoteProcess.Modules;
 
-namespace Binarysharp.MemoryManagement.Core.Shared.Patterns
+namespace Binarysharp.MemoryManagement.Patterns
 {
     /// <summary>
     /// </summary>
     public class PatternFactory : IFactory
     {
         /// <summary>
-        ///     The reference of the <see cref="Core.Shared.ProcessMemory" /> object.
+        ///     The reference of the <see cref="MemoryManagement.ProcessMemory" /> object.
         /// </summary>
         protected readonly ProcessMemory ProcessMemory;
 
@@ -45,8 +45,6 @@ namespace Binarysharp.MemoryManagement.Core.Shared.Patterns
             set { ModuleData = value; }
         }
 
-        #region IFactory Members
-
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -54,8 +52,6 @@ namespace Binarysharp.MemoryManagement.Core.Shared.Patterns
         {
             // Nothing at the moment.
         }
-
-        #endregion
 
         /// <summary>
         ///     Adds all pointers found from scanning a xml file to a given dictonary using the IDictonary interface.

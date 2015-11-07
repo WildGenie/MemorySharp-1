@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
-using Binarysharp.MemoryManagement.Core.Shared;
-using Binarysharp.MemoryManagement.UtilityExtensions;
+using Binarysharp.MemoryManagement.Common.Extensions;
 
 namespace Binarysharp.MemoryManagement.LocalProcess.Objects
 {
@@ -39,8 +38,6 @@ namespace Binarysharp.MemoryManagement.LocalProcess.Objects
         /// </value>
         public bool IsValid => BaseAddress != IntPtr.Zero;
 
-        #region IEquatable<ProxyPointer> Members
-
         /// <summary>
         ///     Indicates whether the current object is equal to another object of the same type.
         /// </summary>
@@ -52,8 +49,6 @@ namespace Binarysharp.MemoryManagement.LocalProcess.Objects
         {
             return BaseAddress == other.BaseAddress;
         }
-
-        #endregion
 
         /// <summary>
         ///     Returns a hash code for this instance.

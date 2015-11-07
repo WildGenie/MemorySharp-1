@@ -13,9 +13,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using Binarysharp.MemoryManagement.Core.Marshaling;
-using Binarysharp.MemoryManagement.Helpers;
+using Binarysharp.MemoryManagement.Common.Helpers;
 using Binarysharp.MemoryManagement.Native;
+using Binarysharp.MemoryManagement.RemoteProcess.Internals;
 
 namespace Binarysharp.MemoryManagement.RemoteProcess.Windows
 {

@@ -12,12 +12,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Binarysharp.MemoryManagement.Assembly;
-using Binarysharp.MemoryManagement.Core.Marshaling;
-using Binarysharp.MemoryManagement.Core.Shared;
-using Binarysharp.MemoryManagement.Helpers;
+using Binarysharp.MemoryManagement.Common.Helpers;
 using Binarysharp.MemoryManagement.Managment.Builders;
 using Binarysharp.MemoryManagement.Native;
+using Binarysharp.MemoryManagement.RemoteProcess.Assembly;
+using Binarysharp.MemoryManagement.RemoteProcess.Internals;
 using Binarysharp.MemoryManagement.RemoteProcess.Memory;
 using Binarysharp.MemoryManagement.RemoteProcess.Modules;
 using Binarysharp.MemoryManagement.RemoteProcess.Threading;
@@ -192,8 +191,6 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         public WindowFactory Windows { get; protected set; }
 
-        #region IEquatable<MemorySharp> Members
-
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified object.
         /// </summary>
@@ -202,8 +199,6 @@ namespace Binarysharp.MemoryManagement
             if (ReferenceEquals(null, other)) return false;
             return ReferenceEquals(this, other) || SafeHandle.Equals(other.SafeHandle);
         }
-
-        #endregion
 
         /// <summary>
         ///     Releases all resources used by the <see cref="MemorySharp" /> object.

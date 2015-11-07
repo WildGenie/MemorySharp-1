@@ -10,9 +10,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Binarysharp.MemoryManagement.Core.Marshaling;
-using Binarysharp.MemoryManagement.Helpers;
+using Binarysharp.MemoryManagement.Common.Helpers;
 using Binarysharp.MemoryManagement.Native;
+using Binarysharp.MemoryManagement.RemoteProcess.Internals;
 
 namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
 {
@@ -21,8 +21,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
     /// </summary>
     public class MemoryCore32 : IMemoryCore
     {
-        #region IMemoryCore Members
-
         /// <summary>
         ///     Reserves a region of memory within the virtual address space of a specified process.
         /// </summary>
@@ -284,7 +282,5 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
             // Else the data couldn't be written, throws an exception
             throw new Win32Exception($"Couldn't write {byteArray.Length} bytes to 0x{address.ToString("X")}");
         }
-
-        #endregion
     }
 }

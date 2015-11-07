@@ -1,7 +1,7 @@
 ﻿using System;
+using Binarysharp.MemoryManagement.Common.Extensions;
+using Binarysharp.MemoryManagement.Common.Logging.Core;
 using Binarysharp.MemoryManagement.Managment.Builders;
-using Binarysharp.MemoryManagement.Managment.Logging.Core;
-using Binarysharp.MemoryManagement.UtilityExtensions;
 
 namespace Binarysharp.MemoryManagement.Managment
 {

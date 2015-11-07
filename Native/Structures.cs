@@ -9,7 +9,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Binarysharp.MemoryManagement.Core.Marshaling;
+using Binarysharp.MemoryManagement.RemoteProcess.Internals;
 
 namespace Binarysharp.MemoryManagement.Native
 {
@@ -941,8 +941,6 @@ namespace Binarysharp.MemoryManagement.Native
             }
         }
 
-        #region IDisposable Members
-
         /// <summary>
         ///     Disposes this instance.
         /// </summary>
@@ -951,8 +949,6 @@ namespace Binarysharp.MemoryManagement.Native
             if (Buffer != IntPtr.Zero) Marshal.FreeHGlobal(Buffer);
             Buffer = IntPtr.Zero;
         }
-
-        #endregion
 
         /// <summary>
         ///     To the string.

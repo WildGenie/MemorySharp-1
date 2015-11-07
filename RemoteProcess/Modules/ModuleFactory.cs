@@ -78,8 +78,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Modules
         /// <returns>A new instance of a <see cref="RemoteModule" /> class.</returns>
         public RemoteModule this[string moduleName] => FetchModule(moduleName);
 
-        #region IFactory Members
-
         /// <summary>
         ///     Releases all resources used by the <see cref="ModuleFactory" /> object.
         /// </summary>
@@ -99,8 +97,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Modules
             // Avoid the finalizer
             GC.SuppressFinalize(this);
         }
-
-        #endregion
 
         /// <summary>
         ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.

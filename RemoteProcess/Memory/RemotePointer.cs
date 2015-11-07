@@ -10,8 +10,8 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using Binarysharp.MemoryManagement.Assembly.CallingConvention;
 using Binarysharp.MemoryManagement.Native;
+using Binarysharp.MemoryManagement.RemoteProcess.Assembly.CallingConvention;
 
 namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
 {
@@ -47,8 +47,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
         /// </summary>
         public MemorySharp MemorySharp { get; protected set; }
 
-        #region IEquatable<RemotePointer> Members
-
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified object.
         /// </summary>
@@ -58,8 +56,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
             return ReferenceEquals(this, other) ||
                    (BaseAddress.Equals(other.BaseAddress) && MemorySharp.Equals(other.MemorySharp));
         }
-
-        #endregion
 
         /// <summary>
         ///     Changes the protection of the n next bytes in remote process.

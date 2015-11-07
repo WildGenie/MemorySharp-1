@@ -72,8 +72,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
         /// </summary>
         public int Size { get; }
 
-        #region IDisposable Members
-
         /// <summary>
         ///     Restores the initial protection of the memory.
         /// </summary>
@@ -85,8 +83,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
             // Avoid the finalizer 
             GC.SuppressFinalize(this);
         }
-
-        #endregion
 
         /// <summary>
         ///     Returns a string that represents the current object.

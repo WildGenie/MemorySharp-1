@@ -181,8 +181,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Windows
             }
         }
 
-        #region IEquatable<RemoteWindow> Members
-
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified object.
         /// </summary>
@@ -192,8 +190,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Windows
             if (ReferenceEquals(this, other)) return true;
             return Equals(MemorySharp, other.MemorySharp) && Handle.Equals(other.Handle);
         }
-
-        #endregion
 
         /// <summary>
         ///     Activates the window.

@@ -11,9 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Binarysharp.MemoryManagement.Core.Marshaling;
 using Binarysharp.MemoryManagement.Managment.Builders;
 using Binarysharp.MemoryManagement.Native;
+using Binarysharp.MemoryManagement.RemoteProcess.Internals;
 
 namespace Binarysharp.MemoryManagement.RemoteProcess.Threading
 {
@@ -81,8 +81,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Threading
             get { return new RemoteThread(MemorySharp, NativeThreads.First(t => t.Id == threadId)); }
         }
 
-        #region IFactory Members
-
         /// <summary>
         ///     Releases all resources used by the <see cref="ThreadFactory" /> object.
         /// </summary>
@@ -90,8 +88,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Threading
         {
             // Nothing to dispose... yet
         }
-
-        #endregion
 
         /// <summary>
         ///     Creates a thread that runs in the remote process.

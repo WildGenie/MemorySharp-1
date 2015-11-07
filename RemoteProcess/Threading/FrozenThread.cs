@@ -31,8 +31,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Threading
         /// </summary>
         public RemoteThread Thread { get; }
 
-        #region IDisposable Members
-
         /// <summary>
         ///     Releases all resources used by the <see cref="RemoteThread" /> object.
         /// </summary>
@@ -41,8 +39,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Threading
             // Unfreeze the thread
             Thread.Resume();
         }
-
-        #endregion
 
         /// <summary>
         ///     Returns a string that represents the current object.

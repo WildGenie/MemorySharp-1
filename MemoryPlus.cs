@@ -1,10 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Binarysharp.MemoryManagement.Core;
-using Binarysharp.MemoryManagement.Core.Shared;
 using Binarysharp.MemoryManagement.LocalProcess;
 using Binarysharp.MemoryManagement.LocalProcess.Hooks;
+using Binarysharp.MemoryManagement.LocalProcess.Internals;
 using Binarysharp.MemoryManagement.LocalProcess.Objects;
 
 namespace Binarysharp.MemoryManagement
@@ -36,8 +35,6 @@ namespace Binarysharp.MemoryManagement
         /// <value>The Instance of <see cref="HookManager" />.</value>
         public HookManager Hooks { get; }
 
-        #region IEquatable<MemoryPlus> Members
-
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified object.
         /// </summary>
@@ -46,8 +43,6 @@ namespace Binarysharp.MemoryManagement
             if (ReferenceEquals(null, other)) return false;
             return ReferenceEquals(this, other) || Handle.Equals(other.Handle);
         }
-
-        #endregion
 
         /// <summary>
         ///     Reads the specified amount of bytes from the specified address.

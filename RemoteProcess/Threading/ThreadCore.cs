@@ -9,9 +9,9 @@
 
 using System;
 using System.ComponentModel;
-using Binarysharp.MemoryManagement.Core.Marshaling;
-using Binarysharp.MemoryManagement.Helpers;
+using Binarysharp.MemoryManagement.Common.Helpers;
 using Binarysharp.MemoryManagement.Native;
+using Binarysharp.MemoryManagement.RemoteProcess.Internals;
 
 namespace Binarysharp.MemoryManagement.RemoteProcess.Threading
 {

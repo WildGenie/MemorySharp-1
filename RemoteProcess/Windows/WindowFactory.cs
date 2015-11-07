@@ -78,8 +78,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Windows
         /// </summary>
         internal IEnumerable<IntPtr> WindowHandles => new List<IntPtr>(ChildWindowHandles) {MainWindowHandle};
 
-        #region IFactory Members
-
         /// <summary>
         ///     Releases all resources used by the <see cref="WindowFactory" /> object.
         /// </summary>
@@ -87,8 +85,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Windows
         {
             // Nothing to dispose... yet
         }
-
-        #endregion
 
         /// <summary>
         ///     Gets all the windows that have the specified class name.

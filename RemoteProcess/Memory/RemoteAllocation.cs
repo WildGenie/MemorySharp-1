@@ -38,8 +38,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
             IsDisposed = false;
         }
 
-        #region IDisposableState Members
-
         /// <summary>
         ///     Releases all resources used by the <see cref="RemoteAllocation" /> object.
         /// </summary>
@@ -70,8 +68,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
         ///     Gets a value indicating whether the element must be disposed when the Garbage Collector collects the object.
         /// </summary>
         public bool MustBeDisposed { get; set; }
-
-        #endregion
 
         /// <summary>
         ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.

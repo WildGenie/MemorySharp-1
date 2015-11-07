@@ -32,8 +32,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Modules
             MustBeDisposed = mustBeDisposed;
         }
 
-        #region IDisposableState Members
-
         /// <summary>
         ///     Releases all resources used by the <see cref="InjectedModule" /> object.
         /// </summary>
@@ -59,8 +57,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Modules
         ///     Gets a value indicating whether the element must be disposed when the Garbage Collector collects the object.
         /// </summary>
         public bool MustBeDisposed { get; set; }
-
-        #endregion
 
         /// <summary>
         ///     Injects the specified module into the address space of the remote process.

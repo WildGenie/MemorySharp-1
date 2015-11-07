@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Binarysharp.MemoryManagement.Core.Marshaling;
+using Binarysharp.MemoryManagement.LocalProcess.Internals;
 using Binarysharp.MemoryManagement.Native;
+using Binarysharp.MemoryManagement.RemoteProcess.Internals;
 
 #pragma warning disable 1584,1711,1572,1581,1580
 

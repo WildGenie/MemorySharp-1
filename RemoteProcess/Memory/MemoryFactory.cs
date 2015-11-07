@@ -66,8 +66,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
             }
         }
 
-        #region IFactory Members
-
         /// <summary>
         ///     Releases all resources used by the <see cref="MemoryFactory" /> object.
         /// </summary>
@@ -81,8 +79,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Memory
             // Avoid the finalizer
             GC.SuppressFinalize(this);
         }
-
-        #endregion
 
         /// <summary>
         ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.

@@ -13,8 +13,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Binarysharp.MemoryManagement.Core.Marshaling;
 using Binarysharp.MemoryManagement.Native;
+using Binarysharp.MemoryManagement.RemoteProcess.Internals;
 using ThreadState = System.Diagnostics.ThreadState;
 
 namespace Binarysharp.MemoryManagement.RemoteProcess.Threading
@@ -193,8 +193,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Threading
         /// </summary>
         public ManagedTeb Teb { get; private set; }
 
-        #region IDisposable Members
-
         /// <summary>
         ///     Releases all resources used by the <see cref="RemoteThread" /> object.
         /// </summary>
@@ -206,10 +204,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Threading
             GC.SuppressFinalize(this);
         }
 
-        #endregion
-
-        #region IEquatable<RemoteThread> Members
-
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified object.
         /// </summary>
@@ -218,8 +212,6 @@ namespace Binarysharp.MemoryManagement.RemoteProcess.Threading
             if (ReferenceEquals(null, other)) return false;
             return ReferenceEquals(this, other) || (Id == other.Id && MemorySharp.Equals(other.MemorySharp));
         }
-
-        #endregion
 
         /// <summary>
         ///     Frees resources and perform other cleanup operations before it is reclaimed by garbage collection.

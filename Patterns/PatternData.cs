@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using System.Linq;
-using Binarysharp.MemoryManagement.Helpers;
+using Binarysharp.MemoryManagement.Common.Helpers;
 
-namespace Binarysharp.MemoryManagement.Core.Shared.Patterns
+namespace Binarysharp.MemoryManagement.Patterns
 {
     /// <summary>
     ///     Static class providing tools for pattern scanning.

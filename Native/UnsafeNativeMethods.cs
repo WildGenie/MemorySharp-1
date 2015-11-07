@@ -9,8 +9,6 @@ namespace Binarysharp.MemoryManagement.Native
     /// </summary>
     public static class UnsafeNativeMethods
     {
-        #region Delegates
-
         /// <summary>
         ///     An application-defined callback function used with the EnumWindows or <c>EnumDesktopWindows</c> function. It
         ///     receives top-level window handles.
@@ -24,8 +22,6 @@ namespace Binarysharp.MemoryManagement.Native
         ///     <c>False</c>.
         /// </returns>
         public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-
-        #endregion
 
         /// <summary>
         ///     TODO: Document.
