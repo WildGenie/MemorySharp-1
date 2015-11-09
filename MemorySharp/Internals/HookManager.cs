@@ -2,6 +2,8 @@
 using System.Linq;
 using ToolsSharp.Hooks.Input;
 using ToolsSharp.Hooks.WndProc;
+using ToolsSharp.Hooks.WndProc.Enums;
+using ToolsSharp.Hooks.WndProc.Interfaces;
 using ToolsSharp.Managment;
 using ToolsSharp.Managment.Interfaces;
 using ToolsSharp.Tools.Logging.Default;
@@ -56,10 +58,15 @@ namespace Binarysharp.MemoryManagement.Internals
         /// </summary>
         /// <param name="name">The name representingthe hook Instance.</param>
         /// <param name="windowHandle">The window handle.</param>
+        /// <param name="engine">
+        ///     ///     The instance of the <see cref="IWindowEngine" /> to use. The <code>StartUp()</code> and
+        ///     <code>ShutDown</code> methods inside the defined interface given will be called when the corresponding
+        ///     <see cref="UserMessage" /> is invoked and sent.
+        /// </param>
         /// <returns>WindowHook.</returns>
-        public WindowHook CreateWndProcHook(IntPtr windowHandle, string name)
+        public WindowHook CreateWndProcHook(IntPtr windowHandle, string name, ref IWindowEngine engine)
         {
-            InternalItems[name] = new WindowHook(windowHandle, name);
+            InternalItems[name] = new WindowHook(windowHandle, name, ref engine);
             return (WindowHook) InternalItems[name];
         }
 

@@ -68,7 +68,8 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="ToolsSharp">
+    <Reference Include="ToolsSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libraries\ToolSharp64\ToolsSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -97,9 +98,6 @@
     <Compile Include="Objects\Threads\RemoteThread.cs" />
     <Compile Include="Factories\ThreadFactory.cs" />
     <Compile Include="Factories\WindowFactory.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
