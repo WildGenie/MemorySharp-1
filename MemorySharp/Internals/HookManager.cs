@@ -4,7 +4,8 @@ using ToolsSharp.Hooks.Input;
 using ToolsSharp.Hooks.WndProc;
 using ToolsSharp.Managment;
 using ToolsSharp.Managment.Interfaces;
-using DebugLog = Binarysharp.MemoryManagement.Logging.Default.DebugLog;
+using ToolsSharp.Tools.Logging.Default;
+
 
 namespace Binarysharp.MemoryManagement.Internals
 {

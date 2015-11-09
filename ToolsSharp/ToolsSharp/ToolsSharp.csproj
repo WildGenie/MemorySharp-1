@@ -82,6 +82,14 @@
     <Compile Include="Helpers\ArchitectureHelper.cs" />
     <Compile Include="Helpers\AttributesHelper.cs" />
     <Compile Include="Native\Objects\ManagedPeb32.cs" />
+    <Compile Include="Tools\Logging\Default\ConsoleLog.cs" />
+    <Compile Include="Tools\Logging\Default\DebugLog.cs" />
+    <Compile Include="Tools\Logging\Default\FileLog.cs" />
+    <Compile Include="Tools\Logging\Enums\LoggerType.cs" />
+    <Compile Include="Tools\Logging\Enums\LogNotificationType.cs" />
+    <Compile Include="Tools\Logging\Enums\MessageType.cs" />
+    <Compile Include="Tools\Logging\Interfaces\IManagedLog.cs" />
+    <Compile Include="Tools\Logging\LogManager.cs" />
     <Compile Include="Tools\Updater.cs" />
     <Compile Include="Hooks\Input\Static\Core\GlobalEventProvider.cs">
       <SubType>Component</SubType>

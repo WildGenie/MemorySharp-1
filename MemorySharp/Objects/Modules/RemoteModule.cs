@@ -34,7 +34,7 @@ namespace Binarysharp.MemoryManagement.Objects.Modules
             MemorySharp = memorySharp;
             // Save the parameter
             Native = module;
-            Patterns = new ProcessModulePatternScanner(memorySharp.Process, module);
+            Patterns = new PatternScanner(MemorySharp, module);
         }
         #endregion
 
@@ -49,7 +49,7 @@ namespace Binarysharp.MemoryManagement.Objects.Modules
         ///     Gets the pattern scannning instance for the remote module.
         /// </summary>
         /// <value>A pattern scanning instance for the module..</value>
-        public ProcessModulePatternScanner Patterns { get; }
+        public PatternScanner Patterns { get; }
 
         /// <summary>
         ///     State if this is the main module of the remote process.
@@ -103,7 +103,7 @@ namespace Binarysharp.MemoryManagement.Objects.Modules
         public void Eject()
         {
             // Eject the module
-            MemorySharp.Modules.Eject(this);
+            MemorySharp.Factories.ModuleFactory.Eject(this);
             // Remove the pointer
             BaseAddress = IntPtr.Zero;
         }
@@ -172,7 +172,8 @@ namespace Binarysharp.MemoryManagement.Objects.Modules
         internal static void InternalEject(MemorySharp memorySharp, RemoteModule module)
         {
             // Call FreeLibrary remotely
-            memorySharp.Threads.CreateAndJoin(memorySharp["kernel32"]["FreeLibrary"].BaseAddress, module.BaseAddress);
+            memorySharp.Factories.ThreadFactory.CreateAndJoin(memorySharp["kernel32"]["FreeLibrary"].BaseAddress,
+                module.BaseAddress);
         }
 
         /// <summary>

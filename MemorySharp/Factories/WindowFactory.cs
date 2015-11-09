@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ToolsSharp.Helpers;
 using ToolsSharp.Managment.Interfaces;
 using ToolsSharp.Windows;
 using ToolsSharp.Windows.Objects;
@@ -32,6 +33,12 @@ namespace Binarysharp.MemoryManagement.Factories
         #endregion
 
         #region Public Properties, Indexers
+        /// <summary>
+        ///     Gets the unique name for this instance.
+        /// </summary>
+        /// <value>The name.</value>
+        public string Name { get; } = "WindowFactory-" + Randomizer.GenerateString();
+
         /// <summary>
         ///     Gets all the child windows that belong to the application.
         /// </summary>

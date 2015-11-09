@@ -57,7 +57,7 @@ namespace Binarysharp.MemoryManagement.Objects.Modules
                 // Set the flag to true
                 IsDisposed = true;
                 // Eject the module
-                MemorySharp.Modules.Eject(this);
+                MemorySharp.Factories.ModuleFactory.Eject(this);
                 // Avoid the finalizer 
                 GC.SuppressFinalize(this);
             }
@@ -76,11 +76,14 @@ namespace Binarysharp.MemoryManagement.Objects.Modules
         internal static InjectedModule InternalInject(MemorySharp memorySharp, string path)
         {
             // Call LoadLibraryA remotely
-            var thread = memorySharp.Threads.CreateAndJoin(memorySharp["kernel32"]["LoadLibraryA"].BaseAddress, path);
+            var thread =
+                memorySharp.Factories.ThreadFactory.CreateAndJoin(memorySharp["kernel32"]["LoadLibraryA"].BaseAddress,
+                    path);
             // Get the inject module
             if (thread.GetExitCode<IntPtr>() != IntPtr.Zero)
                 return new InjectedModule(memorySharp,
-                    memorySharp.Modules.NativeModules.First(m => m.BaseAddress == thread.GetExitCode<IntPtr>()));
+                    memorySharp.Factories.ModuleFactory.NativeModules.First(
+                        m => m.BaseAddress == thread.GetExitCode<IntPtr>()));
             return null;
         }
     }

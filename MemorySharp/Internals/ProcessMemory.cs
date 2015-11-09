@@ -28,7 +28,7 @@ namespace Binarysharp.MemoryManagement.Internals
             Handle = process.Handle;
             ImageBase = process.MainModule.BaseAddress;
             Patches = new PatchManager(this);
-            MainModulePatterns = new ProcessModulePatternScanner(Process, Process.MainModule);
+            MainModulePatterns = CreatePatternScanner(Process.MainModule.ModuleName);
         }
         #endregion
 
@@ -58,7 +58,7 @@ namespace Binarysharp.MemoryManagement.Internals
         ///     A class for performing pattern scans on process module data.
         /// </summary>
         /// <value>The pattern factory.</value>
-        public ProcessModulePatternScanner MainModulePatterns { get; }
+        public PatternScanner MainModulePatterns { get; }
 
         /// <summary>
         ///     Gets the native modules that have been loaded in the remote process.
@@ -219,13 +219,13 @@ namespace Binarysharp.MemoryManagement.Internals
         public abstract void WriteArray<T>(IntPtr address, T[] arrayOfValues, bool isRelative = false);
 
         /// <summary>
-        ///     Creates a <see cref="ProcessModulePatternScanner" /> Instance for the given process module.
+        ///     Creates a <see cref="PatternScanner" /> Instance for the given process module name.
         /// </summary>
-        /// <param name="processModule">The process module.</param>
-        /// <returns>A new <see cref="ProcessModulePatternScanner" /> Instance.</returns>
-        public ProcessModulePatternScanner CreatePatternScanner(ProcessModule processModule)
+        /// <param name="moduleName">The name of the process module that contains the data to match patterns with.</param>
+        /// <returns>A new <see cref="PatternScanner" /> Instance.</returns>
+        public PatternScanner CreatePatternScanner(string moduleName)
         {
-            return new ProcessModulePatternScanner(Process, processModule);
+            return new PatternScanner(this, GetModule(moduleName));
         }
 
         /// <summary>

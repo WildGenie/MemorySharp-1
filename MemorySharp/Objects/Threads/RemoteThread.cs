@@ -161,7 +161,7 @@ namespace Binarysharp.MemoryManagement.Objects.Threads
         /// <summary>
         ///     Gets if the thread is the main one in the remote process.
         /// </summary>
-        public bool IsMainThread => this == MemorySharp.Threads.MainThread;
+        public bool IsMainThread => this == MemorySharp.Factories.ThreadFactory.MainThread;
 
         /// <summary>
         ///     Gets if the thread is suspended.
@@ -322,7 +322,7 @@ namespace Binarysharp.MemoryManagement.Objects.Threads
             // Refresh the process info
             MemorySharp.Process.Refresh();
             // Get new info about the thread
-            Native = MemorySharp.Threads.NativeThreads.FirstOrDefault(t => t.Id == Native.Id);
+            Native = MemorySharp.Factories.ThreadFactory.NativeThreads.FirstOrDefault(t => t.Id == Native.Id);
         }
 
         /// <summary>

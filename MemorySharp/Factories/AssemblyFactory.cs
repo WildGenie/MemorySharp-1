@@ -94,7 +94,7 @@ namespace Binarysharp.MemoryManagement.Factories
         public T Execute<T>(IntPtr address)
         {
             // Execute and join the code in a new thread
-            var thread = MemorySharp.Threads.CreateAndJoin(address);
+            var thread = MemorySharp.Factories.ThreadFactory.CreateAndJoin(address);
             // Return the exit code of the thread
             return thread.GetExitCode<T>();
         }
@@ -118,7 +118,7 @@ namespace Binarysharp.MemoryManagement.Factories
         public T Execute<T>(IntPtr address, dynamic parameter)
         {
             // Execute and join the code in a new thread
-            RemoteThread thread = MemorySharp.Threads.CreateAndJoin(address, parameter);
+            RemoteThread thread = MemorySharp.Factories.ThreadFactory.CreateAndJoin(address, parameter);
             // Return the exit code of the thread
             return thread.GetExitCode<T>();
         }
@@ -299,7 +299,7 @@ namespace Binarysharp.MemoryManagement.Factories
             // Assemble the assembly code
             var code = Assembler.Assemble(asm);
             // Allocate a chunk of memory to store the assembly code
-            var memory = MemorySharp.Memory.Allocate(code.Length);
+            var memory = MemorySharp.Factories.MemoryFactory.Allocate(code.Length);
             // Inject the code
             Inject(asm, memory.BaseAddress);
             // Return the memory allocated

@@ -70,7 +70,7 @@ namespace Binarysharp.MemoryManagement.Objects.Calls
         /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
         public T Execute<T>()
         {
-            return MemorySharp.Assembly.Execute<T>(BaseAddress, CallingConventions);
+            return MemorySharp.Factories.AssemblyFactory.Execute<T>(BaseAddress, CallingConventions);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Binarysharp.MemoryManagement.Objects.Calls
         /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
         public T Execute<T>(dynamic parameter)
         {
-            return MemorySharp.Assembly.Execute<T>(BaseAddress, CallingConventions, parameter);
+            return MemorySharp.Factories.AssemblyFactory.Execute<T>(BaseAddress, CallingConventions, parameter);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Binarysharp.MemoryManagement.Objects.Calls
         /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
         public T Execute<T>(params dynamic[] parameters)
         {
-            return MemorySharp.Assembly.Execute<T>(BaseAddress, CallingConventions, parameters);
+            return MemorySharp.Factories.AssemblyFactory.Execute<T>(BaseAddress, CallingConventions, parameters);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Binarysharp.MemoryManagement.Objects.Calls
         /// </returns>
         public Task<T> ExecuteAsync<T>()
         {
-            return MemorySharp.Assembly.ExecuteAsync<T>(BaseAddress, CallingConventions);
+            return MemorySharp.Factories.AssemblyFactory.ExecuteAsync<T>(BaseAddress, CallingConventions);
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace Binarysharp.MemoryManagement.Objects.Calls
         /// </returns>
         public Task<T> ExecuteAsync<T>(dynamic parameter)
         {
-            return MemorySharp.Assembly.ExecuteAsync<T>(BaseAddress, CallingConventions, parameter);
+            return MemorySharp.Factories.AssemblyFactory.ExecuteAsync<T>(BaseAddress, CallingConventions, parameter);
         }
 
         /// <summary>

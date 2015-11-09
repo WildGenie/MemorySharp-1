@@ -103,9 +103,9 @@ namespace ToolsSharp.Managment
         ///     Remove a given element.
         /// </summary>
         /// <param name="item">The element to remove.</param>
-        public override void Remove(T item)
+        public override void Remove(T iFactory)
         {
-            Remove(item.Name);
+            Remove(iFactory.Name);
         }
 
         /// <summary>

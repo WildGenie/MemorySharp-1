@@ -2,7 +2,8 @@
 using Binarysharp.MemoryManagement.Objects.Edits;
 using ToolsSharp.Helpers;
 using ToolsSharp.Managment;
-using DebugLog = Binarysharp.MemoryManagement.Logging.Default.DebugLog;
+using ToolsSharp.Tools.Logging.Default;
+
 
 namespace Binarysharp.MemoryManagement.Internals
 {

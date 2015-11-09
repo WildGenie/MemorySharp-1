@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using Binarysharp.MemoryManagement.Logging.Interfaces;
+using ToolsSharp.Tools.Logging.Interfaces;
 
-namespace Binarysharp.MemoryManagement.Logging.Default
+namespace ToolsSharp.Tools.Logging.Default
 {
     /// <summary>
     ///     A class class to handle writing logs to text files.

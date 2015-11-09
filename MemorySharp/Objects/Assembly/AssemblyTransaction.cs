@@ -88,19 +88,20 @@ namespace Binarysharp.MemoryManagement.Objects.Assembly
                 // If the assembly code must be executed
                 if (IsAutoExecuted)
                 {
-                    ExitCode = MemorySharp.Assembly.InjectAndExecute<IntPtr>(Mnemonics.ToString(), Address);
+                    ExitCode = MemorySharp.Factories.AssemblyFactory.InjectAndExecute<IntPtr>(Mnemonics.ToString(),
+                        Address);
                 }
                 // Else the assembly code is just injected
                 else
                 {
-                    MemorySharp.Assembly.Inject(Mnemonics.ToString(), Address);
+                    MemorySharp.Factories.AssemblyFactory.Inject(Mnemonics.ToString(), Address);
                 }
             }
 
             // If no pointer was specified and the code assembly code must be executed
             if (Address == IntPtr.Zero && IsAutoExecuted)
             {
-                ExitCode = MemorySharp.Assembly.InjectAndExecute<IntPtr>(Mnemonics.ToString());
+                ExitCode = MemorySharp.Factories.AssemblyFactory.InjectAndExecute<IntPtr>(Mnemonics.ToString());
             }
         }
         #endregion
@@ -121,7 +122,7 @@ namespace Binarysharp.MemoryManagement.Objects.Assembly
         /// <returns>An array of bytes containing the assembly code.</returns>
         public byte[] Assemble()
         {
-            return MemorySharp.Assembly.Assembler.Assemble(Mnemonics.ToString());
+            return MemorySharp.Factories.AssemblyFactory.Assembler.Assemble(Mnemonics.ToString());
         }
 
         /// <summary>

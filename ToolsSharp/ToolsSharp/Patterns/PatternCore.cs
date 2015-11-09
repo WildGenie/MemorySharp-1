@@ -15,21 +15,19 @@ namespace ToolsSharp.Patterns
         /// <summary>
         ///     Performs a ProcessModulePattern scan.
         /// </summary>
-        /// <param name="end">The length of the data.</param>
         /// <param name="myPattern">The processModulePatterns bytes.</param>
         /// <param name="mask">The mask of the ProcessModulePattern. ? Is for wild card, x otherwise.</param>
         /// <param name="offsetToAdd">The offset to add to the offset result found from the ProcessModulePattern.</param>
         /// <param name="isOffsetMode">If the address is found from the base address + offset or not.</param>
         /// <param name="reBase">If the address should be rebased to process modules base address.</param>
-        /// <param name="process">The process the process module is contained in.</param>
+        /// <param name="handle">The handle to the process module is contained in.</param>
         /// <param name="module">The process module the pattern data is contained in.</param>
-        /// <param name="start">The starting address of the pattern data.</param>
         /// <returns>A new <see cref="ScanResult" /> instance.</returns>
-        public static ScanResult Find(Process process, ProcessModule module, IntPtr start, int end, byte[] myPattern,
+        public static ScanResult Find(IntPtr handle, ProcessModule module, byte[] myPattern,
                                       string mask, int offsetToAdd, bool isOffsetMode,
                                       bool reBase)
         {
-            var patternData = ExternalMemoryCore.ReadProcessMemory(process.Handle, start, end);
+            var patternData = ExternalMemoryCore.ReadProcessMemory(handle, module.BaseAddress, module.ModuleMemorySize);
             var patternBytes = myPattern;
             var patternMask = mask;
             var result = new ScanResult();
@@ -37,9 +35,10 @@ namespace ToolsSharp.Patterns
             {
                 if (patternMask.Where((m, b) => m == 'x' && patternBytes[b] != patternData[b + offset]).Any()) continue;
                 // If this area is reached, the ProcessModulePattern has been found.
-                result.OriginalAddress = SafeMarshal<IntPtr>.PtrToObject(process.Handle,
+                result.OriginalAddress = ExternalMemoryCore.Read<IntPtr>(handle,
                     module.BaseAddress + offset + offsetToAdd);
-                result.Address = result.OriginalAddress.Subtract(module.BaseAddress);
+                result.Address = result.OriginalAddress;
+                result.Address -= (int) module.BaseAddress;
                 result.Offset = offset;
                 if (!isOffsetMode)
                 {
@@ -120,6 +119,25 @@ namespace ToolsSharp.Patterns
         public static SerializablePattern[] LoadJsonPatternFile(string nameOrPath)
         {
             return JsonHelper.ImportFromFile<SerializablePattern[]>(nameOrPath);
+        }
+
+        /// <summary>
+        ///     Creates a mask from a given pattern, using the given chars
+        /// </summary>
+        /// <param name="pattern">The pattern this functions designs a mask for</param>
+        /// <param name="wildcardByte">Byte that is interpreted as a wildcard</param>
+        /// <param name="wildcardChar">Char that is used as wildcard</param>
+        /// <param name="matchChar">Char that is no wildcard</param>
+        /// <returns></returns>
+        public static string MaskFromPattern(byte[] pattern, byte wildcardByte = 0, char wildcardChar = '?',
+                                             char matchChar = 'x')
+        {
+            var chr = new char[pattern.Length];
+            for (var i = 0; i < chr.Length; i++)
+            {
+                chr[i] = pattern[i] == wildcardByte ? wildcardChar : matchChar;
+            }
+            return new string(chr);
         }
     }
 }

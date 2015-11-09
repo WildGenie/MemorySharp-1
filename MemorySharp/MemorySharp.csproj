@@ -70,14 +70,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Logging\Default\ConsoleLog.cs" />
-    <Compile Include="Logging\Default\DebugLog.cs" />
-    <Compile Include="Logging\Default\FileLog.cs" />
-    <Compile Include="Logging\Enums\LoggerType.cs" />
-    <Compile Include="Logging\Enums\LogNotificationType.cs" />
-    <Compile Include="Logging\Enums\MessageType.cs" />
-    <Compile Include="Logging\Interfaces\IManagedLog.cs" />
-    <Compile Include="Logging\LogManager.cs" />
+    <Compile Include="Factories\FactoryManager.cs" />
     <Compile Include="Objects\Assembly\Fasm32Assembler.cs" />
     <Compile Include="Factories\AssemblyFactory.cs" />
     <Compile Include="Objects\Assembly\AssemblyTransaction.cs" />

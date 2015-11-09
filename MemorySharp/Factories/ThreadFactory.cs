@@ -112,7 +112,7 @@ namespace Binarysharp.MemoryManagement.Factories
 
             // Find the managed object corresponding to this thread
             var result = new RemoteThread(MemorySharp,
-                MemorySharp.Threads.NativeThreads.First(t => t.Id == ret.ThreadId), marshalledParameter);
+                MemorySharp.Factories.ThreadFactory.NativeThreads.First(t => t.Id == ret.ThreadId), marshalledParameter);
 
             // If the thread must be started
             if (isStarted)
@@ -138,7 +138,7 @@ namespace Binarysharp.MemoryManagement.Factories
 
             // Find the managed object corresponding to this thread
             var result = new RemoteThread(MemorySharp,
-                MemorySharp.Threads.NativeThreads.First(t => t.Id == ret.ThreadId));
+                MemorySharp.Factories.ThreadFactory.NativeThreads.First(t => t.Id == ret.ThreadId));
 
             // If the thread must be started
             if (isStarted)

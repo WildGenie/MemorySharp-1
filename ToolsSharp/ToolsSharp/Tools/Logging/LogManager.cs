@@ -1,10 +1,10 @@
 ﻿using System;
-using Binarysharp.MemoryManagement.Logging.Default;
-using Binarysharp.MemoryManagement.Logging.Enums;
-using Binarysharp.MemoryManagement.Logging.Interfaces;
 using ToolsSharp.Managment;
+using ToolsSharp.Tools.Logging.Default;
+using ToolsSharp.Tools.Logging.Enums;
+using ToolsSharp.Tools.Logging.Interfaces;
 
-namespace Binarysharp.MemoryManagement.Logging
+namespace ToolsSharp.Tools.Logging
 {
     /// <summary>
     ///     Class providing tools to manage a set of <see cref="IManagedLog" /> members. This class cannot be inherited.

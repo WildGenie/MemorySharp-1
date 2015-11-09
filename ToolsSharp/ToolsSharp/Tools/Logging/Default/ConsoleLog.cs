@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using Binarysharp.MemoryManagement.Logging.Interfaces;
+using ToolsSharp.Tools.Logging.Interfaces;
 
-#pragma warning disable 1591
-
-namespace Binarysharp.MemoryManagement.Logging.Default
+namespace ToolsSharp.Tools.Logging.Default
 {
-    [SuppressMessage("ReSharper", "InvocationIsSkipped")]
-    public class DebugLog : IManagedLog
+    /// <summary>
+    ///     A class to handle writing logs to the system <see cref="Console" />.
+    /// </summary>
+    public class ConsoleLog : IManagedLog
     {
         #region Public Properties, Indexers
         /// <summary>
@@ -39,11 +37,8 @@ namespace Binarysharp.MemoryManagement.Logging.Default
         /// <param name="message">The message.</param>
         public void LogWarning(string message)
         {
-            if (!IsEnabled)
-                return;
-            Debug.WriteLine($"{"[LogWarning]["}{DateTime.Now}{"]: "}{message}");
+            Console.WriteLine($"{"[LogWarning]["}{DateTime.Now}{"]: "}{message}");
         }
-
 
         /// <summary>
         ///     Logs the normal.
@@ -51,11 +46,8 @@ namespace Binarysharp.MemoryManagement.Logging.Default
         /// <param name="message">The message.</param>
         public void LogNormal(string message)
         {
-            if (!IsEnabled)
-                return;
-            Debug.WriteLine($"{"[LogNormal]["}{DateTime.Now}{"]: "}{message}");
+            Console.WriteLine($"{"[LogNormal]["}{DateTime.Now}{"]: "}{message}");
         }
-
 
         /// <summary>
         ///     Logs the error.
@@ -63,9 +55,7 @@ namespace Binarysharp.MemoryManagement.Logging.Default
         /// <param name="message">The message.</param>
         public void LogError(string message)
         {
-            if (!IsEnabled)
-                return;
-            Debug.WriteLine($"{"[LogError]["}{DateTime.Now}{"]: "}{message}");
+            Console.WriteLine($"{"[LogError]["}{DateTime.Now}{"]: "}{message}");
         }
 
         /// <summary>
@@ -74,9 +64,7 @@ namespace Binarysharp.MemoryManagement.Logging.Default
         /// <param name="message">The message.</param>
         public void LogInfo(string message)
         {
-            if (!IsEnabled)
-                return;
-            Debug.WriteLine($"{"[LogInfo]["}{DateTime.Now}{"]: "}{message}");
+            Console.WriteLine($"{"[LogInfo]["}{DateTime.Now}{"]: "}{message}");
         }
 
         /// <summary>

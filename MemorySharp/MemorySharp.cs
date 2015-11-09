@@ -50,18 +50,8 @@ namespace Binarysharp.MemoryManagement
                     InternalPeb64 = new Lazy<ManagedPeb64>((() => new ManagedPeb64(Handle)));
                     break;
             }
-
-            // Create instances of the factories
-            Factories = new List<IFactory>();
-            Factories.AddRange(
-                new IFactory[]
-                {
-                    Assembly = new AssemblyFactory(this),
-                    Memory = new MemoryFactory(this),
-                    Modules = new ModuleFactory(this),
-                    Threads = new ThreadFactory(this),
-                    Windows = new WindowFactory(this)
-                });
+            Factories = new FactoryManager(this);
+            Factories.EnableAll();
         }
 
         /// <summary>
@@ -93,9 +83,10 @@ namespace Binarysharp.MemoryManagement
 
         #region Public Properties, Indexers
         /// <summary>
-        ///     The factories embedded inside the library.
+        ///     Gets the factory manager instance.
         /// </summary>
-        protected List<IFactory> Factories { get; }
+        /// <value>The instance for managing factories.</value>
+        public FactoryManager Factories { get; }
 
         /// <summary>
         ///     The ProcessUpdateData Environment Block of the process.
@@ -114,10 +105,6 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         public ProcessArchitectures Architecture => ArchitectureHelper.GetArchitectureByProcess(Process);
 
-        /// <summary>
-        ///     Factory for generating assembly code.
-        /// </summary>
-        public AssemblyFactory Assembly { get; }
 
         /// <summary>
         ///     Gets whether the process is 32-bit.
@@ -148,15 +135,6 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         public SafeMemoryHandle SafeHandle { get; }
 
-        /// <summary>
-        ///     Factory for manipulating memory space.
-        /// </summary>
-        public MemoryFactory Memory { get; }
-
-        /// <summary>
-        ///     Factory for manipulating modules and libraries.
-        /// </summary>
-        public ModuleFactory Modules { get; }
 
         /// <summary>
         ///     The ProcessUpdateData Environment Block of the process.
@@ -178,7 +156,7 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         /// <param name="moduleName">The name of module (not case sensitive).</param>
         /// <returns>A new instance of a <see cref="RemoteModule" /> class.</returns>
-        public RemoteModule this[string moduleName] => Modules[moduleName];
+        public RemoteModule this[string moduleName] => Factories.ModuleFactory[moduleName];
 
         /// <summary>
         ///     Gets a new<see cref="RemoteFunction" /> instance.
@@ -198,16 +176,6 @@ namespace Binarysharp.MemoryManagement
         /// <returns>A new instance of a <see cref="ProxyPointer" /> class.</returns>
         public ProxyPointer this[IntPtr address, bool isRelative = false]
             => new ProxyPointer(Handle, isRelative ? ToRelative(address) : address);
-
-        /// <summary>
-        ///     Factory for manipulating threads.
-        /// </summary>
-        public ThreadFactory Threads { get; }
-
-        /// <summary>
-        ///     Factory for manipulating windows.
-        /// </summary>
-        public WindowFactory Windows { get; }
         #endregion
 
         #region Interface Implementations
@@ -230,7 +198,7 @@ namespace Binarysharp.MemoryManagement
             OnDispose?.Invoke(this, new EventArgs());
 
             // Dispose all factories
-            Factories.ForEach(factory => factory.Dispose());
+            Factories.Dispose();
 
             // Close the process handle
             SafeHandle.Close();

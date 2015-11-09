@@ -1,4 +1,4 @@
-﻿namespace Binarysharp.MemoryManagement.Logging.Enums
+﻿namespace ToolsSharp.Tools.Logging.Enums
 {
     /// <summary>
     ///     Message type

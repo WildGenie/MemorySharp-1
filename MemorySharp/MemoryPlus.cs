@@ -40,11 +40,11 @@ namespace Binarysharp.MemoryManagement
         public HookManager Hooks { get; }
 
         /// <summary>
-        ///     Gets or sets the <see cref="ProcessModulePatternScanner" /> with the specified module name.
+        ///     Gets or sets the <see cref="PatternScanner" /> with the specified module name.
         /// </summary>
         /// <param name="moduleName">Name of the module.</param>
         /// <returns>ProcessModulePatternScanner.</returns>
-        public ProcessModulePatternScanner this[string moduleName] => CreatePatternScanner(GetModule(moduleName));
+        public PatternScanner this[string moduleName] => CreatePatternScanner(GetModule(moduleName).ModuleName);
 
         /// <summary>
         ///     Gets the <see cref="ProxyPointer" /> with the specified address.

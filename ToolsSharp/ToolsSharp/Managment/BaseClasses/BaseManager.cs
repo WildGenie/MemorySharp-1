@@ -41,7 +41,7 @@ namespace ToolsSharp.Managment.BaseClasses
         ///     Remove a given element.
         /// </summary>
         /// <param name="item">The element to remove.</param>
-        public abstract void Remove(T item);
+        public abstract void Remove(T iFactory);
 
         /// <summary>
         ///     Removes all the elements in the manager.

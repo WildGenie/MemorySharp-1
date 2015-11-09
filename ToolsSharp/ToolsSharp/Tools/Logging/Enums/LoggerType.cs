@@ -1,4 +1,4 @@
-﻿namespace Binarysharp.MemoryManagement.Logging.Enums
+﻿namespace ToolsSharp.Tools.Logging.Enums
 {
     /// <summary>
     ///     Enum that defines the different log instances that can be used.
