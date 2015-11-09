@@ -74,7 +74,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Factories\FactoryManager.cs" />
+    <Compile Include="Internals\FactoryManager.cs" />
     <Compile Include="Objects\Assembly\Fasm32Assembler.cs" />
     <Compile Include="Factories\AssemblyFactory.cs" />
     <Compile Include="Objects\Assembly\AssemblyTransaction.cs" />
@@ -87,7 +87,7 @@
     <Compile Include="MemoryPlus.cs" />
     <Compile Include="Objects\Edits\Detour.cs" />
     <Compile Include="Objects\Edits\Patch.cs" />
-    <Compile Include="Internals\ProcessMemory.cs" />
+    <Compile Include="Objects\BaseClasses\ProcessMemory.cs" />
     <Compile Include="Factories\MemoryFactory.cs" />
     <Compile Include="Objects\Modules\InjectedModule.cs" />
     <Compile Include="Factories\ModuleFactory.cs" />

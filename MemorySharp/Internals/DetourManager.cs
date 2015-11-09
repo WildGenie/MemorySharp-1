@@ -1,4 +1,5 @@
 ﻿using System;
+using Binarysharp.MemoryManagement.Objects.BaseClasses;
 using Binarysharp.MemoryManagement.Objects.Edits;
 using ToolsSharp.Helpers;
 using ToolsSharp.Managment;

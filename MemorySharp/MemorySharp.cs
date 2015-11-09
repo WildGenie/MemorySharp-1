@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Binarysharp.MemoryManagement.Factories;
 using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Objects.BaseClasses;
 using Binarysharp.MemoryManagement.Objects.Calls;
 using Binarysharp.MemoryManagement.Objects.Modules;
 using ToolsSharp.CallingConvention.Enums;

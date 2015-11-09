@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Objects.BaseClasses;
 using ToolsSharp.Patterns;
 using ToolsSharp.Patterns.Objects;
 

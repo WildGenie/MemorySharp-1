@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Objects.BaseClasses;
 using ToolsSharp.Managment.Interfaces;
 
 namespace Binarysharp.MemoryManagement.Objects.Edits

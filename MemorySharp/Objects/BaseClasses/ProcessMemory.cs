@@ -5,12 +5,13 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Binarysharp.MemoryManagement.Internals;
 using Binarysharp.MemoryManagement.Objects.Edits;
 using Binarysharp.MemoryManagement.Objects.Modules;
 using ToolsSharp.Extensions;
 using ToolsSharp.Helpers;
 
-namespace Binarysharp.MemoryManagement.Internals
+namespace Binarysharp.MemoryManagement.Objects.BaseClasses
 {
     /// <summary>
     ///     Defines a set of memory reading and writing operations.

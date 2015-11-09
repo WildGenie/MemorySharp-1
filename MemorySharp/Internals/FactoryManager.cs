@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
+using Binarysharp.MemoryManagement.Factories;
 using ToolsSharp.Managment.BaseClasses;
 using ToolsSharp.Managment.Interfaces;
 
-namespace Binarysharp.MemoryManagement.Factories
+namespace Binarysharp.MemoryManagement.Internals
 {
     /// <summary>
     ///     Class for managing of <see cref="IFactory" /> instances.
