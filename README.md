@@ -7,7 +7,7 @@ https://github.com/ZenLulz
 **This version of MemorySharp information**
 The reason for making modifications and changes to the original library are mainly for me to learn as a beginner, and also to provide some useful functionality that can range from syntax sugar and minor convenience to full implementation of useful new features.
 
-**You need the latest version of ToolsSharp as a reference for this project: https://github.com/lolp1/ToolsSharp
+**Note: You need the latest version of ToolsSharp as a reference for this project: https://github.com/lolp1/ToolsSharp)**
 
 Basic Features Added
 ------------------------------------------------------------------------
