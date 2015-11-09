@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using Binarysharp.MemoryManagement.Internals;
-using ToolsSharp.Memory;
-using ToolsSharp.Native.Enums;
 using ToolsSharp.Patterns;
 using ToolsSharp.Patterns.Objects;
 

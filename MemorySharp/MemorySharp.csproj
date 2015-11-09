@@ -68,6 +68,9 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="ToolsSharp">
+      <HintPath>..\Libraries\ToolSharp64\ToolsSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Factories\FactoryManager.cs" />
@@ -97,12 +100,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ToolsSharp\ToolsSharp\ToolsSharp.csproj">
-      <Project>{586cf69b-7363-49cf-a199-9df142df537a}</Project>
-      <Name>ToolsSharp</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

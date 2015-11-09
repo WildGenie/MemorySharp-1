@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -9,7 +8,6 @@ using Binarysharp.MemoryManagement.Objects.Calls;
 using Binarysharp.MemoryManagement.Objects.Modules;
 using ToolsSharp.CallingConvention.Enums;
 using ToolsSharp.Helpers;
-using ToolsSharp.Managment.Interfaces;
 using ToolsSharp.Marshaling;
 using ToolsSharp.Memory;
 using ToolsSharp.Memory.Objects;
