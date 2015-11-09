@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Binarysharp.MemoryManagement.Common.Helpers;
-using Binarysharp.MemoryManagement.Managment.Builders;
-using Binarysharp.MemoryManagement.Native;
-using Binarysharp.MemoryManagement.RemoteProcess.Assembly;
-using Binarysharp.MemoryManagement.RemoteProcess.Internals;
-using Binarysharp.MemoryManagement.RemoteProcess.Memory;
-using Binarysharp.MemoryManagement.RemoteProcess.Modules;
-using Binarysharp.MemoryManagement.RemoteProcess.Threading;
-using Binarysharp.MemoryManagement.RemoteProcess.Windows;
+using Binarysharp.MemoryManagement.Factories;
+using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Objects.Calls;
+using Binarysharp.MemoryManagement.Objects.Modules;
+using ToolsSharp.CallingConvention.Enums;
+using ToolsSharp.Helpers;
+using ToolsSharp.Managment.Interfaces;
+using ToolsSharp.Marshaling;
+using ToolsSharp.Memory;
+using ToolsSharp.Memory.Objects;
+using ToolsSharp.Native.Enums;
+using ToolsSharp.Native.Objects;
 
 namespace Binarysharp.MemoryManagement
 {
@@ -34,25 +37,20 @@ namespace Binarysharp.MemoryManagement
         /// <param name="process">ProcessUpdateData to open.</param>
         public MemorySharp(Process process) : base(process)
         {
-            // Save the reference of the process
-            // Use the correct API depending on the architecture of the opened process
+            // Open the process with all rights
+            SafeHandle = new SafeMemoryHandle(ExternalMemoryCore.OpenProcess(ProcessAccessFlags.AllAccess, process.Id));
+            var size = IntPtr.Size;
             // ReSharper disable once SwitchStatementMissingSomeCases
-            switch (Architecture)
+            switch (size)
             {
-                case ProcessArchitectures.Amd64:
-                    NativeDriver = new NativeDriver64();
-                    // Initialize the PEB
-                    //TODO: Convert this peb to be fully managed.
-                    InternalPeb64 = new Lazy<ManagedPeb64>(() => new ManagedPeb64(this));
+                case 4:
+                    InternalPeb32 = new Lazy<ManagedPeb32>((() => new ManagedPeb32(Handle)));
                     break;
-                default:
-                    NativeDriver = new NativeDriver32();
-                    // Initialize the PEB
-                    InternalPeb32 = new Lazy<ManagedPeb32>(() => new ManagedPeb32(this));
+                case 8:
+                    InternalPeb64 = new Lazy<ManagedPeb64>((() => new ManagedPeb64(Handle)));
                     break;
             }
-            // Open the process with all rights
-            SafeHandle = NativeDriver.MemoryCore.OpenProcess(ProcessAccessFlags.AllAccess, process.Id);
+
             // Create instances of the factories
             Factories = new List<IFactory>();
             Factories.AddRange(
@@ -161,14 +159,14 @@ namespace Binarysharp.MemoryManagement
         public ModuleFactory Modules { get; }
 
         /// <summary>
-        ///     Gets the native driver to interact with the API system/architecture dependant.
+        ///     The ProcessUpdateData Environment Block of the process.
         /// </summary>
-        public NativeDriverBase NativeDriver { get; }
+        public ManagedPeb32 Peb32 => InternalPeb32.Value;
 
         /// <summary>
         ///     The ProcessUpdateData Environment Block of the process.
         /// </summary>
-        public ManagedPeb32 Peb32 => InternalPeb32.Value;
+        public ManagedPeb64 Peb64 => InternalPeb64.Value;
 
         /// <summary>
         ///     Gets the unique identifier for the remote process.
@@ -183,13 +181,23 @@ namespace Binarysharp.MemoryManagement
         public RemoteModule this[string moduleName] => Modules[moduleName];
 
         /// <summary>
+        ///     Gets a new<see cref="RemoteFunction" /> instance.
+        /// </summary>
+        /// <param name="functionName">Name of the function.</param>
+        /// <param name="address">The address.</param>
+        /// <param name="callingConventions">The calling conventions.</param>
+        /// <returns>Binarysharp.MemoryManagement.Modules.Objects.RemoteFunction.</returns>
+        public RemoteFunction this[string functionName, IntPtr address, CallingConventions callingConventions]
+            => new RemoteFunction(this, functionName, address, callingConventions);
+
+        /// <summary>
         ///     Gets a pointer to the specified address in the remote process.
         /// </summary>
         /// <param name="address">The address pointed.</param>
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        /// <returns>A new instance of a <see cref="RemotePointer" /> class.</returns>
-        public RemotePointer this[IntPtr address, bool isRelative = false]
-            => new RemotePointer(this, isRelative ? MakeAbsolute(address) : address);
+        /// <returns>A new instance of a <see cref="ProxyPointer" /> class.</returns>
+        public ProxyPointer this[IntPtr address, bool isRelative = false]
+            => new ProxyPointer(Handle, isRelative ? ToRelative(address) : address);
 
         /// <summary>
         ///     Factory for manipulating threads.
@@ -249,35 +257,6 @@ namespace Binarysharp.MemoryManagement
             return SafeHandle.GetHashCode();
         }
 
-        /// <summary>
-        ///     Makes an absolute address from a relative one based on the main module.
-        /// </summary>
-        /// <param name="address">The relative address.</param>
-        /// <returns>The absolute address.</returns>
-        public IntPtr MakeAbsolute(IntPtr address)
-        {
-            // Check if the relative address is not greater than the main module size
-            if (address.ToInt64() > Modules.MainModule.Size)
-                throw new ArgumentOutOfRangeException(nameof(address),
-                    "The relative address cannot be greater than the main module size.");
-            // Compute the absolute address
-            return new IntPtr(Modules.MainModule.BaseAddress.ToInt64() + address.ToInt64());
-        }
-
-        /// <summary>
-        ///     Makes a relative address from an absolute one based on the main module.
-        /// </summary>
-        /// <param name="address">The absolute address.</param>
-        /// <returns>The relative address.</returns>
-        public IntPtr MakeRelative(IntPtr address)
-        {
-            // Check if the absolute address is smaller than the main module base address
-            if (address.ToInt64() < Modules.MainModule.BaseAddress.ToInt64())
-                throw new ArgumentOutOfRangeException(nameof(address),
-                    "The absolute address cannot be smaller than the main module base address.");
-            // Compute the relative address
-            return new IntPtr(address.ToInt64() - Modules.MainModule.BaseAddress.ToInt64());
-        }
 
         /// <summary>
         ///     Implements the operator ==.
@@ -310,7 +289,7 @@ namespace Binarysharp.MemoryManagement
         /// <returns>A value.</returns>
         public override T Read<T>(IntPtr address, bool isRelative = false)
         {
-            return RemoteMarshal<T>.ByteArrayToObject(ReadBytes(address, RemoteMarshal<T>.Size, isRelative));
+            return SafeMarshal<T>.ByteArrayToObject(ReadBytes(address, SafeMarshal<T>.Size, isRelative));
         }
 
         /// <summary>
@@ -340,7 +319,7 @@ namespace Binarysharp.MemoryManagement
             // Read the array in the remote process
             for (var i = 0; i < count; i++)
             {
-                array[i] = Read<T>(address + RemoteMarshal<T>.Size*i, isRelative);
+                array[i] = Read<T>(address + SafeMarshal<T>.Size*i, isRelative);
             }
             return array;
         }
@@ -367,7 +346,7 @@ namespace Binarysharp.MemoryManagement
         /// <returns>The array of bytes.</returns>
         public override byte[] ReadBytes(IntPtr address, int count, bool isRelative = false)
         {
-            return NativeDriver.MemoryCore.ReadBytes(SafeHandle, isRelative ? MakeAbsolute(address) : address, count);
+            return ExternalMemoryCore.ReadProcessMemory(Handle, isRelative ? ToAbsolute(address) : address, count);
         }
 
         /// <summary>
@@ -446,7 +425,7 @@ namespace Binarysharp.MemoryManagement
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         public override void Write<T>(IntPtr address, T value, bool isRelative = false)
         {
-            WriteBytes(address, RemoteMarshal<T>.ObjectToByteArray(value), isRelative);
+            WriteBytes(address, SafeMarshal<T>.ObjectToByteArray(value), isRelative);
         }
 
         /// <summary>
@@ -473,7 +452,7 @@ namespace Binarysharp.MemoryManagement
             // Write the array in the remote process
             for (var i = 0; i < array.Length; i++)
             {
-                Write(address + RemoteMarshal<T>.Size*i, array[i], isRelative);
+                Write(address + SafeMarshal<T>.Size*i, array[i], isRelative);
             }
         }
 
@@ -499,11 +478,11 @@ namespace Binarysharp.MemoryManagement
         {
             // Change the protection of the memory to allow writable
             using (
-                new MemoryProtection(this, isRelative ? MakeAbsolute(address) : address,
-                    RemoteMarshal<byte>.Size*byteArray.Length))
+                new MemoryProtection(Handle, isRelative ? ToAbsolute(address) : address,
+                    SafeMarshal<byte>.Size*byteArray.Length))
             {
                 // Write the byte array
-                NativeDriver.MemoryCore.WriteBytes(SafeHandle, isRelative ? MakeAbsolute(address) : address, byteArray);
+                ExternalMemoryCore.WriteProcessMemory(Handle, isRelative ? ToAbsolute(address) : address, byteArray);
             }
         }
 

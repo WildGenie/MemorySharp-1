@@ -1,11 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Binarysharp.MemoryManagement.Hooks;
-using Binarysharp.MemoryManagement.LocalProcess;
-using Binarysharp.MemoryManagement.LocalProcess.Internals;
-using Binarysharp.MemoryManagement.LocalProcess.Objects;
-using Binarysharp.MemoryManagement.Patterns;
+using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Objects.Modules;
+using ToolsSharp.Managment.Interfaces;
+using ToolsSharp.Memory;
+using ToolsSharp.Memory.Objects;
 
 namespace Binarysharp.MemoryManagement
 {
@@ -34,7 +34,7 @@ namespace Binarysharp.MemoryManagement
         public DetourManager Detours { get; }
 
         /// <summary>
-        ///     A manager for hooks that implement the <see cref="IHook" /> Interface.
+        ///     A manager for hooks that implement the <see cref="INamedElement" /> Interface.
         /// </summary>
         /// <value>The Instance of <see cref="HookManager" />.</value>
         public HookManager Hooks { get; }
@@ -75,7 +75,7 @@ namespace Binarysharp.MemoryManagement
         /// <returns>An array of bytes.</returns>
         public override byte[] ReadBytes(IntPtr address, int count, bool isRelative = false)
         {
-            return LocalMemoryCore.ReadBytes(address, count, isRelative);
+            return InternalMemoryCore.ReadBytes(address, count, isRelative);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Binarysharp.MemoryManagement
         /// <returns>A value.</returns>
         public override T Read<T>(IntPtr address, bool isRelative = false)
         {
-            return LocalMemoryCore.Read<T>(address, isRelative);
+            return InternalMemoryCore.Read<T>(address, isRelative);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Binarysharp.MemoryManagement
         /// <returns>An array.</returns>
         public override T[] ReadArray<T>(IntPtr address, int count, bool isRelative = false)
         {
-            return LocalMemoryCore.ReadArray<T>(address, count, isRelative);
+            return InternalMemoryCore.ReadArray<T>(address, count, isRelative);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace Binarysharp.MemoryManagement
         /// <param name="isRelative">if set to <c>true</c> [is relative].</param>
         public override void WriteBytes(IntPtr address, byte[] byteArray, bool isRelative = false)
         {
-            LocalMemoryCore.WriteBytes(address, byteArray, isRelative);
+            InternalMemoryCore.WriteBytes(address, byteArray, isRelative);
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Binarysharp.MemoryManagement
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         public override void Write<T>(IntPtr address, T value, bool isRelative = false)
         {
-            LocalMemoryCore.Write(address, value);
+            InternalMemoryCore.Write(address, value);
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Binarysharp.MemoryManagement
         /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
         public override void WriteArray<T>(IntPtr address, T[] arrayOfValues, bool isRelative = false)
         {
-            LocalMemoryCore.WriteArray(address, arrayOfValues);
+            InternalMemoryCore.WriteArray(address, arrayOfValues);
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace Binarysharp.MemoryManagement
         /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
         public IntPtr GetDelegatePointer(Delegate @delegate)
         {
-            return LocalMemoryCore.GetFunctionPointer(@delegate);
+            return InternalMemoryCore.GetFunctionPointer(@delegate);
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace Binarysharp.MemoryManagement
         /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
         public IntPtr GetVTablePointer(IntPtr address, int index)
         {
-            return LocalMemoryCore.GetVTablePointer(address, index);
+            return InternalMemoryCore.GetVTablePointer(address, index);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace Binarysharp.MemoryManagement
             {
                 address = ToAbsolute(address);
             }
-            return new ProxyPointer(this, address);
+            return new ProxyPointer(Handle, address);
         }
 
         /// <summary>
