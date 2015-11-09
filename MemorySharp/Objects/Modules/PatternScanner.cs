@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Binarysharp.MemoryManagement.Internals;
 using ToolsSharp.Patterns;
 using ToolsSharp.Patterns.Objects;
@@ -44,6 +46,50 @@ namespace Binarysharp.MemoryManagement.Objects.Modules
         /// <value>The process module.</value>
         public ProcessModule ProcessModule { get; set; }
         #endregion
+
+        /// <summary>
+        ///     Adds all pointers found from scanning a xml file to a given dictonary using the <code>IDictonary</code> interface.
+        /// </summary>
+        /// <param name="xmlFileNameOrPath">The name or path to the xml ProcessModulePattern file to use.</param>
+        /// <param name="thePointerDictionary">The dictonary to fill.</param>
+        public void CollectXmlScanResults(string xmlFileNameOrPath, IDictionary<string, IntPtr> thePointerDictionary)
+        {
+            var patterns = PatternCore.LoadXmlPatternFile(xmlFileNameOrPath);
+            foreach (var pattern in patterns)
+            {
+                thePointerDictionary.Add(pattern.Description, Find(pattern).Address);
+            }
+        }
+
+
+        /// <summary>
+        ///     Adds all pointers found from scanning a json file to a given dictonary using the <code>IDictonary</code> interface.
+        /// </summary>
+        /// <param name="xmlFileNameOrPath">The name or path to the xml ProcessModulePattern file to use.</param>
+        /// <param name="thePointerDictionary">The dictonary to fill.</param>
+        public void CollectJsonScanResults(string xmlFileNameOrPath, IDictionary<string, IntPtr> thePointerDictionary)
+        {
+            var patterns = PatternCore.LoadJsonPatternFile(xmlFileNameOrPath);
+            foreach (var pattern in patterns)
+            {
+                thePointerDictionary.Add(pattern.Description, Find(pattern).Address);
+            }
+        }
+
+        /// <summary>
+        ///     Performs a pattern scan from the data inside the <see cref="SerializablePattern" /> instance supplied in the
+        ///     parameter.
+        /// </summary>
+        /// m>
+        /// <param name="pattern">The <see cref="SerializablePattern" /> Instance containing the data to use.</param>
+        /// <returns>A new <see cref="ScanResult" /></returns>
+        public ScanResult Find(SerializablePattern pattern)
+        {
+            var bytes =
+                PatternCore.GetBytesFromDwordPattern(pattern.TextPattern);
+            var mask = PatternCore.GetMaskFromDwordPattern(pattern.TextPattern);
+            return Find(bytes, mask, pattern.OffsetToAdd, pattern.IsOffsetMode, pattern.RebaseAddress);
+        }
 
         /// <summary>
         ///     Performs a pattern scan.

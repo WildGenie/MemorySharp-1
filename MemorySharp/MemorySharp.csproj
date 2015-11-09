@@ -79,7 +79,7 @@
     <Compile Include="Factories\AssemblyFactory.cs" />
     <Compile Include="Objects\Assembly\AssemblyTransaction.cs" />
     <Compile Include="Objects\Calls\GenericRemoteFunction.cs" />
-    <Compile Include="Objects\Modules\ProcessModulePatternScanner.cs" />
+    <Compile Include="Objects\Modules\PatternScanner.cs" />
     <Compile Include="MemorySharp.cs" />
     <Compile Include="Internals\DetourManager.cs" />
     <Compile Include="Internals\HookManager.cs" />
