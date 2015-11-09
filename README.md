@@ -75,9 +75,9 @@ A few examples of features added being used
             // The resilt.
             return XmlPatternScanDictionary["CustomTestPattern"];
         }
-    ```
+```
 
-** More traditional pattern scan**
+**More traditional pattern scan**
 
  ```csharp
         // This will return a scan result from a regular pattern struct.
@@ -91,7 +91,7 @@ A few examples of features added being used
             Console.WriteLine(@"The rebased address found was: " + scanResult.Address.ToString("X"));
             return scanResult;
         }
-    ```
+```
     
 **Basic WndProc hook example - credits to jadd@ownedcore entirely.**
 
