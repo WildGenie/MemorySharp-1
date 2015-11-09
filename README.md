@@ -36,7 +36,7 @@ A few examples of features added being used
 
 **Standard pattern scan**
 
- ```charp
+ ```csharp
     private static byte[] PatternBytes { get; } = {1, 2, 3, 0, 0, 5};
     private static string PatternMask { get; } = "xxx??x";
     private static int OffsetLocation { get; } = 0xC;
@@ -53,7 +53,7 @@ A few examples of features added being used
 ```
 **From a xml or json file**
 
- ```charp
+ ```csharp
           // This will write the local SerializablePattern object to a xml file, then serialize it from the file.
         // It will then pattern scan it with the paramters from the xml file, and add its scanned results to the dictionary's.
         public static Dictionary<string, IntPtr> XmlPatternScanDictionary { get; } = new Dictionary<string, IntPtr>();
@@ -79,7 +79,7 @@ A few examples of features added being used
 
 ** More traditional pattern scan**
 
- ```charp
+ ```csharp
         // This will return a scan result from a regular pattern struct.
         public static Pattern CustomTestPattern { get; set; }
         public static ScanResult TestRegularPatternScan()
@@ -95,7 +95,7 @@ A few examples of features added being used
     
 **Basic WndProc hook example - credits to jadd@ownedcore entirely.**
 
- ```charp
+ ```csharp
        public static class WndProcHook
 	    {
         // The MemoryPlus instance, not needed but used in this case.
@@ -168,7 +168,7 @@ A few examples of features added being used
 ```
 **World To Screen with extension methods(thanks Zatt@unknowncheats):**
 
-  ```charp
+  ```csharp
 		        int matrixRows = 1;
                 int matrixCocolumns = 1;
                 Matrix viewMatrix = new Matrix(matrixRows, matrixCocolumns);
