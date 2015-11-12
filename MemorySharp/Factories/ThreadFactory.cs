@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Binarysharp.MemoryManagement.Core.Managment.Interfaces;
+using Binarysharp.MemoryManagement.Core.Marshaling.Objects;
+using Binarysharp.MemoryManagement.Core.Native.Enums;
+using Binarysharp.MemoryManagement.Core.Threads;
 using Binarysharp.MemoryManagement.Objects.Threads;
-using ToolsSharp.Managment.Interfaces;
-using ToolsSharp.Marshaling.Objects;
-using ToolsSharp.Native.Enums;
-using ToolsSharp.Threads;
 
 namespace Binarysharp.MemoryManagement.Factories
 {

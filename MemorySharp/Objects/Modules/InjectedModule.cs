@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using ToolsSharp.Managment.Interfaces;
+using Binarysharp.MemoryManagement.Core.Managment.Interfaces;
 
 namespace Binarysharp.MemoryManagement.Objects.Modules
 {

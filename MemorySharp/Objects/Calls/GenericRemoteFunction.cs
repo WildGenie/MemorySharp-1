@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using ToolsSharp.CallingConvention.Enums;
+using Binarysharp.MemoryManagement.Core.CallingConvention.Enums;
 
 namespace Binarysharp.MemoryManagement.Objects.Calls
 {

@@ -9,7 +9,7 @@
 
 using System;
 using System.Text;
-using ToolsSharp.Marshaling;
+using Binarysharp.MemoryManagement.Core.Marshaling;
 
 namespace Binarysharp.MemoryManagement.Objects.Assembly
 {

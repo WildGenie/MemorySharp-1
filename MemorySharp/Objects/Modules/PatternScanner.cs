@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Core.Patterns;
+using Binarysharp.MemoryManagement.Core.Patterns.Objects;
 using Binarysharp.MemoryManagement.Objects.BaseClasses;
-using ToolsSharp.Patterns;
-using ToolsSharp.Patterns.Objects;
 
 namespace Binarysharp.MemoryManagement.Objects.Modules
 {

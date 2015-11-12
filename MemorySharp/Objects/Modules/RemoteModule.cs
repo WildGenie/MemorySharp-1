@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Binarysharp.MemoryManagement.Core.Memory.Objects;
+using Binarysharp.MemoryManagement.Core.Modules;
+using Binarysharp.MemoryManagement.Core.Native.Objects;
 using Binarysharp.MemoryManagement.Objects.Calls;
-using ToolsSharp.Memory.Objects;
-using ToolsSharp.Modules;
-using ToolsSharp.Native.Objects;
 
 namespace Binarysharp.MemoryManagement.Objects.Modules
 {

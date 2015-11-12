@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ToolsSharp.Marshaling;
-using ToolsSharp.Marshaling.Interfaces;
-using ToolsSharp.Native.Enums;
-using ToolsSharp.Native.Objects;
-using ToolsSharp.Native.Structs;
-using ToolsSharp.Threads;
-using ToolsSharp.Threads.Enums;
+using Binarysharp.MemoryManagement.Core.Marshaling;
+using Binarysharp.MemoryManagement.Core.Marshaling.Interfaces;
+using Binarysharp.MemoryManagement.Core.Native.Enums;
+using Binarysharp.MemoryManagement.Core.Native.Objects;
+using Binarysharp.MemoryManagement.Core.Native.Structs;
+using Binarysharp.MemoryManagement.Core.Threads;
+using Binarysharp.MemoryManagement.Core.Threads.Enums;
 using ThreadState = System.Diagnostics.ThreadState;
 
 namespace Binarysharp.MemoryManagement.Objects.Threads
@@ -365,12 +365,9 @@ namespace Binarysharp.MemoryManagement.Objects.Threads
         /// <returns>A new instance of the <see cref="FrozenThread" /> class. If this object is disposed, the thread is resumed.</returns>
         public FrozenThread Suspend()
         {
-            if (IsAlive)
-            {
-                ThreadCore.SuspendThread(Handle);
-                return new FrozenThread(this);
-            }
-            return null;
+            if (!IsAlive) return null;
+            ThreadCore.SuspendThread(Handle);
+            return new FrozenThread(this);
         }
 
         /// <summary>

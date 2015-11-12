@@ -2,18 +2,17 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Binarysharp.MemoryManagement.Factories;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Core.CallingConvention.Enums;
+using Binarysharp.MemoryManagement.Core.Helpers;
+using Binarysharp.MemoryManagement.Core.Marshaling;
+using Binarysharp.MemoryManagement.Core.Memory;
+using Binarysharp.MemoryManagement.Core.Memory.Objects;
+using Binarysharp.MemoryManagement.Core.Native.Enums;
+using Binarysharp.MemoryManagement.Core.Native.Objects;
+using Binarysharp.MemoryManagement.Managers;
 using Binarysharp.MemoryManagement.Objects.BaseClasses;
 using Binarysharp.MemoryManagement.Objects.Calls;
 using Binarysharp.MemoryManagement.Objects.Modules;
-using ToolsSharp.CallingConvention.Enums;
-using ToolsSharp.Helpers;
-using ToolsSharp.Marshaling;
-using ToolsSharp.Memory;
-using ToolsSharp.Memory.Objects;
-using ToolsSharp.Native.Enums;
-using ToolsSharp.Native.Objects;
 
 namespace Binarysharp.MemoryManagement
 {

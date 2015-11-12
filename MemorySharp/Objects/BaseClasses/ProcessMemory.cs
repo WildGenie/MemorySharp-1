@@ -5,11 +5,11 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Core.Extensions;
+using Binarysharp.MemoryManagement.Core.Helpers;
+using Binarysharp.MemoryManagement.Managers;
 using Binarysharp.MemoryManagement.Objects.Edits;
 using Binarysharp.MemoryManagement.Objects.Modules;
-using ToolsSharp.Extensions;
-using ToolsSharp.Helpers;
 
 namespace Binarysharp.MemoryManagement.Objects.BaseClasses
 {
@@ -30,6 +30,15 @@ namespace Binarysharp.MemoryManagement.Objects.BaseClasses
             ImageBase = process.MainModule.BaseAddress;
             Patches = new PatchManager(this);
             MainModulePatterns = CreatePatternScanner(Process.MainModule.ModuleName);
+        }
+
+        /// <summary>
+        ///     Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage
+        ///     collection.
+        /// </summary>
+        ~ProcessMemory()
+        {
+            Dispose();
         }
         #endregion
 
@@ -73,7 +82,7 @@ namespace Binarysharp.MemoryManagement.Objects.BaseClasses
         /// </summary>
         public virtual void Dispose()
         {
-            Process.Dispose();
+            Patches.DisableAll();
         }
         #endregion
 

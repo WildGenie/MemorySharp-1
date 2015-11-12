@@ -10,15 +10,15 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Binarysharp.MemoryManagement.Core.CallingConvention;
+using Binarysharp.MemoryManagement.Core.CallingConvention.Enums;
+using Binarysharp.MemoryManagement.Core.CallingConvention.Interfaces;
+using Binarysharp.MemoryManagement.Core.Managment.Interfaces;
+using Binarysharp.MemoryManagement.Core.Marshaling.Interfaces;
+using Binarysharp.MemoryManagement.Core.Marshaling.Objects;
+using Binarysharp.MemoryManagement.Core.Memory.Objects;
 using Binarysharp.MemoryManagement.Objects.Assembly;
 using Binarysharp.MemoryManagement.Objects.Threads;
-using ToolsSharp.CallingConvention;
-using ToolsSharp.CallingConvention.Enums;
-using ToolsSharp.CallingConvention.Interfaces;
-using ToolsSharp.Managment.Interfaces;
-using ToolsSharp.Marshaling.Interfaces;
-using ToolsSharp.Marshaling.Objects;
-using ToolsSharp.Memory.Objects;
 
 namespace Binarysharp.MemoryManagement.Factories
 {

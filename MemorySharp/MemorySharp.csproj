@@ -56,8 +56,13 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fasm.NET">
-      <HintPath>..\Libraries\Fasm.NET.dll</HintPath>
+    <Reference Include="Fasm.NET, Version=1.0.4939.27955, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\Fasm.NET.1.70.03.2\lib\Fasm.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -68,22 +73,164 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="ToolsSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libraries\ToolSharp64\ToolsSharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Internals\FactoryManager.cs" />
+    <Compile Include="Core\CallingConvention\CallingConventionSelector.cs" />
+    <Compile Include="Core\CallingConvention\Enums\CallingConventions.cs" />
+    <Compile Include="Core\CallingConvention\Enums\Enumerations.cs" />
+    <Compile Include="Core\CallingConvention\Interfaces\IAssembler.cs" />
+    <Compile Include="Core\CallingConvention\Interfaces\ICallingConvention.cs" />
+    <Compile Include="Core\CallingConvention\Objects\CdeclCallingConvention.cs" />
+    <Compile Include="Core\CallingConvention\Objects\FastcallCallingConvention.cs" />
+    <Compile Include="Core\CallingConvention\Objects\StdcallCallingConvention.cs" />
+    <Compile Include="Core\CallingConvention\Objects\ThiscallCallingConvention.cs" />
+    <Compile Include="Core\Extensions\DelegateExtensions.cs" />
+    <Compile Include="Core\Extensions\EnumExtensions.cs" />
+    <Compile Include="Core\Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Core\Extensions\ReadWriteProcessExtensions.cs" />
+    <Compile Include="Core\Extensions\RichTextBoxExtensions.cs" />
+    <Compile Include="Core\Extensions\ULongExtensions.cs" />
+    <Compile Include="Core\Extensions\UnsafeIntegerExtensions.cs" />
+    <Compile Include="Core\Extensions\UnsafeIntPtrExtensions.cs" />
+    <Compile Include="Core\Extensions\UnsafeLongExtensions.cs" />
+    <Compile Include="Core\Extensions\UnsafeUIntExtensions.cs" />
+    <Compile Include="Core\Helpers\ApplicationFinder.cs" />
+    <Compile Include="Core\Helpers\ApplicationInfo.cs" />
+    <Compile Include="Core\Helpers\ArchitectureHelper.cs" />
+    <Compile Include="Core\Helpers\AttributesHelper.cs" />
+    <Compile Include="Core\Helpers\HandleManipulator.cs" />
+    <Compile Include="Core\Helpers\JsonHelper.cs" />
+    <Compile Include="Core\Helpers\KeyBoardHelper.cs" />
+    <Compile Include="Core\Helpers\Randomizer.cs" />
+    <Compile Include="Core\Helpers\Required.cs" />
+    <Compile Include="Core\Helpers\Singleton.cs" />
+    <Compile Include="Core\Helpers\TypeData.cs" />
+    <Compile Include="Core\Helpers\XmlHelper.cs" />
+    <Compile Include="Core\Hooks\Input\KeyboardHook.cs" />
+    <Compile Include="Core\Hooks\Input\MouseHook.cs" />
+    <Compile Include="Core\Hooks\Input\Static\Core\GlobalEventProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Core\Hooks\Input\Static\Core\HookManager.Callbacks.cs" />
+    <Compile Include="Core\Hooks\Input\Static\Core\HookManager.Structures.cs" />
+    <Compile Include="Core\Hooks\Input\Static\Core\HookManager.Windows.cs" />
+    <Compile Include="Core\Hooks\Input\Static\Core\MouseEventExtArgs.cs" />
+    <Compile Include="Core\Hooks\Input\Static\Core\Msllhookstruct.cs" />
+    <Compile Include="Core\Hooks\Input\Static\InputHookManager.cs" />
+    <Compile Include="Core\Hooks\WndProc\Default\UpdatePulseArgs.cs" />
+    <Compile Include="Core\Hooks\WndProc\Default\WindowHookEngine.cs" />
+    <Compile Include="Core\Hooks\WndProc\Enums\UserMessage.cs" />
+    <Compile Include="Core\Hooks\WndProc\Interfaces\IWIndowEngine.cs" />
+    <Compile Include="Core\Hooks\WndProc\WindowHook.cs" />
+    <Compile Include="Core\Logging\Default\ConsoleLog.cs" />
+    <Compile Include="Core\Logging\Default\DebugLog.cs" />
+    <Compile Include="Core\Logging\Default\FileLog.cs" />
+    <Compile Include="Core\Logging\Enums\LoggerType.cs" />
+    <Compile Include="Core\Logging\Enums\LogNotificationType.cs" />
+    <Compile Include="Core\Logging\Enums\MessageType.cs" />
+    <Compile Include="Core\Logging\Interfaces\IManagedLog.cs" />
+    <Compile Include="Core\Logging\LogManager.cs" />
+    <Compile Include="Core\Managment\BaseClasses\BaseManager.cs" />
+    <Compile Include="Core\Managment\Interfaces\IApplicableElement.cs" />
+    <Compile Include="Core\Managment\Interfaces\IDisposableState.cs" />
+    <Compile Include="Core\Managment\Interfaces\IFactory.cs" />
+    <Compile Include="Core\Managment\Interfaces\Ilog.cs" />
+    <Compile Include="Core\Managment\Interfaces\INamedElement.cs" />
+    <Compile Include="Core\Managment\Interfaces\IPlugin.cs" />
+    <Compile Include="Core\Managment\Interfaces\IPulsableElement.cs" />
+    <Compile Include="Core\Managment\Interfaces\PluginContainer.cs" />
+    <Compile Include="Core\Managment\SafeManager.cs" />
+    <Compile Include="Core\Marshaling\Interfaces\IMarshalledValue.cs" />
+    <Compile Include="Core\Marshaling\Objects\MarshalValue.cs" />
+    <Compile Include="Core\Marshaling\SafeMarshal.cs" />
+    <Compile Include="Core\Marshaling\UnsafeMarshal.cs" />
+    <Compile Include="Core\Math3D\DimensionaMathExtensions.cs" />
+    <Compile Include="Core\Math3D\Objects\Location.cs" />
+    <Compile Include="Core\Math3D\Objects\Matrix.cs" />
+    <Compile Include="Core\Math3D\Objects\Vector2.cs" />
+    <Compile Include="Core\Math3D\Objects\Vector3.cs" />
+    <Compile Include="Core\Memory\ExternalMemoryCore.cs" />
+    <Compile Include="Core\Memory\InternalMemoryCore.cs" />
+    <Compile Include="Core\Memory\Objects\LocalUnmanagedMemory.cs" />
+    <Compile Include="Core\Memory\Objects\MemoryProtection.cs" />
+    <Compile Include="Core\Memory\Objects\ProcessFunction.cs" />
+    <Compile Include="Core\Memory\Objects\ProxyAllocation.cs" />
+    <Compile Include="Core\Memory\Objects\ProxyPointer.cs" />
+    <Compile Include="Core\Memory\Objects\ProxyRegion.cs" />
+    <Compile Include="Core\Memory\Objects\VirtualClass.cs" />
+    <Compile Include="Core\Modules\ModuleCore.cs" />
+    <Compile Include="Core\Native\Enums\FlashWindowFlags.cs" />
+    <Compile Include="Core\Native\Enums\InputTypes.cs" />
+    <Compile Include="Core\Native\Enums\KeyboardFlags.cs" />
+    <Compile Include="Core\Native\Enums\Keys.cs" />
+    <Compile Include="Core\Native\Enums\MemoryAllocationFlags.cs" />
+    <Compile Include="Core\Native\Enums\MemoryProtectionFlags.cs" />
+    <Compile Include="Core\Native\Enums\MemoryReleaseFlags.cs" />
+    <Compile Include="Core\Native\Enums\MemoryStateFlags.cs" />
+    <Compile Include="Core\Native\Enums\MemoryTypeFlags.cs" />
+    <Compile Include="Core\Native\Enums\MouseFlags.cs" />
+    <Compile Include="Core\Native\Enums\PebStructure.cs" />
+    <Compile Include="Core\Native\Enums\ProcessAccessFlags.cs" />
+    <Compile Include="Core\Native\Enums\ProcessArchitectures.cs" />
+    <Compile Include="Core\Native\Enums\ProcessInformationClass.cs" />
+    <Compile Include="Core\Native\Enums\SystemMetrics.cs" />
+    <Compile Include="Core\Native\Enums\TebStructure.cs" />
+    <Compile Include="Core\Native\Enums\ThreadAccessFlags.cs" />
+    <Compile Include="Core\Native\Enums\ThreadContextFlags.cs" />
+    <Compile Include="Core\Native\Enums\ThreadCreationFlags.cs" />
+    <Compile Include="Core\Native\Enums\TranslationTypes.cs" />
+    <Compile Include="Core\Native\Enums\WaitValues.cs" />
+    <Compile Include="Core\Native\Enums\WindowsMessages.cs" />
+    <Compile Include="Core\Native\Enums\WindowStates.cs" />
+    <Compile Include="Core\Native\Objects\ManagedPeb32.cs" />
+    <Compile Include="Core\Native\Objects\ManagedPeb64.cs" />
+    <Compile Include="Core\Native\Objects\ManagedTeb.cs" />
+    <Compile Include="Core\Native\Objects\SafeMemoryHandle.cs" />
+    <Compile Include="Core\Native\SafeNativeMethods.cs" />
+    <Compile Include="Core\Native\Structs\FlashInfo.cs" />
+    <Compile Include="Core\Native\Structs\FloatingSaveArea.cs" />
+    <Compile Include="Core\Native\Structs\HardwareInput.cs" />
+    <Compile Include="Core\Native\Structs\Input.cs" />
+    <Compile Include="Core\Native\Structs\KeyboardInput.cs" />
+    <Compile Include="Core\Native\Structs\LdrDataTableEntry64.cs" />
+    <Compile Include="Core\Native\Structs\LdtEntry.cs" />
+    <Compile Include="Core\Native\Structs\ListEntry.cs" />
+    <Compile Include="Core\Native\Structs\MemoryBasicInformation.cs" />
+    <Compile Include="Core\Native\Structs\MouseInput.cs" />
+    <Compile Include="Core\Native\Structs\Peb64.cs" />
+    <Compile Include="Core\Native\Structs\PebLdrData64.cs" />
+    <Compile Include="Core\Native\Structs\Point.cs" />
+    <Compile Include="Core\Native\Structs\ProcessBasicInformation.cs" />
+    <Compile Include="Core\Native\Structs\Rectangle.cs" />
+    <Compile Include="Core\Native\Structs\ThreadBasicInformation.cs" />
+    <Compile Include="Core\Native\Structs\ThreadContext.cs" />
+    <Compile Include="Core\Native\Structs\UnicodeString.cs" />
+    <Compile Include="Core\Native\Structs\WindowPlacement.cs" />
+    <Compile Include="Core\Native\UnsafeNativeMethods.cs" />
+    <Compile Include="Core\Patterns\Objects\Pattern.cs" />
+    <Compile Include="Core\Patterns\Objects\ScanResult.cs" />
+    <Compile Include="Core\Patterns\Objects\SerializablePattern.cs" />
+    <Compile Include="Core\Patterns\PatternCore.cs" />
+    <Compile Include="Core\Threads\Enums\SegmentRegisters.cs" />
+    <Compile Include="Core\Threads\ThreadCore.cs" />
+    <Compile Include="Core\Tools\ThreadedUpdater.cs" />
+    <Compile Include="Core\Tools\TimedUpdater.cs" />
+    <Compile Include="Core\Windows\BaseClasses\BaseKeyboard.cs" />
+    <Compile Include="Core\Windows\BaseClasses\BaseMouse.cs" />
+    <Compile Include="Core\Windows\Objects\MessageKeyboard.cs" />
+    <Compile Include="Core\Windows\Objects\ProxyWindow.cs" />
+    <Compile Include="Core\Windows\Objects\SendInputMouse.cs" />
+    <Compile Include="Core\Windows\WindowCore.cs" />
+    <Compile Include="Managers\FactoryManager.cs" />
     <Compile Include="Objects\Assembly\Fasm32Assembler.cs" />
     <Compile Include="Factories\AssemblyFactory.cs" />
     <Compile Include="Objects\Assembly\AssemblyTransaction.cs" />
     <Compile Include="Objects\Calls\GenericRemoteFunction.cs" />
     <Compile Include="Objects\Modules\PatternScanner.cs" />
     <Compile Include="MemorySharp.cs" />
-    <Compile Include="Internals\DetourManager.cs" />
-    <Compile Include="Internals\HookManager.cs" />
-    <Compile Include="Internals\PatchManager.cs" />
+    <Compile Include="Managers\DetourManager.cs" />
+    <Compile Include="Managers\HookManager.cs" />
+    <Compile Include="Managers\PatchManager.cs" />
     <Compile Include="MemoryPlus.cs" />
     <Compile Include="Objects\Edits\Detour.cs" />
     <Compile Include="Objects\Edits\Patch.cs" />
@@ -98,6 +245,9 @@
     <Compile Include="Objects\Threads\RemoteThread.cs" />
     <Compile Include="Factories\ThreadFactory.cs" />
     <Compile Include="Factories\WindowFactory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

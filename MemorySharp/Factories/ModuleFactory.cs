@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Binarysharp.MemoryManagement.Core.Managment.Interfaces;
+using Binarysharp.MemoryManagement.Core.Memory.Objects;
 using Binarysharp.MemoryManagement.Objects.Modules;
-using ToolsSharp.Managment.Interfaces;
-using ToolsSharp.Memory.Objects;
 
 namespace Binarysharp.MemoryManagement.Factories
 {

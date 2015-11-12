@@ -1,12 +1,12 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Core.Managment.Interfaces;
+using Binarysharp.MemoryManagement.Core.Memory;
+using Binarysharp.MemoryManagement.Core.Memory.Objects;
+using Binarysharp.MemoryManagement.Managers;
 using Binarysharp.MemoryManagement.Objects.BaseClasses;
 using Binarysharp.MemoryManagement.Objects.Modules;
-using ToolsSharp.Managment.Interfaces;
-using ToolsSharp.Memory;
-using ToolsSharp.Memory.Objects;
 
 namespace Binarysharp.MemoryManagement
 {

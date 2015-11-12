@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Core.Managment.Interfaces;
 using Binarysharp.MemoryManagement.Objects.BaseClasses;
-using ToolsSharp.Managment.Interfaces;
 
 namespace Binarysharp.MemoryManagement.Objects.Edits
 {

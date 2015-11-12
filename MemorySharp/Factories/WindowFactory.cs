@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ToolsSharp.Helpers;
-using ToolsSharp.Managment.Interfaces;
-using ToolsSharp.Windows;
-using ToolsSharp.Windows.Objects;
+using Binarysharp.MemoryManagement.Core.Helpers;
+using Binarysharp.MemoryManagement.Core.Managment.Interfaces;
+using Binarysharp.MemoryManagement.Core.Windows;
+using Binarysharp.MemoryManagement.Core.Windows.Objects;
 
 namespace Binarysharp.MemoryManagement.Factories
 {
