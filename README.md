@@ -7,8 +7,6 @@ https://github.com/ZenLulz
 **This version of MemorySharp information**
 The reason for making modifications and changes to the original library are mainly for me to learn as a beginner, and also to provide some useful functionality that can range from syntax sugar and minor convenience to full implementation of useful new features.
 
-**Note:** The lib here is now a wrapper around the independant 'ToolsSharp' lib, found here: https://github.com/lolp1/ToolsSharp and is needed for the project. The ToolsSharp can be used as a stand alone as well.
-
 Basic Features Added
 ------------------------------------------------------------------------
  **Support for 'in-process' Memory operations, aka injected.**
