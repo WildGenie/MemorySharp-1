@@ -13,14 +13,14 @@ namespace Binarysharp.MemoryManagement.Managers
     /// <summary>
     ///     Class to manage hooks that implement the <see cref="INamedElement" /> Interface.
     /// </summary>
-    public class HookManager : SafeManager<INamedElement>, IDisposable
+    public class HookFactory : SafeManager<INamedElement>, IFactory
     {
         #region Constructors, Destructors
         /// <summary>
-        ///     Initializes a new instance of the <see cref="HookManager" /> class.
+        ///     Initializes a new instance of the <see cref="HookFactory" /> class.
         /// </summary>
         /// <param name="processMemory">The process memory.</param>
-        public HookManager(MemoryPlus processMemory) : base(new DebugLog())
+        public HookFactory(MemoryPlus processMemory) : base(new DebugLog())
         {
             ProcessMemory = processMemory;
         }

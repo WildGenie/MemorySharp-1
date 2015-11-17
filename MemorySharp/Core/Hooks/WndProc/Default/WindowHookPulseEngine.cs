@@ -10,7 +10,7 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.WndProc.Default
     ///     Default Class for adding elements to be executed inside of the thread the window <see cref="WindowHook" /> class is
     ///     attached to.
     /// </summary>
-    public class WindowHookEngine : IWindowEngine
+    public class WindowHookPulseEngine : IWindowEngine
     {
         #region Public Delegates/Events
         /// <summary>
@@ -34,9 +34,9 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.WndProc.Default
 
         #region Constructors, Destructors
         /// <summary>
-        ///     Initializes a new instance of the <see cref="WindowHookEngine" /> class.
+        ///     Initializes a new instance of the <see cref="WindowHookPulseEngine" /> class.
         /// </summary>
-        public WindowHookEngine()
+        public WindowHookPulseEngine()
         {
             Pulsables = new LinkedList<IPulsableElement>();
         }

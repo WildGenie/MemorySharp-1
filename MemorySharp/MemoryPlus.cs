@@ -22,23 +22,18 @@ namespace Binarysharp.MemoryManagement
         /// <param name="process">The process.</param>
         public MemoryPlus(Process process) : base(process)
         {
-            Detours = new DetourManager(this);
-            Hooks = new HookManager(this);
+            Factories = new InternalFactoryManager(this);
+            Factories.EnableAll();
         }
         #endregion
 
         #region Public Properties, Indexers
         /// <summary>
-        ///     A manager for Instances of the <see cref="DetourManager" /> class.
+        ///     Gets the factory manager instance.
         /// </summary>
-        /// <value>The Instance of <see cref="DetourManager" />.</value>
-        public DetourManager Detours { get; }
+        /// <value>The instance for managing factories.</value>
+        public InternalFactoryManager Factories { get; }
 
-        /// <summary>
-        ///     A manager for hooks that implement the <see cref="INamedElement" /> Interface.
-        /// </summary>
-        /// <value>The Instance of <see cref="HookManager" />.</value>
-        public HookManager Hooks { get; }
 
         /// <summary>
         ///     Gets or sets the <see cref="PatternScanner" /> with the specified module name.

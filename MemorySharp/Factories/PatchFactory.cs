@@ -1,6 +1,7 @@
 ﻿using System;
 using Binarysharp.MemoryManagement.Core.Logging.Default;
 using Binarysharp.MemoryManagement.Core.Managment;
+using Binarysharp.MemoryManagement.Core.Managment.Interfaces;
 using Binarysharp.MemoryManagement.Objects.BaseClasses;
 using Binarysharp.MemoryManagement.Objects.Edits;
 
@@ -10,14 +11,14 @@ namespace Binarysharp.MemoryManagement.Managers
     ///     A manager class to handle memory patches.
     ///     <remarks>All credits to Apoc.</remarks>
     /// </summary>
-    public class PatchManager : SafeManager<Patch>
+    public class PatchFactory : SafeManager<Patch>, IFactory
     {
         #region Constructors, Destructors
         /// <summary>
-        ///     Initializes a new instance of the <see cref="PatchManager" /> class.
+        ///     Initializes a new instance of the <see cref="PatchFactory" /> class.
         /// </summary>
         /// <param name="processMemory">The process memory.</param>
-        public PatchManager(ProcessMemory processMemory) : base(new DebugLog())
+        public PatchFactory(ProcessMemory processMemory) : base(new DebugLog())
         {
             ProcessMemory = processMemory;
         }
@@ -35,6 +36,21 @@ namespace Binarysharp.MemoryManagement.Managers
         /// </summary>
         /// <param name="name">The name of the patch.</param>
         public Patch this[string name] => InternalItems[name];
+        #endregion
+
+        #region Interface Implementations
+        public void Dispose()
+        {
+            foreach (var keyValuePair in InternalItems)
+            {
+                if (keyValuePair.Value.MustBeDisposed)
+                {
+                    keyValuePair.Value.Dispose();
+                }
+
+                Remove(keyValuePair.Key);
+            }
+        }
         #endregion
 
         /// <summary>

@@ -1,30 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Binarysharp.MemoryManagement.Core.Managment.BaseClasses;
 using Binarysharp.MemoryManagement.Core.Managment.Interfaces;
-using Binarysharp.MemoryManagement.Factories;
 
 namespace Binarysharp.MemoryManagement.Managers
 {
     /// <summary>
     ///     Class for managing of <see cref="IFactory" /> instances.
     /// </summary>
-    public class FactoryManager : BaseManager<IFactory>, IDisposable
+    public class InternalFactoryManager : BaseManager<IFactory>, IDisposable
     {
         #region Fields, Private Properties
         /// <summary>
         ///     Gets the memory sharp reference for this instance.
         /// </summary>
         /// <value>The memory sharp reference for this instance.</value>
-        private MemorySharp MemorySharp { get; }
+        private MemoryPlus MemorySharp { get; }
         #endregion
 
         #region Constructors, Destructors
         /// <summary>
-        ///     Initializes a new instance of the <see cref="FactoryManager" /> class.
+        ///     Initializes a new instance of the <see cref="ExternalFactoryManager" /> class.
         /// </summary>
         /// <param name="memorySharp">The memory sharp instance to use for reference in the managers instance.</param>
-        public FactoryManager(MemorySharp memorySharp)
+        public InternalFactoryManager(MemoryPlus memorySharp)
         {
             MemorySharp = memorySharp;
         }
@@ -32,36 +34,22 @@ namespace Binarysharp.MemoryManagement.Managers
 
         #region Public Properties, Indexers
         /// <summary>
-        ///     Gets the instance of the <see cref="Factories.ThreadFactory" /> class.
+        ///     A manager for Instances of the <see cref="Managers.DetourFactory" /> class.
         /// </summary>
-        /// <value>The thread factory.</value>
-        public ThreadFactory ThreadFactory { get; private set; }
-
+        /// <value>The Instance of <see cref="Managers.DetourFactory" />.</value>
+        public DetourFactory DetourFactory { get; private set; }
 
         /// <summary>
-        ///     Gets the instance of the <see cref="Factories.WindowFactory" /> class.
+        ///     A manager for hooks that implement the <see cref="INamedElement" /> Interface.
         /// </summary>
-        /// <value>The window factory.</value>
-        public WindowFactory WindowFactory { get; private set; }
-
-
-        /// <summary>
-        ///     Gets the instance of the <see cref="Factories.MemoryFactory" /> class.
-        /// </summary>
-        /// <value>The memory factory.</value>
-        public MemoryFactory MemoryFactory { get; private set; }
+        /// <value>The Instance of <see cref="Managers.HookFactory" />.</value>
+        public HookFactory HookFactory { get; private set; }
 
         /// <summary>
-        ///     Gets the instance of the <see cref="Factories.ModuleFactory" /> class.
+        ///     A factory for patches that implement the <see cref="INamedElement" /> Interface.
         /// </summary>
-        /// <value>The module factory.</value>
-        public ModuleFactory ModuleFactory { get; private set; }
-
-        /// <summary>
-        ///     Gets the the instance of the <see cref="Factories.AssemblyFactory" /> class.
-        /// </summary>
-        /// <value>The assembly factory.</value>
-        public AssemblyFactory AssemblyFactory { get; private set; }
+        /// <value>The Instance of <see cref="Managers.HookFactory" />.</value>
+        public PatchFactory PatchFactory { get; private set; }
         #endregion
 
         #region Interface Implementations
@@ -84,11 +72,9 @@ namespace Binarysharp.MemoryManagement.Managers
         /// </summary>
         public override void EnableAll()
         {
-            InternalItems.Add("ThreadFactory", ThreadFactory = new ThreadFactory(MemorySharp));
-            InternalItems.Add("WindowFactory", WindowFactory = new WindowFactory(MemorySharp));
-            InternalItems.Add("MemoryFactory", MemoryFactory = new MemoryFactory(MemorySharp));
-            InternalItems.Add("ModuleFactory", ModuleFactory = new ModuleFactory(MemorySharp));
-            InternalItems.Add("AssemblyFactory", AssemblyFactory = new AssemblyFactory(MemorySharp));
+            InternalItems.Add("DetourFactory", DetourFactory = new DetourFactory(MemorySharp));
+            InternalItems.Add("HookFactory", HookFactory = new HookFactory(MemorySharp));
+            InternalItems.Add("PatchFactory", PatchFactory = new PatchFactory(MemorySharp));
         }
 
         /// <summary>
@@ -105,10 +91,10 @@ namespace Binarysharp.MemoryManagement.Managers
         /// <summary>
         ///     Removes a factory by its instance reference in the manager.
         /// </summary>
-        /// <param name="iFactory">The <see cref="IFactory" /> instance to remove and dispose.</param>
-        public override void Remove(IFactory iFactory)
+        /// <param name="item">The <see cref="IFactory" /> instance to remove and dispose.</param>
+        public override void Remove(IFactory item)
         {
-            var keyValuePair = InternalItems.First(factory => factory.Value.Equals(iFactory));
+            var keyValuePair = InternalItems.First(factory => factory.Value.Equals(item));
             InternalItems.Remove(keyValuePair.Key);
             keyValuePair.Value.Dispose();
         }
@@ -120,7 +106,9 @@ namespace Binarysharp.MemoryManagement.Managers
         {
             foreach (var value in InternalItems)
             {
-                Remove(value.Key);
+                Action action = (() => value.Value.Dispose());
+                Remove(value.Value);
+                action();
             }
         }
     }

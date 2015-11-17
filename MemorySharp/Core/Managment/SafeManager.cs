@@ -103,9 +103,9 @@ namespace Binarysharp.MemoryManagement.Core.Managment
         ///     Remove a given element.
         /// </summary>
         /// <param name="item">The element to remove.</param>
-        public override void Remove(T iFactory)
+        public override void Remove(T item)
         {
-            Remove(iFactory.Name);
+            Remove(item.Name);
         }
 
         /// <summary>

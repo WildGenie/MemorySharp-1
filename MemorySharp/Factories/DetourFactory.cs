@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using Binarysharp.MemoryManagement.Core.Helpers;
 using Binarysharp.MemoryManagement.Core.Logging.Default;
 using Binarysharp.MemoryManagement.Core.Managment;
+using Binarysharp.MemoryManagement.Core.Managment.Interfaces;
 using Binarysharp.MemoryManagement.Objects.BaseClasses;
 using Binarysharp.MemoryManagement.Objects.Edits;
 
@@ -11,14 +13,14 @@ namespace Binarysharp.MemoryManagement.Managers
     ///     A manager class to handle function detours, and hooks.
     ///     <remarks>All credits to Apoc.</remarks>
     /// </summary>
-    public class DetourManager : SafeManager<Detour>
+    public class DetourFactory : SafeManager<Detour>, IFactory
     {
         #region Constructors, Destructors
         /// <summary>
-        ///     Initializes a new instance of the <see cref="DetourManager" /> class.
+        ///     Initializes a new instance of the <see cref="DetourFactory" /> class.
         /// </summary>
         /// <param name="processMemory">The <see cref="ProcessMemory" /> Instance.</param>
-        public DetourManager(ProcessMemory processMemory) : base(new DebugLog())
+        public DetourFactory(MemoryPlus processMemory) : base(new DebugLog())
         {
             ProcessMemory = processMemory;
         }
@@ -28,7 +30,20 @@ namespace Binarysharp.MemoryManagement.Managers
         /// <summary>
         ///     The reference of the <see cref="ProcessMemory" /> object.
         /// </summary>
-        protected ProcessMemory ProcessMemory { get; }
+        protected MemoryPlus ProcessMemory { get; }
+        #endregion
+
+        #region Interface Implementations
+        /// <summary>
+        ///     Releases all resources used by the <see cref="DetourFactory" /> object.
+        /// </summary>
+        public void Dispose()
+        {
+            foreach (var value in InternalItems.Values.Where(value => value.MustBeDisposed))
+            {
+                value.Dispose();
+            }
+        }
         #endregion
 
         /// <summary>

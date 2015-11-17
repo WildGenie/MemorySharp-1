@@ -48,7 +48,7 @@ namespace Binarysharp.MemoryManagement
                     InternalPeb64 = new Lazy<ManagedPeb64>((() => new ManagedPeb64(Handle)));
                     break;
             }
-            Factories = new FactoryManager(this);
+            Factories = new ExternalFactoryManager(this);
             Factories.EnableAll();
         }
 
@@ -84,7 +84,7 @@ namespace Binarysharp.MemoryManagement
         ///     Gets the factory manager instance.
         /// </summary>
         /// <value>The instance for managing factories.</value>
-        public FactoryManager Factories { get; }
+        public ExternalFactoryManager Factories { get; }
 
         /// <summary>
         ///     The ProcessUpdateData Environment Block of the process.

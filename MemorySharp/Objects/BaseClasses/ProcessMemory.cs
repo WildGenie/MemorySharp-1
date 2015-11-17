@@ -18,6 +18,10 @@ namespace Binarysharp.MemoryManagement.Objects.BaseClasses
     /// </summary>
     public abstract class ProcessMemory : IDisposable
     {
+        #region Fields, Private Properties
+        private Lazy<PatternScanner> LazyMainModulePatterns { get; }
+        #endregion
+
         #region Constructors, Destructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProcessMemory" /> class.
@@ -26,10 +30,9 @@ namespace Binarysharp.MemoryManagement.Objects.BaseClasses
         protected ProcessMemory(Process process)
         {
             Process = process;
+            LazyMainModulePatterns = new Lazy<PatternScanner>((() => new PatternScanner(this, Process.MainModule)));
             Handle = process.Handle;
             ImageBase = process.MainModule.BaseAddress;
-            Patches = new PatchManager(this);
-            MainModulePatterns = CreatePatternScanner(Process.MainModule.ModuleName);
         }
 
         /// <summary>
@@ -59,21 +62,15 @@ namespace Binarysharp.MemoryManagement.Objects.BaseClasses
         public IntPtr Handle { get; }
 
         /// <summary>
-        ///     A manager for Instances of the <see cref="Patch" /> class.
-        /// </summary>
-        /// <value>The Instance of <see cref="PatchManager" />.</value>
-        public PatchManager Patches { get; }
-
-        /// <summary>
-        ///     A class for performing pattern scans on process module data.
-        /// </summary>
-        /// <value>The pattern factory.</value>
-        public PatternScanner MainModulePatterns { get; }
-
-        /// <summary>
         ///     Gets the native modules that have been loaded in the remote process.
         /// </summary>
         public IEnumerable<ProcessModule> NativeModules => Process.Modules.Cast<ProcessModule>();
+
+        /// <summary>
+        ///     Gets the a pattern scanning instance for the local processes main mdoule using a
+        ///     <see cref="Lazy{PatternScanner}" /> value.
+        /// </summary>
+        public PatternScanner MainModulePatterns => LazyMainModulePatterns.Value;
         #endregion
 
         #region Interface Implementations
@@ -82,7 +79,7 @@ namespace Binarysharp.MemoryManagement.Objects.BaseClasses
         /// </summary>
         public virtual void Dispose()
         {
-            Patches.DisableAll();
+            // Patches.DisableAll();
         }
         #endregion
 

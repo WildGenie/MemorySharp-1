@@ -41,7 +41,7 @@ namespace Binarysharp.MemoryManagement.Core.Managment.BaseClasses
         ///     Remove a given element.
         /// </summary>
         /// <param name="item">The element to remove.</param>
-        public abstract void Remove(T iFactory);
+        public abstract void Remove(T item);
 
         /// <summary>
         ///     Removes all the elements in the manager.
