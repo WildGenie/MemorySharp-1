@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Binarysharp.MemoryManagement.Core.Managment.BaseClasses;
 using Binarysharp.MemoryManagement.Core.Managment.Interfaces;
+using Binarysharp.MemoryManagement.Factorys;
 
 namespace Binarysharp.MemoryManagement.Managers
 {
@@ -34,21 +32,21 @@ namespace Binarysharp.MemoryManagement.Managers
 
         #region Public Properties, Indexers
         /// <summary>
-        ///     A manager for Instances of the <see cref="Managers.DetourFactory" /> class.
+        ///     A manager for Instances of the <see cref="Factorys.DetourFactory" /> class.
         /// </summary>
-        /// <value>The Instance of <see cref="Managers.DetourFactory" />.</value>
+        /// <value>The Instance of <see cref="Factorys.DetourFactory" />.</value>
         public DetourFactory DetourFactory { get; private set; }
 
         /// <summary>
         ///     A manager for hooks that implement the <see cref="INamedElement" /> Interface.
         /// </summary>
-        /// <value>The Instance of <see cref="Managers.HookFactory" />.</value>
+        /// <value>The Instance of <see cref="Factorys.HookFactory" />.</value>
         public HookFactory HookFactory { get; private set; }
 
         /// <summary>
         ///     A factory for patches that implement the <see cref="INamedElement" /> Interface.
         /// </summary>
-        /// <value>The Instance of <see cref="Managers.HookFactory" />.</value>
+        /// <value>The Instance of <see cref="Factorys.HookFactory" />.</value>
         public PatchFactory PatchFactory { get; private set; }
         #endregion
 

@@ -158,7 +158,8 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
             }
 
             //If someone listens to double click and a click is heppened
-            if (SMouseDoubleClick != null && clickCount == 2)
+            if (SMouseDoubleClick != null &&
+                clickCount == 2)
             {
                 SMouseDoubleClick.Invoke(null, e);
             }
@@ -170,7 +171,8 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
             }
 
             //If someone listens to move and there was a change in coordinates raise move event
-            if ((SMouseMove != null || SMouseMoveExt != null) &&
+            if ((SMouseMove != null ||
+                 SMouseMoveExt != null) &&
                 (_mOldX != mouseHookStruct.Point.X || _mOldY != mouseHookStruct.Point.Y))
             {
                 _mOldX = mouseHookStruct.Point.X;
@@ -226,9 +228,12 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
         {
             array = new MulticastDelegate[]
                     {
-                        SMouseClick, SMouseDown,
-                        SMouseMove, SMouseUp,
-                        SMouseClickExt, SMouseMoveExt,
+                        SMouseClick,
+                        SMouseDown,
+                        SMouseMove,
+                        SMouseUp,
+                        SMouseClickExt,
+                        SMouseMoveExt,
                         SMouseWheel
                     };
         }
@@ -285,7 +290,8 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
                 var myKeyboardHookStruct =
                     (KeyboardHookStruct) Marshal.PtrToStructure(lParam, typeof (KeyboardHookStruct));
                 //raise KeyDown
-                if (SKeyDown != null && (wParam == WmKeydown || wParam == WmSyskeydown))
+                if (SKeyDown != null &&
+                    (wParam == WmKeydown || wParam == WmSyskeydown))
                 {
                     var keyData = (Keys) myKeyboardHookStruct.VirtualKeyCode;
                     var e = new KeyEventArgs(keyData);
@@ -294,7 +300,8 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
                 }
 
                 // raise KeyPress
-                if (SKeyPress != null && wParam == WmKeydown)
+                if (SKeyPress != null &&
+                    wParam == WmKeydown)
                 {
                     var isDownShift = ((GetKeyState(VkShift) & 0x80) == 0x80 ? true : false);
                     var isDownCapslock = (GetKeyState(VkCapital) != 0 ? true : false);
@@ -317,7 +324,8 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
                 }
 
                 // raise KeyUp
-                if (SKeyUp != null && (wParam == WmKeyup || wParam == WmSyskeyup))
+                if (SKeyUp != null &&
+                    (wParam == WmKeyup || wParam == WmSyskeyup))
                 {
                     var keyData = (Keys) myKeyboardHookStruct.VirtualKeyCode;
                     var e = new KeyEventArgs(keyData);
@@ -360,7 +368,8 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
         private static void TryUnsubscribeFromGlobalKeyboardEvents()
         {
             //if no subsribers are registered unsubsribe from hook
-            if (SKeyDown == null && SKeyUp == null &&
+            if (SKeyDown == null &&
+                SKeyUp == null &&
                 SKeyPress == null)
             {
                 ForceUnsunscribeFromGlobalKeyboardEvents();

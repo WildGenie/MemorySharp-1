@@ -10,9 +10,9 @@ using Binarysharp.MemoryManagement.Core.Memory.Objects;
 using Binarysharp.MemoryManagement.Core.Native.Enums;
 using Binarysharp.MemoryManagement.Core.Native.Objects;
 using Binarysharp.MemoryManagement.Managers;
-using Binarysharp.MemoryManagement.Objects.BaseClasses;
-using Binarysharp.MemoryManagement.Objects.Calls;
-using Binarysharp.MemoryManagement.Objects.Modules;
+using Binarysharp.MemoryManagement.Models.Calls;
+using Binarysharp.MemoryManagement.Models.Memory;
+using Binarysharp.MemoryManagement.Models.Modules;
 
 namespace Binarysharp.MemoryManagement
 {

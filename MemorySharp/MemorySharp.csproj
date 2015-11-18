@@ -117,8 +117,9 @@
     <Compile Include="Core\Hooks\Input\Static\Core\MouseEventExtArgs.cs" />
     <Compile Include="Core\Hooks\Input\Static\Core\Msllhookstruct.cs" />
     <Compile Include="Core\Hooks\Input\Static\InputHookManager.cs" />
-    <Compile Include="Core\Hooks\WndProc\Default\UpdatePulseArgs.cs" />
-    <Compile Include="Core\Hooks\WndProc\Default\WindowHookPulseEngine.cs" />
+    <Compile Include="Core\Hooks\WndProc\Engines\UpdatePulseArgs.cs" />
+    <Compile Include="Core\Hooks\WndProc\Engines\WindowActionQueue.cs" />
+    <Compile Include="Core\Hooks\WndProc\Engines\WindowHookPulseEngine.cs" />
     <Compile Include="Core\Hooks\WndProc\Enums\UserMessage.cs" />
     <Compile Include="Core\Hooks\WndProc\Interfaces\IWIndowEngine.cs" />
     <Compile Include="Core\Hooks\WndProc\WindowHook.cs" />
@@ -223,33 +224,34 @@
     <Compile Include="Core\Windows\WindowCore.cs" />
     <Compile Include="Managers\ExternalFactoryManager.cs" />
     <Compile Include="Managers\InternalFactoryManager.cs" />
-    <Compile Include="Objects\Assembly\Fasm32Assembler.cs" />
-    <Compile Include="Factories\AssemblyFactory.cs" />
-    <Compile Include="Objects\Assembly\AssemblyTransaction.cs" />
-    <Compile Include="Objects\Calls\GenericRemoteFunction.cs" />
-    <Compile Include="Objects\Modules\PatternScanner.cs" />
+    <Compile Include="Models\Assembly\Fasm32Assembler.cs" />
+    <Compile Include="Factorys\AssemblyFactory.cs" />
+    <Compile Include="Models\Assembly\AssemblyTransaction.cs" />
+    <Compile Include="Models\Calls\GenericRemoteFunction.cs" />
+    <Compile Include="Models\Modules\PatternScanner.cs" />
     <Compile Include="MemorySharp.cs" />
-    <Compile Include="Factories\DetourFactory.cs" />
-    <Compile Include="Factories\HookFactory.cs" />
-    <Compile Include="Factories\PatchFactory.cs" />
+    <Compile Include="Factorys\DetourFactory.cs" />
+    <Compile Include="Factorys\HookFactory.cs" />
+    <Compile Include="Factorys\PatchFactory.cs" />
     <Compile Include="MemoryPlus.cs" />
-    <Compile Include="Objects\Edits\Detour.cs" />
-    <Compile Include="Objects\Edits\Patch.cs" />
-    <Compile Include="Objects\BaseClasses\ProcessMemory.cs" />
-    <Compile Include="Factories\MemoryFactory.cs" />
-    <Compile Include="Objects\Modules\InjectedModule.cs" />
-    <Compile Include="Factories\ModuleFactory.cs" />
-    <Compile Include="Objects\Calls\RemoteFunction.cs" />
-    <Compile Include="Objects\Modules\RemoteModule.cs" />
+    <Compile Include="Models\Detours\Detour.cs" />
+    <Compile Include="Models\Patch\Patch.cs" />
+    <Compile Include="Models\Memory\ProcessMemory.cs" />
+    <Compile Include="Factorys\MemoryFactory.cs" />
+    <Compile Include="Models\Modules\InjectedModule.cs" />
+    <Compile Include="Factorys\ModuleFactory.cs" />
+    <Compile Include="Models\Calls\RemoteFunction.cs" />
+    <Compile Include="Models\Modules\RemoteModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Objects\Threads\FrozenThread.cs" />
-    <Compile Include="Objects\Threads\RemoteThread.cs" />
-    <Compile Include="Factories\ThreadFactory.cs" />
-    <Compile Include="Factories\WindowFactory.cs" />
+    <Compile Include="Models\Threads\FrozenThread.cs" />
+    <Compile Include="Models\Threads\RemoteThread.cs" />
+    <Compile Include="Factorys\ThreadFactory.cs" />
+    <Compile Include="Factorys\WindowFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

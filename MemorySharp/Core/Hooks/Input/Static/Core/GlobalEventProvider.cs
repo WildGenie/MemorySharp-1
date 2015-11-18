@@ -127,7 +127,8 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
             {
                 if (MMouseDoubleClick == null)
                 {
-                    InputHookManager.MouseDoubleClick += HookManager_MouseDoubleClick;
+                    InputHookManager.MouseDoubleClick +=
+                        HookManager_MouseDoubleClick;
                 }
                 MMouseDoubleClick += value;
             }
@@ -137,7 +138,8 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
                 MMouseDoubleClick -= value;
                 if (MMouseDoubleClick == null)
                 {
-                    InputHookManager.MouseDoubleClick -= HookManager_MouseDoubleClick;
+                    InputHookManager.MouseDoubleClick -=
+                        HookManager_MouseDoubleClick;
                 }
             }
         }
@@ -158,7 +160,8 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
             {
                 if (MMouseMoveExt == null)
                 {
-                    InputHookManager.MouseMoveExt += HookManager_MouseMoveExt;
+                    InputHookManager.MouseMoveExt +=
+                        HookManager_MouseMoveExt;
                 }
                 MMouseMoveExt += value;
             }
@@ -168,7 +171,8 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
                 MMouseMoveExt -= value;
                 if (MMouseMoveExt == null)
                 {
-                    InputHookManager.MouseMoveExt -= HookManager_MouseMoveExt;
+                    InputHookManager.MouseMoveExt -=
+                        HookManager_MouseMoveExt;
                 }
             }
         }
@@ -188,7 +192,8 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
             {
                 if (MMouseClickExt == null)
                 {
-                    InputHookManager.MouseClickExt += HookManager_MouseClickExt;
+                    InputHookManager.MouseClickExt +=
+                        HookManager_MouseClickExt;
                 }
                 MMouseClickExt += value;
             }
@@ -198,7 +203,8 @@ namespace Binarysharp.MemoryManagement.Core.Hooks.Input.Static.Core
                 MMouseClickExt -= value;
                 if (MMouseClickExt == null)
                 {
-                    InputHookManager.MouseClickExt -= HookManager_MouseClickExt;
+                    InputHookManager.MouseClickExt -=
+                        HookManager_MouseClickExt;
                 }
             }
         }
