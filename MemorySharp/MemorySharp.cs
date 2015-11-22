@@ -11,7 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 using Binarysharp.MemoryManagement.Assembly;
+using Binarysharp.MemoryManagement.Assembly.CallingConvention;
 using Binarysharp.MemoryManagement.Helpers;
 using Binarysharp.MemoryManagement.Internals;
 using Binarysharp.MemoryManagement.Memory;
@@ -301,6 +303,129 @@ namespace Binarysharp.MemoryManagement
             // Compute the relative address
             return new IntPtr(address.ToInt64() - ImageBase.ToInt64());
         }
+
+
+        /// <summary>
+        ///     Executes the assembly code in the remote process.
+        /// </summary>
+        /// <param name="remoteCallParams">
+        ///     The <see cref="RemoteCallParams" /> structure that contains the remote calls
+        ///     <see cref="CallingConventions" /> type and the <see cref="IntPtr" /> address of where the remote call is located in
+        ///     memory.
+        /// </param>
+        /// <param name="parameters">An array of parameters used to execute the assembly code.</param>
+        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
+        public T Execute<T>(RemoteCallParams remoteCallParams, params dynamic[] parameters)
+        {
+            return Assembly.Execute<T>(remoteCallParams.Address, remoteCallParams.CallingConvention, parameters);
+        }
+
+
+        /// <summary>
+        ///     Executes the assembly code in the remote process.
+        /// </summary>
+        /// <param name="remoteCallParams">
+        ///     The <see cref="RemoteCallParams" /> structure that contains the remote calls
+        ///     <see cref="CallingConventions" /> type and the <see cref="IntPtr" /> address of where the remote call is located in
+        ///     memory.
+        /// </param>
+        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
+        public IntPtr Execute(RemoteCallParams remoteCallParams, params dynamic[] parameters)
+        {
+            return Assembly.Execute<IntPtr>(remoteCallParams.Address, remoteCallParams.CallingConvention, parameters);
+        }
+
+        /// <summary>
+        ///     Executes the assembly code in the remote process.
+        /// </summary>
+        /// <param name="remoteCallParams">
+        ///     The <see cref="RemoteCallParams" /> structure that contains the remote calls
+        ///     <see cref="CallingConventions" /> type and the <see cref="IntPtr" /> address of where the remote call is located in
+        ///     memory.
+        /// </param>
+        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
+        public IntPtr Execute(RemoteCallParams remoteCallParams)
+        {
+            return Assembly.Execute<IntPtr>(remoteCallParams.Address, remoteCallParams.CallingConvention);
+        }
+
+
+        /// <summary>
+        ///     Executes the assembly code in the remote process.
+        /// </summary>
+        /// <param name="remoteCallParams">
+        ///     The <see cref="RemoteCallParams" /> structure that contains the remote calls
+        ///     <see cref="CallingConventions" /> type and the <see cref="IntPtr" /> address of where the remote call is located in
+        ///     memory.
+        /// </param>
+        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
+        public T Execute<T>(RemoteCallParams remoteCallParams)
+        {
+            return Assembly.Execute<T>(remoteCallParams.Address, remoteCallParams.CallingConvention);
+        }
+
+        /// <summary>
+        ///     Executes asynchronously the assembly code located in the remote process at the specified address.
+        /// </summary>
+        /// <param name="remoteCallParams">
+        ///     The <see cref="RemoteCallParams" /> structure that contains the remote calls
+        ///     <see cref="CallingConventions" /> type and the <see cref="IntPtr" /> address of where the remote call is located in
+        ///     memory.
+        /// </param>
+        /// <param name="parameters">An array of parameters used to execute the assembly code.</param>
+        /// <returns>
+        ///     The return value is an asynchronous operation that return the exit code of the thread created to execute the
+        ///     assembly code.
+        /// </returns>
+        public Task<T> ExecuteAsycn<T>(RemoteCallParams remoteCallParams, params dynamic[] parameters)
+        {
+            return Assembly.ExecuteAsync<T>(remoteCallParams.Address, remoteCallParams.CallingConvention, parameters);
+        }
+
+
+        /// <summary>
+        ///     Executes asynchronously the assembly code located in the remote process at the specified address.
+        /// </summary>
+        /// <param name="parameters">An array of parameters used to execute the assembly code.</param>
+        /// <param name="remoteCallParams">
+        ///     The <see cref="RemoteCallParams" /> structure that contains the remote calls
+        ///     <see cref="CallingConventions" /> type and the <see cref="IntPtr" /> address of where the remote call is located in
+        ///     memory.
+        /// </param>
+        /// <returns>
+        ///     The return value is an asynchronous operation that return the exit code of the thread created to execute the
+        ///     assembly code.
+        /// </returns>
+        public Task ExecuteAsycn(RemoteCallParams remoteCallParams, params dynamic[] parameters)
+        {
+            return Assembly.ExecuteAsync<IntPtr>(remoteCallParams.Address, remoteCallParams.CallingConvention,
+                parameters);
+        }
+
+        /// <summary>
+        ///     Executes asynchronously the assembly code located in the remote process at the specified address.
+        /// </summary>
+        /// <returns>
+        ///     The return value is an asynchronous operation that return the exit code of the thread created to execute the
+        ///     assembly code.
+        /// </returns>
+        public Task ExecuteAsycn(RemoteCallParams remoteCallParams)
+        {
+            return Assembly.ExecuteAsync(remoteCallParams.Address, remoteCallParams.CallingConvention);
+        }
+
+        /// <summary>
+        ///     Executes asynchronously the assembly code located in the remote process at the specified address.
+        /// </summary>
+        /// <returns>
+        ///     The return value is an asynchronous operation that return the exit code of the thread created to execute the
+        ///     assembly code.
+        /// </returns>
+        public Task ExecuteAsycn<T>(RemoteCallParams remoteCallParams)
+        {
+            return Assembly.ExecuteAsync<T>(remoteCallParams.Address, remoteCallParams.CallingConvention);
+        }
+
 
         /// <summary>
         ///     Implements the operator ==.

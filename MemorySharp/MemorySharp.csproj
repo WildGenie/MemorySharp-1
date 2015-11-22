@@ -150,6 +150,7 @@
     <Compile Include="Memory\RemoteRegion.cs" />
     <Compile Include="Memory\RemotePointer.cs" />
     <Compile Include="Modules\InjectedModule.cs" />
+    <Compile Include="Modules\RemoteCall.cs" />
     <Compile Include="Native\Enums\InputTypes.cs" />
     <Compile Include="Native\Enums\KeyboardFlags.cs" />
     <Compile Include="Native\Enums\Keys.cs" />
