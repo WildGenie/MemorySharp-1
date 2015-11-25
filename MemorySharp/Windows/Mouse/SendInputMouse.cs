@@ -132,7 +132,7 @@ namespace Binarysharp.MemoryManagement.Windows.Mouse
         /// </summary>
         private int CalculateAbsoluteCoordinateX(int x)
         {
-            return (x*65536)/NativeMethods.GetSystemMetrics(SystemMetrics.CxScreen);
+            return x*65536/NativeMethods.GetSystemMetrics(SystemMetrics.CxScreen);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Binarysharp.MemoryManagement.Windows.Mouse
         /// </summary>
         private int CalculateAbsoluteCoordinateY(int y)
         {
-            return (y*65536)/NativeMethods.GetSystemMetrics(SystemMetrics.CyScreen);
+            return y*65536/NativeMethods.GetSystemMetrics(SystemMetrics.CyScreen);
         }
 
         /// <summary>

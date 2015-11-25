@@ -96,7 +96,7 @@ namespace Binarysharp.MemoryManagement.Logging
                     InternalItems[name] = new DebugLog();
                     break;
                 case LoggerType.File:
-                    InternalItems[name] = FileLog.Create(name, name, "Logs", true);
+                    InternalItems[name] = FileLog.Create(name, name, "Logs", true, true);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

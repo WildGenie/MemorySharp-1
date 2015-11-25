@@ -26,7 +26,7 @@ namespace Binarysharp.MemoryManagement.Tools.Math3D
         {
             var ret = new Vector3();
             var vDelta = src - dst;
-            var fHyp = (float) Math.Sqrt((vDelta.X*vDelta.X) + (vDelta.Y*vDelta.Y));
+            var fHyp = (float) Math.Sqrt(vDelta.X*vDelta.X + vDelta.Y*vDelta.Y);
 
             ret.X = RadiansToDegrees((float) Math.Atan(vDelta.Z/fHyp));
             ret.Y = RadiansToDegrees((float) Math.Atan(vDelta.Y/vDelta.X));
@@ -205,14 +205,14 @@ namespace Binarysharp.MemoryManagement.Tools.Math3D
             if (!(w >= 0.01f)) return returnVector;
             var inverseX = 1f/w;
             returnVector.X =
-                (screenSize.X/2f) +
+                screenSize.X/2f +
                 (0.5f*(
                     (viewMatrix[0, 0]*point3D.X + viewMatrix[0, 1]*point3D.Y + viewMatrix[0, 2]*point3D.Z +
                      viewMatrix[0, 3])
                     *inverseX)
                  *screenSize.X + 0.5f);
             returnVector.Y =
-                (screenSize.Y/2f) -
+                screenSize.Y/2f -
                 (0.5f*(
                     (viewMatrix[1, 0]*point3D.X + viewMatrix[1, 1]*point3D.Y + viewMatrix[1, 2]*point3D.Z +
                      viewMatrix[1, 3])

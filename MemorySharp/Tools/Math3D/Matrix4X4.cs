@@ -150,25 +150,25 @@ namespace Binarysharp.MemoryManagement.Tools.Math3D
 
             var buffer = ExternalMemoryCore.ReadProcessMemory(handle, _lpBaseAddress, 64);
 
-            tmp.M11 = BitConverter.ToSingle(buffer, (0*4));
-            tmp.M12 = BitConverter.ToSingle(buffer, (1*4));
-            tmp.M13 = BitConverter.ToSingle(buffer, (2*4));
-            tmp.M14 = BitConverter.ToSingle(buffer, (3*4));
+            tmp.M11 = BitConverter.ToSingle(buffer, 0*4);
+            tmp.M12 = BitConverter.ToSingle(buffer, 1*4);
+            tmp.M13 = BitConverter.ToSingle(buffer, 2*4);
+            tmp.M14 = BitConverter.ToSingle(buffer, 3*4);
 
-            tmp.M21 = BitConverter.ToSingle(buffer, (4*4));
-            tmp.M22 = BitConverter.ToSingle(buffer, (5*4));
-            tmp.M23 = BitConverter.ToSingle(buffer, (6*4));
-            tmp.M24 = BitConverter.ToSingle(buffer, (7*4));
+            tmp.M21 = BitConverter.ToSingle(buffer, 4*4);
+            tmp.M22 = BitConverter.ToSingle(buffer, 5*4);
+            tmp.M23 = BitConverter.ToSingle(buffer, 6*4);
+            tmp.M24 = BitConverter.ToSingle(buffer, 7*4);
 
-            tmp.M31 = BitConverter.ToSingle(buffer, (8*4));
-            tmp.M32 = BitConverter.ToSingle(buffer, (9*4));
-            tmp.M33 = BitConverter.ToSingle(buffer, (10*4));
-            tmp.M34 = BitConverter.ToSingle(buffer, (11*4));
+            tmp.M31 = BitConverter.ToSingle(buffer, 8*4);
+            tmp.M32 = BitConverter.ToSingle(buffer, 9*4);
+            tmp.M33 = BitConverter.ToSingle(buffer, 10*4);
+            tmp.M34 = BitConverter.ToSingle(buffer, 11*4);
 
-            tmp.M41 = BitConverter.ToSingle(buffer, (12*4));
-            tmp.M42 = BitConverter.ToSingle(buffer, (13*4));
-            tmp.M43 = BitConverter.ToSingle(buffer, (14*4));
-            tmp.M44 = BitConverter.ToSingle(buffer, (15*4));
+            tmp.M41 = BitConverter.ToSingle(buffer, 12*4);
+            tmp.M42 = BitConverter.ToSingle(buffer, 13*4);
+            tmp.M43 = BitConverter.ToSingle(buffer, 14*4);
+            tmp.M44 = BitConverter.ToSingle(buffer, 15*4);
             return tmp;
         }
     }

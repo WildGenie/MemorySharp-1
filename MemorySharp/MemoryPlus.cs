@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Binarysharp.MemoryManagement.Edits;
 using Binarysharp.MemoryManagement.Edits.Detours;
 using Binarysharp.MemoryManagement.Edits.Patchs;
 using Binarysharp.MemoryManagement.Hooks;
@@ -10,6 +9,7 @@ using Binarysharp.MemoryManagement.Internals;
 using Binarysharp.MemoryManagement.Memory;
 using Binarysharp.MemoryManagement.Native;
 using Binarysharp.MemoryManagement.Native.Enums;
+using Binarysharp.MemoryManagement.Patterns;
 
 namespace Binarysharp.MemoryManagement
 {

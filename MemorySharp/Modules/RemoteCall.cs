@@ -6,32 +6,35 @@ using Binarysharp.MemoryManagement.Assembly.CallingConvention;
 namespace Binarysharp.MemoryManagement.Modules
 {
     /// <summary>
-    /// The paramters used for the <see cref="MemorySharp"/> classes <code>Call{T}(RemoteCallParams remoteCallParams).(...)</code> methods.
+    ///     The paramters used for the <see cref="MemorySharp" /> classes
+    ///     <code>Call{T}(RemoteCallParams remoteCallParams).(...)</code> methods.
     /// </summary>
     public struct RemoteCallParams
     {
         /// <summary>
-        /// Gets or sets the address where the remote function being called is located in memory.
+        ///     Gets or sets the address where the remote function being called is located in memory.
         /// </summary>
         /// <value>
-        /// The address where the function being called is located in memory.
+        ///     The address where the function being called is located in memory.
         /// </value>
         public IntPtr Address { get; set; }
 
         /// <summary>
-        /// Gets or sets the calling convention type of the function being called.
+        ///     Gets or sets the calling convention type of the function being called.
         /// </summary>
         /// <value>
-        /// The calling convention type of the function being called.
+        ///     The calling convention type of the function being called.
         /// </value>
         public CallingConventions CallingConvention { get; set; }
     }
+
     /// <summary>
     ///     A class representing a remote function which you wish to call with assembly injection. This class will the calling
     ///     convention of the function and provide accsess quick methods to call and execute it.
     /// </summary>
     public class RemoteCall : IEquatable<RemoteCall>
     {
+        #region Constructors, Destructors
         /// <summary>
         ///     RemoteCall constructor.
         /// </summary>
@@ -51,7 +54,9 @@ namespace Binarysharp.MemoryManagement.Modules
         public RemoteCall()
         {
         }
+        #endregion
 
+        #region Public Properties, Indexers
         /// <summary>
         ///     The address where the RemoteCall function is stored in memory.
         /// </summary>
@@ -66,7 +71,9 @@ namespace Binarysharp.MemoryManagement.Modules
         ///     The <see cref="CallingConventions" /> used for this call.
         /// </summary>
         internal CallingConventions CallingConvention { get; }
+        #endregion
 
+        #region Interface Implementations
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified object.
         /// </summary>
@@ -76,6 +83,7 @@ namespace Binarysharp.MemoryManagement.Modules
             return ReferenceEquals(this, other) ||
                    (BaseAddress.Equals(other.BaseAddress) && MemorySharp.Equals(other.MemorySharp));
         }
+        #endregion
 
         /// <summary>
         ///     Executes the assembly code in the remote process.
@@ -175,10 +183,8 @@ namespace Binarysharp.MemoryManagement.Modules
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((RemoteCall)obj);
+            return obj.GetType() == GetType() && Equals((RemoteCall) obj);
         }
-
-        #region GetHashCode (override)
 
         /// <summary>
         ///     Serves as a hash function for a particular type.
@@ -188,10 +194,6 @@ namespace Binarysharp.MemoryManagement.Modules
         {
             return BaseAddress.GetHashCode() ^ MemorySharp.GetHashCode();
         }
-
-        #endregion GetHashCode (override)
-
-        #region Operator (override)
 
         /// <summary>
         ///     Operator overide.
@@ -208,7 +210,5 @@ namespace Binarysharp.MemoryManagement.Modules
         {
             return !Equals(left, right);
         }
-
-        #endregion Operator (override)
     }
 }

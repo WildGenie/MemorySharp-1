@@ -1,9 +1,9 @@
-﻿namespace Binarysharp.MemoryManagement.Patterns
+﻿namespace Binarysharp.MemoryManagement.Patterns.Structs
 {
     /// <summary>
     ///     A class that represents basic pattrn scanning properties.
     /// </summary>
-    public class Pattern
+    public struct Pattern
     {
         #region Constructors, Destructors
         /// <summary>

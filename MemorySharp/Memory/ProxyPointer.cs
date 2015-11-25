@@ -48,7 +48,7 @@ namespace Binarysharp.MemoryManagement.Memory
         {
             if (ReferenceEquals(null, other)) return false;
             return ReferenceEquals(this, other) ||
-                   (BaseAddress.Equals(other.BaseAddress));
+                   BaseAddress.Equals(other.BaseAddress);
         }
         #endregion
 

@@ -209,7 +209,7 @@ namespace Binarysharp.MemoryManagement.Hooks.Input
                     MiddleButtonDown?.Invoke(MouseInputToStructure(lParam));
                     break;
                 case MouseFlags.MiddleUp:
-                    MiddleButtonUp?.Invoke((MouseInputToStructure(lParam)));
+                    MiddleButtonUp?.Invoke(MouseInputToStructure(lParam));
                     break;
             }
 

@@ -88,7 +88,7 @@ namespace Binarysharp.MemoryManagement.Memory
             var ret = new T[count];
             for (var i = 0; i < count; i++)
             {
-                ret[i] = Read<T>(address + (i*size));
+                ret[i] = Read<T>(address + i*size);
             }
             return ret;
         }
@@ -156,7 +156,7 @@ namespace Binarysharp.MemoryManagement.Memory
             for (var i = 0; i < value.Length; i++)
             {
                 var val = value[i];
-                Write(address + (i*size), val);
+                Write(address + i*size, val);
             }
         }
 
@@ -195,7 +195,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <returns>System.IntPtr.</returns>
         public static IntPtr GetVTablePointer(IntPtr address, int index)
         {
-            return Read<IntPtr>(Read<IntPtr>(address) + (index*4));
+            return Read<IntPtr>(Read<IntPtr>(address) + index*4);
         }
 
         /// <summary>

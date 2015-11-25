@@ -57,7 +57,7 @@ namespace Binarysharp.MemoryManagement.Tools.Math3D
             {
                 for (var x = 0; x < Columns; x++)
                 {
-                    this[y, x] = BitConverter.ToSingle(data, MarshalType<float>.Size)*((y*Columns) + x);
+                    this[y, x] = BitConverter.ToSingle(data, MarshalType<float>.Size)*(y*Columns + x);
                 }
             }
         }

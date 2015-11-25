@@ -7,8 +7,8 @@
  * See the file LICENSE for more information.
 */
 
-using Binarysharp.Assemblers.Fasm;
 using System;
+using Binarysharp.Assemblers.Fasm;
 
 namespace Binarysharp.MemoryManagement.Assembly.Assembler
 {

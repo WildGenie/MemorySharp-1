@@ -1,9 +1,9 @@
-﻿namespace Binarysharp.MemoryManagement.Patterns
+﻿namespace Binarysharp.MemoryManagement.Patterns.Structs
 {
     /// <summary>
     ///     A class that represents basic pattern scanning properties.
     /// </summary>
-    public class SerializablePattern
+    public struct SerializablePattern
     {
         #region Constructors, Destructors
         /// <summary>
@@ -24,13 +24,6 @@
             IsOffsetMode = isOffsetMode;
             RebaseAddress = rebase;
             Comments = comment;
-        }
-
-        /// <summary>
-        ///     Paramerterless constructor for xml serialization/deserialization simplicity.
-        /// </summary>
-        public SerializablePattern()
-        {
         }
         #endregion
 

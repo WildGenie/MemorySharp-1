@@ -27,7 +27,7 @@
             lock (ThreadedUpdaterLockObject)
                 //could have changed by the time we acquired lock
                 if (!IsBusyFlag)
-                    return (IsBusyFlag = true);
+                    return IsBusyFlag = true;
             return false;
         }
 

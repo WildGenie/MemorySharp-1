@@ -3,7 +3,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Binarysharp.MemoryManagement.Helpers;
+using Binarysharp.MemoryManagement.Logging.Defaults;
 using Binarysharp.MemoryManagement.Memory;
+using Binarysharp.MemoryManagement.Patterns.Structs;
 
 namespace Binarysharp.MemoryManagement.Patterns
 {
@@ -12,6 +14,12 @@ namespace Binarysharp.MemoryManagement.Patterns
     /// </summary>
     public static class PatternCore
     {
+        #region Fields, Private Properties
+        // Used to dump scan results to a file.
+        private static FileLog FileLog { get; } = FileLog.Create("PatternScanResultLogger", "PatternLogs", "PatternLog",
+            false, true);
+        #endregion
+
         /// <summary>
         ///     Performs a ProcessModulePattern scan.
         /// </summary>
@@ -42,7 +50,7 @@ namespace Binarysharp.MemoryManagement.Patterns
                     return new ScanResult
                            {
                                OriginalAddress = found,
-                               Address = !reBase ? found : found.Subtract(module.BaseAddress),
+                               Address = reBase ? found : found.Subtract(module.BaseAddress),
                                Offset = !reBase ? (IntPtr) offset : module.BaseAddress.Add(offset)
                            };
             }
@@ -135,6 +143,34 @@ namespace Binarysharp.MemoryManagement.Patterns
                 chr[i] = pattern[i] == wildcardByte ? wildcardChar : matchChar;
             }
             return new string(chr);
+        }
+
+        /// <summary>
+        ///     Logs the pattern scan result to a text file as a useable pattern format for C#.
+        /// </summary>
+        /// <param name="patternName">Name that represents the pattern that was scanned.</param>
+        /// <param name="address">The address found from the pattern scan.</param>
+        public static void LogScanResultToFile(string patternName, IntPtr address)
+        {
+            try
+            {
+                FileLog.LogNormal(FormatPatternText(patternName, address));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        /// <summary>
+        ///     Formats a name and address result from a pattern scan to a useable format for C#.
+        /// </summary>
+        /// <param name="patternName">The name that represents the pattern.</param>
+        /// <param name="address">The address found from pattern scan to log.</param>
+        /// <returns>A C# useable string from the address found from a pattern scan.</returns>
+        public static string FormatPatternText(string patternName, IntPtr address)
+        {
+            return $"public IntPtr {patternName} {" {get;} = "} {"(IntPtr) 0x"}{address.ToString("X")}{";"}";
         }
 
         private static void TryGetPatternAddress(out IntPtr found, IntPtr handle, ProcessModule module, int offsetToAdd,

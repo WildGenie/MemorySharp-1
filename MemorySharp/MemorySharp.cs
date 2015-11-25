@@ -20,6 +20,7 @@ using Binarysharp.MemoryManagement.Memory;
 using Binarysharp.MemoryManagement.Modules;
 using Binarysharp.MemoryManagement.Native;
 using Binarysharp.MemoryManagement.Native.Enums;
+using Binarysharp.MemoryManagement.Patterns;
 using Binarysharp.MemoryManagement.Threading;
 using Binarysharp.MemoryManagement.Windows;
 

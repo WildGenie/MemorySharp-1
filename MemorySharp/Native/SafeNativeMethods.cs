@@ -1189,7 +1189,7 @@ namespace Binarysharp.MemoryManagement.Native
             {
                 return false;
             }
-            return (GetProcAddress(moduleHandle, functionName) != IntPtr.Zero);
+            return GetProcAddress(moduleHandle, functionName) != IntPtr.Zero;
         }
     }
 

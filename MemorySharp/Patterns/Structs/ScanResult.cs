@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Binarysharp.MemoryManagement.Patterns
+namespace Binarysharp.MemoryManagement.Patterns.Structs
 {
     /// <summary>
     ///     Contains data regarding a pattern scan result.
     /// </summary>
-    public class ScanResult
+    public struct ScanResult
     {
         #region Public Properties, Indexers
         /// <summary>

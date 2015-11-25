@@ -52,7 +52,7 @@ namespace Binarysharp.MemoryManagement.Logging.Defaults
         ///     Gets the is enabled.
         /// </summary>
         /// <value>The is enabled.</value>
-        public bool IsEnabled { get; protected set; } = false;
+        public bool IsEnabled { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the name.
@@ -115,6 +115,7 @@ namespace Binarysharp.MemoryManagement.Logging.Defaults
         /// </summary>
         public void Disable()
         {
+            IsEnabled = false;
             if (MustBeDisposed)
                 Dispose();
         }
@@ -132,6 +133,7 @@ namespace Binarysharp.MemoryManagement.Logging.Defaults
                 new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FolderName,
                     $"{FileName}-{DateTime.Now:yyyy-MM-dd_hh-mm-ss}.txt"))
                 {AutoFlush = true};
+            IsEnabled = true;
         }
         #endregion
 
@@ -142,16 +144,25 @@ namespace Binarysharp.MemoryManagement.Logging.Defaults
         /// <param name="folderName">Name of the folder.</param>
         /// <param name="logFileName">Name of the log file.</param>
         /// <param name="useFormattedText">The use formatted text.</param>
+        /// <param name="autoEnable">
+        ///     States if the <see cref="StreamWriter" /> object should be created right away to allow logging
+        ///     to files with out the need to call the <see cref="Enable()" /> method manually first.
+        /// </param>
         public static FileLog Create(string logInstanceName, string folderName, string logFileName,
-                                     bool useFormattedText)
+                                     bool useFormattedText, bool autoEnable)
         {
-            return new FileLog
-                   {
-                       Name = logInstanceName,
-                       FolderName = folderName,
-                       FileName = logFileName,
-                       UseFormattedText = useFormattedText
-                   };
+            var log = new FileLog
+                      {
+                          Name = logInstanceName,
+                          FolderName = folderName,
+                          FileName = logFileName,
+                          UseFormattedText = useFormattedText
+                      };
+            if (autoEnable)
+            {
+                log.Enable();
+            }
+            return log;
         }
 
         /// <summary>

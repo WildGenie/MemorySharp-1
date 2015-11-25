@@ -174,6 +174,7 @@
     <Compile Include="Native\Enums\WaitValues.cs" />
     <Compile Include="Native\Enums\WindowsMessages.cs" />
     <Compile Include="Native\Enums\WindowStates.cs" />
+    <Compile Include="Patterns\InternalPatternFactory.cs" />
     <Compile Include="Native\ManagedPeb.cs" />
     <Compile Include="Native\ManagedTeb.cs" />
     <Compile Include="Modules\ModuleCore.cs" />
@@ -184,7 +185,8 @@
     <Compile Include="Native\NativeDriver32.cs" />
     <Compile Include="Native\NativeDriver64.cs" />
     <Compile Include="Native\NativeDriverBase.cs" />
-    <Compile Include="Native\PatternFactory.cs" />
+    <Compile Include="Patterns\PatternFactory.cs" />
+    <Compile Include="Native\PatternFileType.cs" />
     <Compile Include="Native\SafeMemoryHandle.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Native\SafeNativeMethods.cs" />
@@ -203,10 +205,10 @@
     <Compile Include="Native\Structures\ThreadContext.cs" />
     <Compile Include="Native\Structures\WindowPlacement.cs" />
     <Compile Include="Native\UnsafeNativeMethods.cs" />
-    <Compile Include="Patterns\Pattern.cs" />
+    <Compile Include="Patterns\Structs\Pattern.cs" />
     <Compile Include="Patterns\PatternCore.cs" />
-    <Compile Include="Patterns\ScanResult.cs" />
-    <Compile Include="Patterns\SerializablePattern.cs" />
+    <Compile Include="Patterns\Structs\ScanResult.cs" />
+    <Compile Include="Patterns\Structs\SerializablePattern.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threading\Enumerations.cs" />
     <Compile Include="Threading\FrozenThread.cs" />
