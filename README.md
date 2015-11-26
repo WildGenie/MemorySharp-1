@@ -242,9 +242,80 @@ Tools, logging, updaters, misc features added examples.
       
  
  * Distance to.            
-```
+```csharp
 public static float DistanceTo(Vector2 vector2One, Vector2 vector2Two)
  {
   return vector2One.DistanceTo(vector2Two);
  }
 ```
+
+
+Credits for MemorySharp - Note: All credits for the base of this library go to Jämes Ménétrey aka ZenLulz. 
+------------------------------------------------------------------------
+
+Credits - please note, I support all original authors work fully. Most of the additons here come from disecting others code and making it fit here. Pst me if I missed you and you would enjoy some credits.
+
+
+**--- Direct code useage credits, there is likely far more. Did the major ones I can remember for now, message me as suggested above if you're missing and want credits. ---**
+Zatt @ unknowncheats.
+GitHub: https://github.com/BigMo
+Major code used: Updater classes, 3D math releated classes.
+Project suggestion of his to check out: https://github.com/BigMo/ExternalUtilsCSharp
+
+
+Jadd @ ownedcore.
+GitHub: Unknown.
+Major code used: WndProc hook example - http://blog.ntoskr.nl/hooking-threads-without-detours-or-patches/
+Project suggestions of his to check out: Monitor the blog? :).
+
+aganonki @ unknowncheats.
+GitHub: https://github.com/aganonki
+Major code used: TimedUpdater class.
+Project suggestions of his to check out: https://github.com/aganonki/HackTools
+Note: He helped me a LOT with non-direct code help, just helping me understand basic oop concepts.
+
+aevitas @ unknowncheats?
+GitHub: https://github.com/aevitas
+Major code used: A lot of references to his external memory classes, and more. https://github.com/aevitas/bluerain/blob/master/src/BlueRain/ExternalProcessMemory.cs
+Project suggestions of his to check out: https://github.com/aevitas/orion
+
+Apoc @ ownedcore
+GitHub: Unknown.
+Major code used: Pretty much 1:1 rip of his memory library's 'GreyMagic' patch and detour classes.
+Project suggestion of his to check out: Google if you want :) too many.
+
+
+miceiken @ ownedcore
+GitHub: https://github.com/miceiken
+Major code used: His IceFlake's project Pulse engines and action queue systems.
+Project suggestions of his to check out: Great start on injected code - https://github.com/miceiken/IceFlake
+
+jeffora @ ownedcore?
+GitHub: https://github.com/jeffora
+Major code used: https://github.com/jeffora/extemory extension methods ripped 1:1 almost in some cases.
+Project suggestions of his to check out: https://github.com/jeffora/extemory - cool memory library that is not known well.
+--- End ---
+
+
+**--- Helpful people credits ---**
+
+Torpedos @ ownedcore.
+Replied to lots of noob questions, gave me very solid tips in terms of going about learning and using code in relation to game hacking.
+
+
+Corthezz @ ownedcore. 
+Good blog for starters who are stuck in external land or have not messed with assembly calling of functions or what ever much yet.,
+
+LordTerror @ Unknown.
+A friend who helped me understand hacking concepts a LOT. I do not think he uses forums these days at all, but might have some old good reads if you google around.
+
+--- End --- 
+
+
+**--- Cool Projects to check out ---** 
+
+1. Cool Diablo II hack using hardware breakpoints and remote threads to make the 'external' hack perform in some cool ways - https://github.com/Dramacydal/DirtyDeeds/tree/master/DirtyDeeds
+2. Really solid base example of an externally based Object Manager for WoW - https://github.com/Dramacydal/WowMoPObjMgrTest , it also provides some good insight on how it works internally.
+3. Not updated anymore - but a cool example of getting started with C# code on modern patches of WoW - https://github.com/unknowndev/CoolFish.
+
+
