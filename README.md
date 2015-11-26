@@ -1,10 +1,9 @@
-
 MemorySharp - Original Author: Jämes Ménétrey aka ZenLulz.
 ===================
 
 Hello,
 
-I really liked the MemorySharp library by ZenLulz. Sadly, it did not contain some items I wanted in a memory library as I started getting more and more into it since I started. Instead of simply use a different library, 
+I I really liked the MemorySharp library by ZenLulz. Sadly, it did not contain some items I wanted in a memory library as I started getting more and more into it since I started. Instead of simply use a different library, 
 
 I decided to just work on adding the features in myself. No exes, or dlls are included. You must restore the packages and then compile if you want. For now, I do not intend to release binary's until it is more stable. 
 
@@ -15,8 +14,7 @@ One main feature added was support for people running injected code. A basic Wnd
 Some documentation of new features by example.
 -----------------------------
 
-* Executing internal game functions using assembly injection and CreateRemoteThread with ease with MemorySharps assembly wrappers and the RemoteCal class.
-
+* Executing internal game functions using assembly injection and CreateRemoteThread with ease with MemorySharps assembly wrappers and the ``` RemoteCall``` class.
 ```csharp
           public static class ExampleCalls
           {
@@ -48,14 +46,14 @@ Some documentation of new features by example.
                 CallingConvention = CallingConventions.Cdecl
             };
         }
-```
 
+```
 * Pattern scanning examples.
 
 **Pattern Scan xml/json file examples:**
 
 Json:
-```json
+```Json
      {
         "Description": "GameState",
         "TextPattern": "80 3d ?? ?? ?? ?? ?? 74 ?? 50 b9 ?? ?? ?? ?? e8 ?? ?? ?? ?? 85 c0 74 ?? 8b 40 08 83 f8 02 74 ?? 83 f8 01 75 ?? b0 01 c3 32 c0 c3",
@@ -74,7 +72,6 @@ Json:
       }
 ```
 Xml:
-
 ```XML
     ?xml version="1.0" encoding="utf-16"?>
     <ArrayOfSerializablePattern xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
@@ -209,6 +206,7 @@ Tools, logging, updaters, misc features added examples.
 
 * Updaters (thanks to Zatt @ unknowncheats and aganonki as well from there).
 
+
 ```csharp
     // Credits: Zatt @ unknowncheats.me
     public class MyUpdaterExample
@@ -230,4 +228,23 @@ Tools, logging, updaters, misc features added examples.
                Console.WriteLine("Hi, we were called.");
             }
         }
+```
+3D Math (Credits: Zatt).
+------------------------
+* WorldToScreen
+ 
+```csharp
+        public static Vector2 GetWorldToScreen(Matrix viewMatrix, Vector2 vector2, Vector3 vector3)
+            {
+               return viewMatrix.WorldToScreen(vector2, vector3);
+            }
+```   
+      
+ 
+ * Distance to.            
+```
+public static float DistanceTo(Vector2 vector2One, Vector2 vector2Two)
+ {
+  return vector2One.DistanceTo(vector2Two);
+ }
 ```
