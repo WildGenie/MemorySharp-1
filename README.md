@@ -111,6 +111,8 @@ Injected code support - Hook WndProc and execute your custom engines code in the
         public static void Attach()
         {
             // This is our custom engine we pass to the window hook class as a ref.
+            // Create the engine. There is some default engines and call backs 
+            // supplied to look at or use.
             _windowEngine = new HookEngine();
             // 0x500 should be the handle to the window being hooked. 
             // Should often just be the MainWindowHandle of the process.
