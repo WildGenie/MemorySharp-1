@@ -71,6 +71,7 @@ namespace Binarysharp.MemoryManagement.Tools.Updaters
         public string Name { get; }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -97,6 +98,7 @@ namespace Binarysharp.MemoryManagement.Tools.Updaters
             Timer.Change(int.MaxValue, Interval);
             IsEnabled = false;
         }
+        #endregion
 
         /// <summary>
         ///     Processes the specified object casted to the type.

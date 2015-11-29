@@ -85,6 +85,7 @@ namespace Binarysharp.MemoryManagement.Modules
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Executes the assembly code in the remote process.
         /// </summary>
@@ -210,5 +211,6 @@ namespace Binarysharp.MemoryManagement.Modules
         {
             return !Equals(left, right);
         }
+        #endregion
     }
 }

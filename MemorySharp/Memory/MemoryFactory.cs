@@ -65,17 +65,13 @@ namespace Binarysharp.MemoryManagement.Memory
         /// </summary>
         public IEnumerable<RemoteRegion> Regions
         {
-            // TODO: Old 64-bit check
             get
             {
-#if x64
-                var adresseTo = new IntPtr(0x7fffffffffffffff);
-#else
-                var adresseTo = new IntPtr(0x7fffffff);
-#endif
+                var adresseTo = IntPtr.Size == 4 ? new IntPtr(0x7fffffff) : new IntPtr(0x7fffffffffffffff);
                 return
                     MemorySharp.NativeDriver.MemoryCore.QueryInformationMemory(MemorySharp.Handle, IntPtr.Zero,
-                        adresseTo).Select(page => new RemoteRegion(MemorySharp, page.BaseAddress));
+                                                                               adresseTo)
+                               .Select(page => new RemoteRegion(MemorySharp, page.BaseAddress));
             }
         }
         #endregion
@@ -96,6 +92,7 @@ namespace Binarysharp.MemoryManagement.Memory
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Allocates a region of memory within the virtual address space of the remote process.
         /// </summary>
@@ -127,5 +124,6 @@ namespace Binarysharp.MemoryManagement.Memory
             if (InternalRemoteAllocations.Contains(allocation))
                 InternalRemoteAllocations.Remove(allocation);
         }
+        #endregion
     }
 }

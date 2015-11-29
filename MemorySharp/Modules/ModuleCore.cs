@@ -21,6 +21,7 @@ namespace Binarysharp.MemoryManagement.Modules
     /// </summary>
     public static class ModuleCore
     {
+        #region Public Methods
         /// <summary>
         ///     Retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
         /// </summary>
@@ -115,5 +116,6 @@ namespace Binarysharp.MemoryManagement.Modules
             // Enumerate the loaded modules and return the one newly added
             return Process.GetCurrentProcess().Modules.Cast<ProcessModule>().First(m => m.FileName == libraryPath);
         }
+        #endregion
     }
 }

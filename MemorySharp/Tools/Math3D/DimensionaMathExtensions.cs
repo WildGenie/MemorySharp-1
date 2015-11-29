@@ -16,6 +16,7 @@ namespace Binarysharp.MemoryManagement.Tools.Math3D
         private const float Rad2Deg = (float) (180f/Math.PI);
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Calculates an angle that aims from the given source-Vector3 to the given destination-Vector3
         /// </summary>
@@ -207,18 +208,19 @@ namespace Binarysharp.MemoryManagement.Tools.Math3D
             returnVector.X =
                 screenSize.X/2f +
                 (0.5f*(
-                    (viewMatrix[0, 0]*point3D.X + viewMatrix[0, 1]*point3D.Y + viewMatrix[0, 2]*point3D.Z +
-                     viewMatrix[0, 3])
-                    *inverseX)
+                          (viewMatrix[0, 0]*point3D.X + viewMatrix[0, 1]*point3D.Y + viewMatrix[0, 2]*point3D.Z +
+                           viewMatrix[0, 3])
+                          *inverseX)
                  *screenSize.X + 0.5f);
             returnVector.Y =
                 screenSize.Y/2f -
                 (0.5f*(
-                    (viewMatrix[1, 0]*point3D.X + viewMatrix[1, 1]*point3D.Y + viewMatrix[1, 2]*point3D.Z +
-                     viewMatrix[1, 3])
-                    *inverseX)
+                          (viewMatrix[1, 0]*point3D.X + viewMatrix[1, 1]*point3D.Y + viewMatrix[1, 2]*point3D.Z +
+                           viewMatrix[1, 3])
+                          *inverseX)
                  *screenSize.Y + 0.5f);
             return returnVector;
         }
+        #endregion
     }
 }

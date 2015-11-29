@@ -142,13 +142,13 @@ namespace Binarysharp.MemoryManagement.Tools.Math3D
         ///     Reads the four by four matrix.
         /// </summary>
         /// <param name="handle">The handle to the process where the matrix is located in memory.</param>
-        /// <param name="_lpBaseAddress">The <see cref="IntPtr" /> address of where the four by four matrix is located in memory.</param>
+        /// <param name="lpBaseAddress">The <see cref="IntPtr" /> address of where the four by four matrix is located in memory.</param>
         /// <returns></returns>
-        public static Matrix4X4 ReadFourByFourMatrix(IntPtr handle, IntPtr _lpBaseAddress)
+        public static Matrix4X4 ReadFourByFourMatrix(IntPtr handle, IntPtr lpBaseAddress)
         {
             var tmp = new Matrix4X4();
 
-            var buffer = ExternalMemoryCore.ReadProcessMemory(handle, _lpBaseAddress, 64);
+            var buffer = ExternalMemoryCore.ReadProcessMemory(handle, lpBaseAddress, 64);
 
             tmp.M11 = BitConverter.ToSingle(buffer, 0*4);
             tmp.M12 = BitConverter.ToSingle(buffer, 1*4);

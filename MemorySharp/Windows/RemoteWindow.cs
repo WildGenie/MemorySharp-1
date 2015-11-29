@@ -196,12 +196,19 @@ namespace Binarysharp.MemoryManagement.Windows
         /// </summary>
         public bool Equals(RemoteWindow other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
             return Equals(MemorySharp, other.MemorySharp) && Handle.Equals(other.Handle);
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Activates the window.
         /// </summary>
@@ -223,10 +230,15 @@ namespace Binarysharp.MemoryManagement.Windows
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((RemoteWindow) obj);
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            return obj.GetType() == GetType() && Equals((RemoteWindow) obj);
         }
 
         /// <summary>
@@ -359,5 +371,6 @@ namespace Binarysharp.MemoryManagement.Windows
         {
             return $"Title = {Title} ClassName = {ClassName}";
         }
+        #endregion
     }
 }

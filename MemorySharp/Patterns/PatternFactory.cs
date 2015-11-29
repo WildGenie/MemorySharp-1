@@ -38,7 +38,7 @@ namespace Binarysharp.MemoryManagement.Patterns
         /// </summary>
         public byte[] ModuleData => InternalModuleData ??
                                     (InternalModuleData =
-                                        MemorySharp.ReadBytes(ProcessModule.BaseAddress, ProcessModule.ModuleMemorySize))
+                                     MemorySharp.ReadBytes(ProcessModule.BaseAddress, ProcessModule.ModuleMemorySize))
             ;
         #endregion
 
@@ -52,33 +52,133 @@ namespace Binarysharp.MemoryManagement.Patterns
         }
         #endregion
 
+        #region Public Methods
+        /// <summary>
+        ///     Performs a pattern scan from a <see cref="SerializablePattern" /> struct.
+        /// </summary>
+        /// <param name="pattern">The <see cref="SerializablePattern" /> instance to use.</param>
+        /// <returns>A new <see cref="ScanResult" /> instance.</returns>
+        public ScanResult Find(SerializablePattern pattern)
+        {
+            return Find(pattern.TextPattern, pattern.OffsetToAdd, pattern.RebaseResult);
+        }
+
+        /// <summary>
+        ///     Performs a pattern scan from a <see cref="Pattern" /> struct.
+        /// </summary>
+        /// m>
+        /// <param name="pattern">The <see cref="Pattern" /> instance to use.</param>
+        /// <returns>A new <see cref="ScanResult" /> instance.</returns>
+        public ScanResult Find(Pattern pattern)
+        {
+            return Find(pattern.TextPattern, pattern.OffsetToAdd, pattern.RebaseResult);
+        }
+
+        /// <summary>
+        ///     Preform a pattern scan from a dword string based pattern.
+        /// </summary>
+        /// m>
+        /// <param name="patternText">
+        ///     The dword string based pattern text containing the pattern to try and find matches against.
+        ///     <example>
+        ///         <code>
+        /// var bytes = new byte[]{55,45,00,00,55} ;
+        /// var mask = "xx??x";
+        /// </code>
+        ///     </example>
+        /// </param>
+        /// <param name="offsetToAdd">The offset to add to the offset result found from the pattern.</param>
+        /// <param name="reBase">If the address should be rebased to this <see cref="RemoteModule" /> Instance's base address.</param>
+        /// <returns>A new <see cref="ScanResult" /> instance.</returns>
+        public ScanResult Find(string patternText, int offsetToAdd, bool reBase)
+        {
+            var bytes = PatternCore.GetBytesFromDwordPattern(patternText);
+            return Find(bytes, offsetToAdd, reBase);
+        }
+
+        /// <summary>
+        ///     Preform a pattern scan from a byte[] array pattern.
+        /// </summary>
+        /// <param name="pattern">The byte array that contains the pattern of bytes we're looking for.</param>
+        /// <param name="offsetToAdd">The offset to add to the offset result found from the pattern.</param>
+        /// <param name="rebaseResult">
+        ///     If the final address result should be rebased to the base address of the
+        ///     <see cref="ProcessModule" /> the pattern data resides in.
+        /// </param>
+        /// <returns>A new <see cref="ScanResult" /> instance.</returns>
+        public ScanResult Find(byte[] pattern, int offsetToAdd, bool rebaseResult)
+        {
+            var mask = PatternCore.MaskFromPattern(pattern);
+            return Find(pattern, mask, offsetToAdd, rebaseResult);
+        }
+
+
+        /// <summary>
+        ///     Performs a pattern scan.
+        /// </summary>
+        /// <param name="pattern">The byte array that contains the pattern of bytes we're looking for.</param>
+        /// <param name="mask">
+        ///     The mask that defines the byte pattern we are searching for.
+        ///     <example>
+        ///         <code>
+        /// var bytes = new byte[]{55,45,00,00,55} ;
+        /// var mask = "xx??x";
+        /// </code>
+        ///     </example>
+        /// </param>
+        /// <param name="offsetToAdd">The offset to add to the offset result found from the pattern.</param>
+        /// <param name="rebaseResult">
+        ///     If the final address result should be rebased to the base address of the
+        ///     <see cref="ProcessModule" /> the pattern data resides in.
+        /// </param>
+        /// <returns>A new <see cref="ScanResult" /> instance.</returns>
+        public ScanResult Find(byte[] pattern, string mask, int offsetToAdd, bool rebaseResult)
+        {
+            return PatternCore.Find(MemorySharp.Native, ProcessModule, ModuleData, pattern, mask, offsetToAdd,
+                                    rebaseResult);
+        }
+
+
+        /// <summary>
+        ///     Adds all pointers found from scanning an array of <see cref="SerializablePattern" /> instances to the given
+        ///     <see cref="Dictionary{TKey,TValue}" /> instance using the <see cref="IDictionary{TKey,TValue}" /> interface.
+        /// </summary>
+        /// <param name="patterns">The array of <see cref="SerializablePattern" /> instances to scan.</param>
+        /// <param name="resultDictionary">
+        ///     The <see cref="Dictionary{TKey,TValue}" /> to add the results to. The key of each
+        ///     result is the <see cref="SerializablePattern" /> instances <see cref="SerializablePattern.Description" /> and the
+        ///     value is the <see cref="ScanResult.Address" /> found.
+        /// </param>
+        public void CollectScanResults(SerializablePattern[] patterns, IDictionary<string, IntPtr> resultDictionary)
+        {
+            foreach (var pattern in patterns)
+            {
+                resultDictionary.Add(pattern.Description, Find(pattern).Address);
+            }
+        }
+
+
         /// <summary>
         ///     Adds all pointers found from scanning a xml file to a given dictonary using the <code>IDictonary</code> interface.
         /// </summary>
-        /// <param name="xmlFileNameOrPath">The name or path to the xml ProcessModulePattern file to use.</param>
-        /// <param name="thePointerDictionary">The dictonary to fill.</param>
-        public void CollectXmlScanResults(string xmlFileNameOrPath, IDictionary<string, IntPtr> thePointerDictionary)
+        /// <param name="xmlFileNameOrPath">The name or path of the xml pattern file to use.</param>
+        /// <param name="resultDictionary">The <see cref="Dictionary{TKey,TValue}" /> instance to add the results too.</param>
+        public void CollectXmlScanResults(string xmlFileNameOrPath, IDictionary<string, IntPtr> resultDictionary)
         {
             var patterns = PatternCore.LoadXmlPatternFile(xmlFileNameOrPath);
-            foreach (var pattern in patterns)
-            {
-                thePointerDictionary.Add(pattern.Description, Find(pattern).Address);
-            }
+            CollectScanResults(patterns, resultDictionary);
         }
 
 
         /// <summary>
         ///     Adds all pointers found from scanning a json file to a given dictonary using the <code>IDictonary</code> interface.
         /// </summary>
-        /// <param name="xmlFileNameOrPath">The name or path to the xml ProcessModulePattern file to use.</param>
-        /// <param name="thePointerDictionary">The dictonary to fill.</param>
-        public void CollectJsonScanResults(string xmlFileNameOrPath, IDictionary<string, IntPtr> thePointerDictionary)
+        /// <param name="jsonFileNameOrPath">The name or path of the json pattern file to use.</param>
+        /// <param name="resultDictionary">The <see cref="Dictionary{TKey,TValue}" /> instance to add the results too.</param>
+        public void CollectJsonScanResults(string jsonFileNameOrPath, IDictionary<string, IntPtr> resultDictionary)
         {
-            var patterns = PatternCore.LoadJsonPatternFile(xmlFileNameOrPath);
-            foreach (var pattern in patterns)
-            {
-                thePointerDictionary.Add(pattern.Description, Find(pattern).Address);
-            }
+            var patterns = PatternCore.LoadJsonPatternFile(jsonFileNameOrPath);
+            CollectScanResults(patterns, resultDictionary);
         }
 
         /// <summary>
@@ -97,99 +197,20 @@ namespace Binarysharp.MemoryManagement.Patterns
                     CollectXmlScanResults(xmlFileNameOrPath, results);
                     foreach (var result in results)
                     {
-                        PatternCore.LogScanResultToFile(result.Key, result.Value);
+                        PatternCore.LogFoundAddressToFile(result.Key, result.Value);
                     }
                     return;
                 case PatternFileType.Json:
                     CollectJsonScanResults(xmlFileNameOrPath, results);
                     foreach (var result in results)
                     {
-                        PatternCore.LogScanResultToFile(result.Key, result.Value);
+                        PatternCore.LogFoundAddressToFile(result.Key, result.Value);
                     }
                     return;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(patternFileType), patternFileType, null);
             }
         }
-
-        /// <summary>
-        ///     Performs a pattern scan from the data inside the <see cref="SerializablePattern" /> instance supplied in the
-        ///     parameter.
-        /// </summary>
-        /// m>
-        /// <param name="pattern">The <see cref="SerializablePattern" /> Instance containing the data to use.</param>
-        /// <returns>A new <see cref="ScanResult" /></returns>
-        public ScanResult Find(SerializablePattern pattern)
-        {
-            var bytes = PatternCore.GetBytesFromDwordPattern(pattern.TextPattern);
-            var mask = PatternCore.GetMaskFromDwordPattern(pattern.TextPattern);
-            return Find(bytes, mask, pattern.OffsetToAdd, pattern.IsOffsetMode, pattern.RebaseAddress);
-        }
-
-        /// <summary>
-        ///     Performs a pattern scan.
-        /// </summary>
-        /// m>
-        /// <param name="pattern">The <see cref="Pattern" /> Instance containing the data to use.</param>
-        /// <returns>A new <see cref="ScanResult" /></returns>
-        public ScanResult Find(Pattern pattern)
-        {
-            var bytes = PatternCore.GetBytesFromDwordPattern(pattern.TextPattern);
-            var mask = PatternCore.GetMaskFromDwordPattern(pattern.TextPattern);
-            return Find(bytes, mask, pattern.OffsetToAdd, pattern.IsOffsetMode, pattern.RebaseAddress);
-        }
-
-        /// <summary>
-        ///     Performs a pattern scan.
-        /// </summary>
-        /// m>
-        /// <param name="patternText">
-        ///     The dword formatted text of the pattern.
-        ///     <example>A2 5B ?? ?? ?? A2</example>
-        /// </param>
-        /// <param name="offsetToAdd">The offset to add to the offset result found from the pattern.</param>
-        /// <param name="isOffsetMode">If the address is found from the base address + offset or not.</param>
-        /// <param name="reBase">If the address should be rebased to this <see cref="RemoteModule" /> Instance's base address.</param>
-        /// <returns>A new <see cref="ScanResult" /></returns>
-        public ScanResult Find(string patternText, int offsetToAdd, bool isOffsetMode, bool reBase)
-        {
-            var bytes = PatternCore.GetBytesFromDwordPattern(patternText);
-            var mask = PatternCore.GetMaskFromDwordPattern(patternText);
-            return Find(bytes, mask, offsetToAdd, isOffsetMode, reBase);
-        }
-
-        /// <summary>
-        ///     Preformpattern scan from byte[]
-        /// </summary>
-        /// <param name="pattern"></param>
-        /// <param name="offsetToAdd"></param>
-        /// <param name="isOffsetMode"></param>
-        /// <param name="reBase"></param>
-        /// <returns></returns>
-        public ScanResult Find(byte[] pattern, int offsetToAdd, bool isOffsetMode, bool reBase)
-        {
-            var bytes = pattern;
-            var mask = PatternCore.MaskFromPattern(pattern);
-            return Find(bytes, mask, offsetToAdd, isOffsetMode, reBase);
-        }
-
-
-        /// <summary>
-        ///     Performs a pattern scan.
-        /// </summary>
-        /// <param name="myPattern">The patterns bytes.</param>
-        /// <param name="mask">The mask of the pattern. ? Is for wild card, x otherwise.</param>
-        /// <param name="offsetToAdd">The offset to add to the offset result found from the pattern.</param>
-        /// <param name="isOffsetMode">If the address is found from the base address + offset or not.</param>
-        /// <param name="reBase">If the address should be rebased to this <see cref="RemoteModule" /> Instance's base address.</param>
-        /// <returns>A new <see cref="ScanResult" /></returns>
-        public ScanResult Find(byte[] myPattern, string mask, int offsetToAdd, bool isOffsetMode, bool reBase)
-        {
-            var patternBytes = myPattern;
-            var patternMask = mask;
-            var scanResult = PatternCore.Find(MemorySharp.Handle.DangerousGetHandle(), ProcessModule, patternBytes,
-                patternMask, offsetToAdd, isOffsetMode, reBase);
-            return scanResult;
-        }
+        #endregion
     }
 }

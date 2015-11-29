@@ -46,6 +46,7 @@ namespace Binarysharp.MemoryManagement.Threading
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Returns a string that represents the current object.
         /// </summary>
@@ -53,5 +54,6 @@ namespace Binarysharp.MemoryManagement.Threading
         {
             return $"Id = {Thread.Id}";
         }
+        #endregion
     }
 }

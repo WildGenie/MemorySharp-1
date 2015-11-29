@@ -15,47 +15,52 @@ namespace Binarysharp.MemoryManagement.Patterns
     public static class PatternCore
     {
         #region Fields, Private Properties
-        // Used to dump scan results to a file.
         private static FileLog FileLog { get; } = FileLog.Create("PatternScanResultLogger", "PatternLogs", "PatternLog",
-            false, true);
+                                                                 false, true);
         #endregion
 
+        #region Public Methods
         /// <summary>
-        ///     Performs a ProcessModulePattern scan.
+        ///     Performs a pattern scan.
         /// </summary>
-        /// <param name="pattern">The processModulePatterns bytes.</param>
-        /// <param name="mask">The mask of the ProcessModulePattern. ? Is for wild card, x otherwise.</param>
-        /// <param name="offsetToAdd">The offset to add to the offset result found from the ProcessModulePattern.</param>
-        /// <param name="isOffsetMode">If the address is found from the base address + offset or not.</param>
-        /// <param name="reBase">If the address should be rebased to process modules base address.</param>
-        /// <param name="handle">The handle to the process module is contained in.</param>
-        /// <param name="module">The process module the pattern data is contained in.</param>
+        /// <param name="process">The process the <see cref="ProcessModule" /> containing the data resides in.</param>
+        /// <param name="processModule">The <see cref="ProcessModule" /> that contains the pattern data resides in.</param>
+        /// <param name="data">The array of bytes containing the data to search for matches in.</param>
+        /// <param name="mask">
+        ///     The mask that defines the byte pattern we are searching for.
+        ///     <example>
+        ///         <code>
+        /// var bytes = new byte[]{55,45,00,00,55} ;
+        /// var mask = "xx??x";
+        /// </code>
+        ///     </example>
+        /// </param>
+        /// <param name="offsetToAdd">The offset to add to the offset result found from the pattern.</param>
+        /// <param name="reBase">If the address should be rebased to this  Instance's base address.</param>
         /// <param name="wildCardChar">
         ///     [Optinal] The 'wild card' defines the <see cref="char" /> value that the mask uses to differentiate
         ///     between pattern data that is relevant, and pattern data that should be ignored. The default value is 'x'.
         /// </param>
+        /// <param name="pattern">The byte array that contains the pattern of bytes we're looking for.</param>
         /// <returns>A new <see cref="ScanResult" /> instance.</returns>
-        public static ScanResult Find(IntPtr handle, ProcessModule module, byte[] pattern, string mask, int offsetToAdd,
-                                      bool isOffsetMode, bool reBase, char wildCardChar = 'x')
+        public static ScanResult Find(Process process, ProcessModule processModule, byte[] data, byte[] pattern,
+                                      string mask, int offsetToAdd, bool reBase, char wildCardChar = 'x')
         {
-            var patternData = ExternalMemoryCore.ReadProcessMemory(handle, module.BaseAddress, module.ModuleMemorySize);
-            for (var offset = 0; offset < patternData.Length; offset++)
+            for (var offset = 0; offset < data.Length; offset++)
             {
-                if (mask.Where((c, b) => c == 'x' && pattern[b] != patternData[b + offset]).Any())
-                    continue;
-                // If this code is reached, then the pattern was located.
-                IntPtr found;
-                TryGetPatternAddress(out found, handle, module, offsetToAdd, offset);
-                if (found != IntPtr.Zero)
-                    return new ScanResult
-                           {
-                               OriginalAddress = found,
-                               Address = reBase ? found : found.Subtract(module.BaseAddress),
-                               Offset = !reBase ? (IntPtr) offset : module.BaseAddress.Add(offset)
-                           };
+                if (mask.Where((m, b) => m == 'x' && pattern[b] != data[b + offset]).Any()) continue;
+                var found = ExternalMemoryCore.Read<IntPtr>(process.Handle,
+                                                            processModule.BaseAddress + offset + offsetToAdd);
+                var result = new ScanResult
+                             {
+                                 OriginalAddress = found,
+                                 Address = reBase ? found : found.Subtract(processModule.BaseAddress),
+                                 Offset = (IntPtr) offset
+                             };
+                return result;
             }
-            // If this code is reached, it is likely no pattern match was found.
-            throw new Exception("The ProcessModulePattern " + "[" + pattern + "]" + " was not found.");
+            // If this is reached, the pattern was not found.
+            throw new Exception("The pattern scan for the pattern mask: " + "[" + mask + "]" + " was not found.");
         }
 
         /// <summary>
@@ -68,7 +73,6 @@ namespace Binarysharp.MemoryManagement.Patterns
             var mask = pattern
                 .Split(' ')
                 .Select(s => s.Contains('?') ? "?" : "x");
-
             return string.Concat(mask);
         }
 
@@ -148,13 +152,13 @@ namespace Binarysharp.MemoryManagement.Patterns
         /// <summary>
         ///     Logs the pattern scan result to a text file as a useable pattern format for C#.
         /// </summary>
-        /// <param name="patternName">Name that represents the pattern that was scanned.</param>
+        /// <param name="name">Name that represents the address.ed.</param>
         /// <param name="address">The address found from the pattern scan.</param>
-        public static void LogScanResultToFile(string patternName, IntPtr address)
+        public static void LogFoundAddressToFile(string name, IntPtr address)
         {
             try
             {
-                FileLog.LogNormal(FormatPatternText(patternName, address));
+                FileLog.LogNormal(FormatAddressForFileLog(name, address));
             }
             catch (Exception e)
             {
@@ -168,15 +172,10 @@ namespace Binarysharp.MemoryManagement.Patterns
         /// <param name="patternName">The name that represents the pattern.</param>
         /// <param name="address">The address found from pattern scan to log.</param>
         /// <returns>A C# useable string from the address found from a pattern scan.</returns>
-        public static string FormatPatternText(string patternName, IntPtr address)
+        public static string FormatAddressForFileLog(string patternName, IntPtr address)
         {
             return $"public IntPtr {patternName} {" {get;} = "} {"(IntPtr) 0x"}{address.ToString("X")}{";"}";
         }
-
-        private static void TryGetPatternAddress(out IntPtr found, IntPtr handle, ProcessModule module, int offsetToAdd,
-                                                 int offset)
-        {
-            found = ExternalMemoryCore.Read<IntPtr>(handle, module.BaseAddress + offset + offsetToAdd);
-        }
+        #endregion
     }
 }

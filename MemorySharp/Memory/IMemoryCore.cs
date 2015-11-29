@@ -20,6 +20,7 @@ namespace Binarysharp.MemoryManagement.Memory
     /// </summary>
     public interface IMemoryCore
     {
+        #region Public Methods
         /// <summary>
         ///     Reserves a region of memory within the virtual address space of a specified process.
         /// </summary>
@@ -112,5 +113,6 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <param name="byteArray">A buffer that contains data to be written in the address space of the specified process.</param>
         /// <returns>The number of bytes written.</returns>
         int WriteBytes(SafeMemoryHandle processHandle, IntPtr address, byte[] byteArray);
+        #endregion
     }
 }

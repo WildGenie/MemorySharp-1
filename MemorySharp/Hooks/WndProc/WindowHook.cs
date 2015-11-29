@@ -149,6 +149,7 @@ namespace Binarysharp.MemoryManagement.Hooks.WndProc
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Used to send the custom user message to be intercepted in the call back.
         /// </summary>
@@ -157,6 +158,9 @@ namespace Binarysharp.MemoryManagement.Hooks.WndProc
         {
             SafeNativeMethods.SendMessage(WindowHandle, (uint) WmUser, (UIntPtr) message, new IntPtr(0));
         }
+        #endregion
+
+        #region Private Methods
 
         // The custom call back.
         private int WndProc(IntPtr hWnd, int msg, int wParam, int lParam)
@@ -186,6 +190,7 @@ namespace Binarysharp.MemoryManagement.Hooks.WndProc
             }
             return false;
         }
+        #endregion
 
         // Nested delegate for WindowProc.
         private delegate int WindowProc(IntPtr hWnd, int msg, int wParam, int lParam);

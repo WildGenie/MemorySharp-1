@@ -20,6 +20,7 @@ namespace Binarysharp.MemoryManagement.Helpers
     /// </summary>
     public static class HandleManipulator
     {
+        #region Public Methods
         /// <summary>
         ///     Closes an open object handle.
         /// </summary>
@@ -138,5 +139,6 @@ namespace Binarysharp.MemoryManagement.Helpers
             if (handle.IsClosed || handle.IsInvalid)
                 throw new ArgumentException("The handle is not valid or closed.", argumentName);
         }
+        #endregion
     }
 }

@@ -44,6 +44,7 @@ namespace Binarysharp.MemoryManagement.Windows.Keyboard
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Presses the specified virtual key to the window.
         /// </summary>
@@ -124,5 +125,6 @@ namespace Binarysharp.MemoryManagement.Windows.Keyboard
                 Write(character);
             }
         }
+        #endregion
     }
 }

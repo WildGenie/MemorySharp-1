@@ -89,6 +89,7 @@ namespace Binarysharp.MemoryManagement.Modules
         public RemoteFunction this[string functionName] => FindFunction(functionName);
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Ejects the loaded dynamic-link library (DLL) module.
         /// </summary>
@@ -140,7 +141,7 @@ namespace Binarysharp.MemoryManagement.Modules
 
                 // Rebase the function with the remote module
                 var function = new RemoteFunction(MemorySharp, new IntPtr(Native.BaseAddress.ToInt64() + offset),
-                    functionName);
+                                                  functionName);
 
                 // Store the function in the cache
                 CachedFunctions.Add(tuple, function);
@@ -157,6 +158,15 @@ namespace Binarysharp.MemoryManagement.Modules
         }
 
         /// <summary>
+        ///     Returns a string that represents the current object.
+        /// </summary>
+        public override string ToString()
+        {
+            return $"BaseAddress = 0x{BaseAddress.ToInt64():X} Name = {Name}";
+        }
+        #endregion
+
+        /// <summary>
         ///     Frees the loaded dynamic-link library (DLL) module and, if necessary, decrements its reference count.
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
@@ -165,14 +175,6 @@ namespace Binarysharp.MemoryManagement.Modules
         {
             // Call FreeLibrary remotely
             memorySharp.Threads.CreateAndJoin(memorySharp["kernel32"]["FreeLibrary"].BaseAddress, module.BaseAddress);
-        }
-
-        /// <summary>
-        ///     Returns a string that represents the current object.
-        /// </summary>
-        public override string ToString()
-        {
-            return $"BaseAddress = 0x{BaseAddress.ToInt64():X} Name = {Name}";
         }
     }
 }

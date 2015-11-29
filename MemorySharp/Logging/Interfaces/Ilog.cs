@@ -5,6 +5,7 @@
     /// </summary>
     public interface ILog
     {
+        #region Public Methods
         /// <summary>
         ///     LogNormal a warning log.
         /// </summary>
@@ -28,5 +29,6 @@
         /// </summary>
         /// <param name="message">The message to write.</param>
         void LogInfo(string message);
+        #endregion
     }
 }

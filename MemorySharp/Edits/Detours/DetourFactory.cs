@@ -2,6 +2,8 @@
 using System.Linq;
 using Binarysharp.MemoryManagement.Helpers;
 using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Logging.Defaults;
+using Binarysharp.MemoryManagement.Logging.Interfaces;
 
 namespace Binarysharp.MemoryManagement.Edits.Detours
 {
@@ -11,6 +13,15 @@ namespace Binarysharp.MemoryManagement.Edits.Detours
     /// </summary>
     public class DetourFactory : Manager<Detour>, IFactory
     {
+        #region Constructors, Destructors
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="DetourFactory" /> class.
+        /// </summary>
+        public DetourFactory() : base(new DebugLog())
+        {
+        }
+        #endregion
+
         #region Public Properties, Indexers
         /// <summary>
         ///     Gets or sets the instance reference for the <see cref="MemoryManagement.MemoryPlus" /> class.
@@ -34,6 +45,7 @@ namespace Binarysharp.MemoryManagement.Edits.Detours
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Creates a new Detour.
         /// </summary>
@@ -99,5 +111,6 @@ namespace Binarysharp.MemoryManagement.Edits.Detours
             InternalItems[name].Enable();
             return InternalItems[name];
         }
+        #endregion
     }
 }

@@ -94,6 +94,7 @@ namespace Binarysharp.MemoryManagement.Windows
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Gets all the windows that have the specified class name.
         /// </summary>
@@ -129,5 +130,6 @@ namespace Binarysharp.MemoryManagement.Windows
                 .Where(handle => WindowCore.GetWindowText(handle).Contains(windowTitle))
                 .Select(handle => new RemoteWindow(_memorySharp, handle));
         }
+        #endregion
     }
 }

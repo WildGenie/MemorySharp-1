@@ -55,6 +55,7 @@ namespace Binarysharp.MemoryManagement.Memory
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Changes the protection of the n next bytes in remote process.
         /// </summary>
@@ -114,5 +115,6 @@ namespace Binarysharp.MemoryManagement.Memory
             return
                 $"BaseAddress = 0x{BaseAddress.ToInt64():X} Size = 0x{Information.RegionSize:X} Protection = {Information.Protect}";
         }
+        #endregion
     }
 }

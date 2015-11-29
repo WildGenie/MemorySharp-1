@@ -105,6 +105,7 @@ namespace Binarysharp.MemoryManagement.Assembly
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Adds a mnemonic to the transaction.
         /// </summary>
@@ -150,5 +151,6 @@ namespace Binarysharp.MemoryManagement.Assembly
         {
             Mnemonics.Insert(index, string.Format(asm, args));
         }
+        #endregion
     }
 }

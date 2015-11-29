@@ -8,6 +8,8 @@
 */
 
 using System.Collections.Generic;
+using System.Linq;
+using Binarysharp.MemoryManagement.Logging.Interfaces;
 
 namespace Binarysharp.MemoryManagement.Internals
 {
@@ -23,22 +25,47 @@ namespace Binarysharp.MemoryManagement.Internals
         protected Dictionary<string, T> InternalItems = new Dictionary<string, T>();
         #endregion
 
+        #region Constructors, Destructors
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Manager{T}" /> class.
+        /// </summary>
+        /// <param name="logger">The <see cref="IManagedLog" /> instance to use..</param>
+        protected Manager(IManagedLog logger)
+        {
+            Logger = logger;
+        }
+        #endregion
+
         #region Public Properties, Indexers
+        /// <summary>
+        /// </summary>
+        public IManagedLog Logger { get; set; }
+
         /// <summary>
         ///     The collection of the elements.
         /// </summary>
-        public IReadOnlyDictionary<string, T> Items => InternalItems;
+        public IReadOnlyDictionary<string, T> ItemsAsDictionary => InternalItems;
+
+        /// <summary>
+        ///     Gets the collection of <see cref="INamedElement" /> instances as a <see cref="IEnumerable{T}" />.
+        /// </summary>
+        /// <value>
+        ///     The collection of <see cref="INamedElement" /> instances as a <see cref="IEnumerable{T}" />.
+        /// </value>
+        public IEnumerable<T> Items => InternalItems.Values;
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Disables all items in the manager.
         /// </summary>
         public void DisableAll()
         {
-            foreach (var item in InternalItems)
-            {
-                item.Value.Disable();
-            }
+            InternalItems.Values.ToList().ForEach(i =>
+                                                  {
+                                                      i.Disable();
+                                                      Logger.LogInfo(i.Name + " was disabled.");
+                                                  });
         }
 
         /// <summary>
@@ -46,10 +73,11 @@ namespace Binarysharp.MemoryManagement.Internals
         /// </summary>
         public void EnableAll()
         {
-            foreach (var item in InternalItems)
-            {
-                item.Value.Enable();
-            }
+            InternalItems.Values.ToList().ForEach(i =>
+                                                  {
+                                                      i.Enable();
+                                                      Logger.LogInfo(i.Name + " was Enabled.");
+                                                  });
         }
 
         /// <summary>
@@ -59,18 +87,16 @@ namespace Binarysharp.MemoryManagement.Internals
         public void Remove(string name)
         {
             // Check if the element exists in the dictionary
-            if (InternalItems.ContainsKey(name))
+            if (!InternalItems.ContainsKey(name)) return;
+            try
             {
-                try
-                {
-                    // Dispose the element
-                    InternalItems[name].Dispose();
-                }
-                finally
-                {
-                    // Remove the element from the dictionary
-                    InternalItems.Remove(name);
-                }
+                // Dispose the element
+                InternalItems[name].Dispose();
+            }
+            finally
+            {
+                // Remove the element from the dictionary
+                InternalItems.Remove(name);
             }
         }
 
@@ -88,14 +114,9 @@ namespace Binarysharp.MemoryManagement.Internals
         /// </summary>
         public void RemoveAll()
         {
-            // For each element
-            foreach (var item in InternalItems)
-            {
-                // Dispose it
-                item.Value.Dispose();
-            }
-            // Clear the dictionary
+            InternalItems.Values.ToList().ForEach(i => i.Dispose());
             InternalItems.Clear();
         }
+        #endregion
     }
 }

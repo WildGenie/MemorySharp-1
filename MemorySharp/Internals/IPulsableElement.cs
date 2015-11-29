@@ -5,9 +5,11 @@
     /// </summary>
     public interface IPulsableElement
     {
+        #region Public Methods
         /// <summary>
         ///     Pulse one iteration of this instance's logic.
         /// </summary>
         void Pulse();
+        #endregion
     }
 }

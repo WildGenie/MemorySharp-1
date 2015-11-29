@@ -14,6 +14,7 @@ namespace Binarysharp.MemoryManagement.Helpers
     /// </summary>
     public static class UnsafeIntPtrExtensions
     {
+        #region Public Methods
         /// <summary>
         ///     Adds the specified pointer.
         /// </summary>
@@ -194,5 +195,6 @@ namespace Binarysharp.MemoryManagement.Helpers
         {
             return InternalMemoryCore.RegisterDelegate<T>(address);
         }
+        #endregion
     }
 }

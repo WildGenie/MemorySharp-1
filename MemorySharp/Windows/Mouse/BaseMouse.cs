@@ -35,13 +35,7 @@ namespace Binarysharp.MemoryManagement.Windows.Mouse
         }
         #endregion
 
-        /// <summary>
-        ///     Moves the cursor at the specified coordinate.
-        /// </summary>
-        /// <param name="x">The x-coordinate.</param>
-        /// <param name="y">The y-coordinate.</param>
-        protected abstract void MoveToAbsolute(int x, int y);
-
+        #region Public Methods
         /// <summary>
         ///     Presses the left button of the mouse at the current cursor position.
         /// </summary>
@@ -130,5 +124,13 @@ namespace Binarysharp.MemoryManagement.Windows.Mouse
         {
             MoveToAbsolute(Window.X + x, Window.Y + y);
         }
+        #endregion
+
+        /// <summary>
+        ///     Moves the cursor at the specified coordinate.
+        /// </summary>
+        /// <param name="x">The x-coordinate.</param>
+        /// <param name="y">The y-coordinate.</param>
+        protected abstract void MoveToAbsolute(int x, int y);
     }
 }

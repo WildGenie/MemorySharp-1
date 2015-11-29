@@ -1,5 +1,7 @@
 using System;
 using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Logging.Defaults;
+using Binarysharp.MemoryManagement.Logging.Interfaces;
 
 namespace Binarysharp.MemoryManagement.Edits.Patchs
 {
@@ -9,6 +11,12 @@ namespace Binarysharp.MemoryManagement.Edits.Patchs
     /// </summary>
     public class InternalPatchFactory : Manager<Patch>, IFactory
     {
+        #region Constructors, Destructors
+        public InternalPatchFactory() : base(new DebugLog())
+        {
+        }
+        #endregion
+
         #region Public Properties, Indexers
         /// <summary>
         ///     Gets or sets the instance reference for the <see cref="MemoryManagement.MemoryPlus" /> class.
@@ -43,6 +51,7 @@ namespace Binarysharp.MemoryManagement.Edits.Patchs
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Creates a new <see cref="Patch" /> at the specified address.
         /// </summary>
@@ -70,5 +79,6 @@ namespace Binarysharp.MemoryManagement.Edits.Patchs
             InternalItems[name].Enable();
             return InternalItems[name];
         }
+        #endregion
     }
 }

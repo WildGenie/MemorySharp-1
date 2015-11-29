@@ -30,6 +30,7 @@ namespace Binarysharp.MemoryManagement.Helpers
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".ToCharArray();
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Returns a random number within a specified range.
         /// </summary>
@@ -94,5 +95,6 @@ namespace Binarysharp.MemoryManagement.Helpers
         {
             return Guid.NewGuid();
         }
+        #endregion
     }
 }

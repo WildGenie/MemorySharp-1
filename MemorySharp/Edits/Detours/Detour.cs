@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Binarysharp.MemoryManagement.Helpers;
 using Binarysharp.MemoryManagement.Internals;
 
 namespace Binarysharp.MemoryManagement.Edits.Detours
@@ -39,9 +40,9 @@ namespace Binarysharp.MemoryManagement.Edits.Detours
             ProcessMemory = memory;
             Name = name;
             TargetDelegate = target;
-            Target = Marshal.GetFunctionPointerForDelegate(target);
+            Target = target.GetFunctionPointer();
             _hookDelegate = hook;
-            Hook = Marshal.GetFunctionPointerForDelegate(hook);
+            Hook = hook.GetFunctionPointer();
 
             //Store the orginal bytes
             Orginal = new List<byte>();
@@ -143,6 +144,7 @@ namespace Binarysharp.MemoryManagement.Edits.Detours
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Calls the original function, and returns a return value.
         /// </summary>
@@ -158,5 +160,6 @@ namespace Binarysharp.MemoryManagement.Edits.Detours
             Enable();
             return ret;
         }
+        #endregion
     }
 }

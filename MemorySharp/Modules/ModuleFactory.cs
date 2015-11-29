@@ -114,6 +114,7 @@ namespace Binarysharp.MemoryManagement.Modules
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Frees the loaded dynamic-link library (DLL) module and, if necessary, decrements its reference count.
         /// </summary>
@@ -146,6 +147,38 @@ namespace Binarysharp.MemoryManagement.Modules
         }
 
         /// <summary>
+        ///     Injects the specified module into the address space of the remote process.
+        /// </summary>
+        /// <param name="path">
+        ///     The path of the module. This can be either a library module (a .dll file) or an executable module
+        ///     (an .exe file).
+        /// </param>
+        /// <param name="mustBeDisposed">The module will be ejected when the finalizer collects the object.</param>
+        /// <returns>A new instance of the <see cref="InjectedModule" />class.</returns>
+        public InjectedModule Inject(string path, bool mustBeDisposed = true)
+        {
+            // Injects the module
+            var module = InjectedModule.InternalInject(MemorySharp, path);
+            // Add the module in the list
+            InternalInjectedModules.Add(module);
+            // Return the module
+            return module;
+        }
+        #endregion
+
+        #region Private Methods
+        /// <summary>
+        ///     Fetches a module from the remote process.
+        /// </summary>
+        /// <param name="module">A module in the remote process.</param>
+        /// <returns>A new instance of a <see cref="RemoteModule" /> class.</returns>
+        private RemoteModule FetchModule(ProcessModule module)
+        {
+            return FetchModule(module.ModuleName);
+        }
+        #endregion
+
+        /// <summary>
         ///     Fetches a module from the remote process.
         /// </summary>
         /// <param name="moduleName">
@@ -164,35 +197,6 @@ namespace Binarysharp.MemoryManagement.Modules
 
             // Fetch and return the module
             return new RemoteModule(MemorySharp, NativeModules.First(m => m.ModuleName.ToLower() == moduleName));
-        }
-
-        /// <summary>
-        ///     Fetches a module from the remote process.
-        /// </summary>
-        /// <param name="module">A module in the remote process.</param>
-        /// <returns>A new instance of a <see cref="RemoteModule" /> class.</returns>
-        private RemoteModule FetchModule(ProcessModule module)
-        {
-            return FetchModule(module.ModuleName);
-        }
-
-        /// <summary>
-        ///     Injects the specified module into the address space of the remote process.
-        /// </summary>
-        /// <param name="path">
-        ///     The path of the module. This can be either a library module (a .dll file) or an executable module
-        ///     (an .exe file).
-        /// </param>
-        /// <param name="mustBeDisposed">The module will be ejected when the finalizer collects the object.</param>
-        /// <returns>A new instance of the <see cref="InjectedModule" />class.</returns>
-        public InjectedModule Inject(string path, bool mustBeDisposed = true)
-        {
-            // Injects the module
-            var module = InjectedModule.InternalInject(MemorySharp, path);
-            // Add the module in the list
-            InternalInjectedModules.Add(module);
-            // Return the module
-            return module;
         }
     }
 }

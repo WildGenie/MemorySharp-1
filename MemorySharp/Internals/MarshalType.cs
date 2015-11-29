@@ -8,6 +8,7 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Binarysharp.MemoryManagement.Memory;
@@ -38,7 +39,7 @@ namespace Binarysharp.MemoryManagement.Internals
                 TypeCode == TypeCode.Int64 ||
                 TypeCode == TypeCode.UInt64 ||
 #endif
-                    TypeCode == TypeCode.Boolean ||
+                TypeCode == TypeCode.Boolean ||
                 TypeCode == TypeCode.Byte ||
                 TypeCode == TypeCode.Char ||
                 TypeCode == TypeCode.Int16 ||
@@ -78,6 +79,7 @@ namespace Binarysharp.MemoryManagement.Internals
         public static TypeCode TypeCode { get; }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Marshals a managed object to an array of bytes.
         /// </summary>
@@ -92,6 +94,7 @@ namespace Binarysharp.MemoryManagement.Internals
                 case TypeCode.Object:
                     if (IsIntPtr)
                     {
+                        // ReSharper disable once SwitchStatementMissingSomeCases
                         switch (Size)
                         {
                             case 4:
@@ -111,8 +114,8 @@ namespace Binarysharp.MemoryManagement.Internals
                     return BitConverter.GetBytes((short) (object) obj);
                 case TypeCode.Int32:
                     return BitConverter.GetBytes((int) (object) obj);
-                case TypeCode.Int64:
-                    return BitConverter.GetBytes((long) (object) obj);
+                //      case TypeCode.Int64:
+                //        return BitConverter.GetBytes((long) (object) obj);
                 case TypeCode.Single:
                     return BitConverter.GetBytes((float) (object) obj);
                 case TypeCode.String:
@@ -121,8 +124,8 @@ namespace Binarysharp.MemoryManagement.Internals
                     return BitConverter.GetBytes((ushort) (object) obj);
                 case TypeCode.UInt32:
                     return BitConverter.GetBytes((uint) (object) obj);
-                case TypeCode.UInt64:
-                    return BitConverter.GetBytes((ulong) (object) obj);
+                //   case TypeCode.UInt64:
+                //     return BitConverter.GetBytes((ulong) (object) obj);
             }
             // Check if it's not a common type
             // Allocate a block of unmanaged memory
@@ -140,6 +143,7 @@ namespace Binarysharp.MemoryManagement.Internals
         /// </summary>
         /// <param name="byteArray">The array of bytes corresponding to a managed object.</param>
         /// <returns>A managed object.</returns>
+        [SuppressMessage("ReSharper", "SwitchStatementMissingSomeCases")]
         public static T ByteArrayToObject(byte[] byteArray)
         {
             // We'll tried to avoid marshalling as it really slows the process
@@ -154,15 +158,15 @@ namespace Binarysharp.MemoryManagement.Internals
                             case 1:
                                 return
                                     (T)
-                                        (object)
-                                            new IntPtr(BitConverter.ToInt32(new byte[] {byteArray[0], 0x0, 0x0, 0x0}, 0));
+                                    (object)
+                                    new IntPtr(BitConverter.ToInt32(new byte[] {byteArray[0], 0x0, 0x0, 0x0}, 0));
                             case 2:
                                 return
                                     (T)
-                                        (object)
-                                            new IntPtr(
-                                                BitConverter.ToInt32(new byte[] {byteArray[0], byteArray[1], 0x0, 0x0},
-                                                    0));
+                                    (object)
+                                    new IntPtr(
+                                        BitConverter.ToInt32(new byte[] {byteArray[0], byteArray[1], 0x0, 0x0},
+                                                             0));
                             case 4:
                                 return (T) (object) new IntPtr(BitConverter.ToInt32(byteArray, 0));
                             case 8:
@@ -216,8 +220,9 @@ namespace Binarysharp.MemoryManagement.Internals
         public static T PtrToObject(MemorySharp memorySharp, IntPtr pointer)
         {
             return ByteArrayToObject(CanBeStoredInRegisters
-                ? BitConverter.GetBytes(pointer.ToInt64())
-                : memorySharp.Read<byte>(pointer, Size, false));
+                                         ? BitConverter.GetBytes(pointer.ToInt64())
+                                         : memorySharp.Read<byte>(pointer, Size));
         }
+        #endregion
     }
 }

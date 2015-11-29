@@ -79,15 +79,15 @@ namespace Binarysharp.MemoryManagement
             // Create instances of the factories
             Factories = new List<IFactory>();
             Factories.AddRange(
-                new IFactory[]
-                {
-                    Assembly = new AssemblyFactory(this),
-                    Memory = new MemoryFactory(this),
-                    Modules = new ModuleFactory(this),
-                    Threads = new ThreadFactory(this),
-                    Windows = new WindowFactory(this),
-                    Patterns = new PatternFactory(this, Native.MainModule)
-                });
+                               new IFactory[]
+                               {
+                                   Assembly = new AssemblyFactory(this),
+                                   Memory = new MemoryFactory(this),
+                                   Modules = new ModuleFactory(this),
+                                   Threads = new ThreadFactory(this),
+                                   Windows = new WindowFactory(this),
+                                   Patterns = new PatternFactory(this, Native.MainModule)
+                               });
             ImageBase = Native.MainModule.BaseAddress;
             MainModule = new RemoteModule(this, Native.MainModule);
         }
@@ -252,18 +252,29 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         public bool Equals(MemorySharp other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
             return ReferenceEquals(this, other) || Handle.Equals(other.Handle);
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Determines whether the specified object is equal to the current object.
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
             return obj.GetType() == GetType() && Equals((MemorySharp) obj);
         }
 
@@ -284,8 +295,10 @@ namespace Binarysharp.MemoryManagement
         {
             // Check if the relative address is not greater than the main module size
             if (address.ToInt64() > MainModule.Size)
+            {
                 throw new ArgumentOutOfRangeException(nameof(address),
-                    "The relative address cannot be greater than the main module size.");
+                                                      "The relative address cannot be greater than the main module size.");
+            }
             // Compute the absolute address
             return new IntPtr(ImageBase.ToInt64() + address.ToInt64());
         }
@@ -299,8 +312,10 @@ namespace Binarysharp.MemoryManagement
         {
             // Check if the absolute address is smaller than the main module base address
             if (address.ToInt64() < ImageBase.ToInt64())
+            {
                 throw new ArgumentOutOfRangeException(nameof(address),
-                    "The absolute address cannot be smaller than the main module base address.");
+                                                      "The absolute address cannot be smaller than the main module base address.");
+            }
             // Compute the relative address
             return new IntPtr(address.ToInt64() - ImageBase.ToInt64());
         }
@@ -400,7 +415,7 @@ namespace Binarysharp.MemoryManagement
         public Task ExecuteAsycn(RemoteCallParams remoteCallParams, params dynamic[] parameters)
         {
             return Assembly.ExecuteAsync<IntPtr>(remoteCallParams.Address, remoteCallParams.CallingConvention,
-                parameters);
+                                                 parameters);
         }
 
         /// <summary>
@@ -653,7 +668,7 @@ namespace Binarysharp.MemoryManagement
             // Change the protection of the memory to allow writable
             using (
                 new MemoryProtection(this, isRelative ? MakeAbsolute(address) : address,
-                    MarshalType<byte>.Size*byteArray.Length))
+                                     MarshalType<byte>.Size*byteArray.Length))
             {
                 // Write the byte array
                 NativeDriver.MemoryCore.WriteBytes(Handle, isRelative ? MakeAbsolute(address) : address, byteArray);
@@ -706,5 +721,6 @@ namespace Binarysharp.MemoryManagement
         {
             WriteString(new IntPtr(Convert.ToInt64(address)), text, isRelative);
         }
+        #endregion
     }
 }

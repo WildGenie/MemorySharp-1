@@ -26,6 +26,7 @@ namespace Binarysharp.MemoryManagement.Windows
     /// </summary>
     public static class WindowCore
     {
+        #region Public Methods
         /// <summary>
         ///     Retrieves the name of the class to which the specified window belongs.
         /// </summary>
@@ -527,5 +528,6 @@ namespace Binarysharp.MemoryManagement.Windows
             // Change the state of the window
             return NativeMethods.ShowWindow(windowHandle, state);
         }
+        #endregion
     }
 }

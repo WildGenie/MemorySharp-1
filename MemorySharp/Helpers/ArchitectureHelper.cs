@@ -10,11 +10,80 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
+using Binarysharp.MemoryManagement.Logging.Interfaces;
 using Binarysharp.MemoryManagement.Native;
 using Binarysharp.MemoryManagement.Native.Enums;
 
 namespace Binarysharp.MemoryManagement.Helpers
 {
+    /// <summary>
+    ///     A class to perform simple benchmark operations on actions.
+    /// </summary>
+    public static class QuickBenchMark
+    {
+        #region Public Methods
+        /// <summary>
+        ///     Performs a quick profile of an action.
+        ///     <remarks>This should be used for simple actions which could possibly be resource intensive.</remarks>
+        /// </summary>
+        /// <param name="description">Description of the action being profiled.</param>
+        /// <param name="iterations">Total iterations to perform.</param>
+        /// <param name="func">The action to profile.</param>
+        /// <param name="log">The <see cref="ILog" /> instance for this class to use.</param>
+        public static void BenchmarkAction(string description, int iterations, Action func, ILog log)
+        {
+            // Warm up 
+            func();
+
+            var watch = new Stopwatch();
+
+            // Clean up
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            watch.Start();
+            for (var i = 0; i < iterations; i++)
+            {
+                func();
+            }
+            watch.Stop();
+            log.LogInfo("Total time to complete: " +
+                        watch.Elapsed.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>
+        ///     Performs a quick profile of an action.
+        ///     <remarks>This should be used for simple actions which could possibly be resource intensive.</remarks>
+        /// </summary>
+        /// <param name="description">Description of the action being profiled.</param>
+        /// <param name="iterations">Total iterations to perform.</param>
+        /// <param name="func">The action to profile.</param>
+        /// <param name="log">The <see cref="ILog" /> instance for this class to use.</param>
+        public static void BenchmarkAction(string description, int iterations, Action func, IManagedLog log)
+        {
+            // Warm up 
+            func();
+
+            var watch = new Stopwatch();
+
+            // Clean up
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            watch.Start();
+            for (var i = 0; i < iterations; i++)
+            {
+                func();
+            }
+            watch.Stop();
+            log.LogInfo("Total time to complete: " + watch.Elapsed.TotalMilliseconds);
+        }
+        #endregion
+    }
+
     /// <summary>
     ///     Static helper class providing tools for detecting architecture.
     /// </summary>
@@ -42,6 +111,7 @@ namespace Binarysharp.MemoryManagement.Helpers
         public static bool Is64BitOperatingSystem => Environment.Is64BitOperatingSystem;
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Determines whether the specified process is running under WOW64.
         ///     WOW64 is the x86 emulator that allows 32-bit Windows-based applications to run seamlessly on 64-bit Windows.
@@ -84,5 +154,6 @@ namespace Binarysharp.MemoryManagement.Helpers
 
             return architecture;
         }
+        #endregion
     }
 }

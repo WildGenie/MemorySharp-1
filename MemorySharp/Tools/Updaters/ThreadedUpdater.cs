@@ -77,7 +77,7 @@ namespace Binarysharp.MemoryManagement.Tools.Updaters
         ///     Gets a value indicating whether the threaded updater is enabled.
         /// </summary>
         /// <value><c>true</c> if the threaded updater is enabled; otherwise, <c>false</c>.</value>
-        public bool IsEnabled { get; private set; }
+        public bool IsEnabled { get; set; }
 
         /// <summary>
         ///     The unique name that represents this instance.
@@ -145,6 +145,7 @@ namespace Binarysharp.MemoryManagement.Tools.Updaters
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Calculates the average frames per second of the updater instance.
         /// </summary>
@@ -169,7 +170,7 @@ namespace Binarysharp.MemoryManagement.Tools.Updaters
         ///     in maintaining thread saftey,
         /// </summary>
         /// <param name="e">The <see cref="DeltaEventArgs" /> instance containing the event data.</param>
-        public void OnUpdateEvent(DeltaEventArgs e)
+        public virtual void OnUpdateEvent(DeltaEventArgs e)
         {
             if (!UpdateThrottler.CanAcquire()) return;
             try
@@ -181,6 +182,9 @@ namespace Binarysharp.MemoryManagement.Tools.Updaters
                 UpdateThrottler.Release();
             }
         }
+        #endregion
+
+        #region Private Methods
 
         // This method calculates the update events raised per second.
         private void CalculateFramesPerSecond()
@@ -210,6 +214,7 @@ namespace Binarysharp.MemoryManagement.Tools.Updaters
                 Thread.Sleep(Interval);
             }
         }
+        #endregion
 
         /// <summary>
         ///     Event args for the <see cref="ThreadedUpdater" /> class events.

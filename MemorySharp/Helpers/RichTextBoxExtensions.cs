@@ -8,6 +8,7 @@ namespace Binarysharp.MemoryManagement.Helpers
     /// </summary>
     public static class RichTextBoxExtensions
     {
+        #region Public Methods
         /// <summary>
         ///     Appends the text.
         /// </summary>
@@ -53,7 +54,9 @@ namespace Binarysharp.MemoryManagement.Helpers
                 box.InvokeAppendText("\n" + text, color == Color.Empty ? box.ForeColor : color, args);
             }
         }
+        #endregion
 
+        #region Private Methods
         /// <summary>
         ///     Invokes the append text.
         /// </summary>
@@ -65,5 +68,6 @@ namespace Binarysharp.MemoryManagement.Helpers
         {
             box.Invoke((MethodInvoker) delegate { box.AppendText(text, color, args); });
         }
+        #endregion
     }
 }

@@ -447,6 +447,7 @@ namespace Binarysharp.MemoryManagement.Native
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Finds the Thread Environment Block address of a specified thread.
         /// </summary>
@@ -456,5 +457,6 @@ namespace Binarysharp.MemoryManagement.Native
         {
             return ThreadCore.NtQueryInformationThread(threadHandle).TebBaseAdress;
         }
+        #endregion
     }
 }

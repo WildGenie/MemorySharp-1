@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using Binarysharp.MemoryManagement.Native.Enums;
 using Binarysharp.MemoryManagement.Native.Structures;
@@ -11,6 +12,7 @@ namespace Binarysharp.MemoryManagement.Native
     /// </summary>
     public static class SafeNativeMethods
     {
+        #region Public Methods
         /// <summary>
         ///     Passes message information to the specified window procedure..
         /// </summary>
@@ -49,16 +51,9 @@ namespace Binarysharp.MemoryManagement.Native
         public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
         {
             return IntPtr.Size == 8
-                ? SetWindowLongPtr64(hWnd, nIndex, dwNewLong)
-                : new IntPtr(SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32()));
+                       ? SetWindowLongPtr64(hWnd, nIndex, dwNewLong)
+                       : new IntPtr(SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32()));
         }
-
-        // These are private, for the helper above to use which handles both x32/x64 for us.
-        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
-        private static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
-
-        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
-        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
         /// <summary>
         ///     Closes an open object processHandle.
@@ -69,7 +64,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool CloseHandle(IntPtr hObject);
 
@@ -115,7 +110,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is NULL. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern SafeMemoryHandle CreateRemoteThread(SafeMemoryHandle hProcess, IntPtr lpThreadAttributes,
                                                                  uint dwStackSize, IntPtr lpStartAddress,
                                                                  IntPtr lpParameter, ThreadCreationFlags dwCreationFlags,
@@ -135,7 +130,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool FreeLibrary(IntPtr hModule);
 
@@ -155,7 +150,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto), SuppressUnmanagedCodeSecurity]
         public static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
         /// <summary>
@@ -175,7 +170,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         /// <param name="hhk">The HHK.</param>
         /// <returns>System.Boolean.</returns>
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true), SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool UnhookWindowsHookEx(IntPtr hhk);
 
@@ -187,7 +182,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// <param name="wParam">The w parameter.</param>
         /// <param name="lParam">The l parameter.</param>
         /// <returns>System.IntPtr.</returns>
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
 
         /// <summary>
@@ -259,7 +254,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern bool GetExitCodeThread(SafeMemoryHandle hThread, out IntPtr lpExitCode);
 
         /// <summary>
@@ -287,7 +282,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is NULL. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr GetModuleHandle(string moduleName);
 
         /// <summary>
@@ -308,7 +303,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is NULL. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Ansi)]
+        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Ansi), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
 
         /// <summary>
@@ -325,7 +320,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is NULL. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern int GetProcessId(SafeMemoryHandle hProcess);
 
         /// <summary>
@@ -338,7 +333,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is 0. <see cref="Marshal.GetLastWin32Error" /> does not provide extended
         ///     error information.
         /// </returns>
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern int GetSystemMetrics(SystemMetrics metric);
 
         /// <summary>
@@ -365,7 +360,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern bool GetThreadContext(SafeMemoryHandle hThread, ref ThreadContext lpContext);
 
         /// <summary>
@@ -388,7 +383,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern bool GetThreadSelectorEntry(SafeMemoryHandle hThread, uint dwSelector,
                                                          out LdtEntry lpSelectorEntry);
 
@@ -406,7 +401,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern int GetThreadId(SafeMemoryHandle hThread);
 
         /// <summary>
@@ -422,7 +417,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowPlacement(IntPtr hWnd, out WindowPlacement lpwndpl);
 
@@ -447,7 +442,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     the return value is zero.
         ///     To get extended error information, call <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto), SuppressUnmanagedCodeSecurity]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         /// <summary>
@@ -461,7 +456,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the window has no text, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto), SuppressUnmanagedCodeSecurity]
         public static extern int GetWindowTextLength(IntPtr hWnd);
 
         /// <summary>
@@ -491,7 +486,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// <param name="lpEnumFunc">
         ///     A pointer to an application-defined callback function.
         ///     For more information, see
-        ///     <see cref="Binarysharp.MemoryManagement.Native.EnumWindowsProc(System.IntPtr,System.IntPtr)" />.
+        ///     <see />.
         /// </param>
         /// <param name="lParam">An application-defined value to be passed to the callback function.</param>
         /// <returns>The return value is not used.</returns>
@@ -556,7 +551,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool IsWow64Process(IntPtr process,
                                                  [Out, MarshalAs(UnmanagedType.Bool)] out bool wow64Process);
@@ -586,7 +581,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is NULL. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
+        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr LoadLibrary(string lpFileName);
 
         /// <summary>
@@ -690,7 +685,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is NULL. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern SafeMemoryHandle OpenProcess(ProcessAccessFlags dwDesiredAccess,
                                                           [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
                                                           int dwProcessId);
@@ -714,7 +709,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is NULL. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern SafeMemoryHandle OpenThread(ThreadAccessFlags dwDesiredAccess,
                                                          [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
                                                          int dwThreadId);
@@ -738,7 +733,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     <see cref="Marshal.GetLastWin32Error" /> returns ERROR_NOT_ENOUGH_QUOTA when the limit is hit.
         /// </returns>
         [return: MarshalAs(UnmanagedType.Bool)]
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern bool PostMessage(IntPtr hWnd, uint msg, UIntPtr wParam, UIntPtr lParam);
 
         /// <summary>
@@ -769,7 +764,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ReadProcessMemory(SafeMemoryHandle hProcess, IntPtr lpBaseAddress,
                                                     [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
@@ -789,7 +784,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is (DWORD) -1. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern uint ResumeThread(SafeMemoryHandle hThread);
 
         /// <summary>
@@ -816,7 +811,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     Note that neither <see cref="Marshal.GetLastWin32Error" /> nor the return value will indicate the failure was
         ///     caused by UIPI blocking.
         /// </returns>
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern int SendInput(int nInputs, Input[] pInputs, int cbSize);
 
         /// <summary>
@@ -829,7 +824,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// <param name="wParam">Additional message-specific information.</param>
         /// <param name="lParam">Additional message-specific information.</param>
         /// <returns>The return value specifies the result of the message processing; it depends on the message sent.</returns>
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam);
 
         /// <summary>
@@ -870,7 +865,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern bool SetThreadContext(SafeMemoryHandle hThread,
                                                    [MarshalAs(UnmanagedType.Struct)] ref ThreadContext lpContext);
 
@@ -903,7 +898,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
         [return: MarshalAs(UnmanagedType.Bool)]
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto), SuppressUnmanagedCodeSecurity]
         public static extern bool SetWindowText(IntPtr hwnd, string lpString);
 
         /// <summary>
@@ -940,7 +935,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function succeeds, the return value is the thread's previous suspend count; otherwise, it is (DWORD) -1.
         ///     To get extended error information, use <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern uint SuspendThread(SafeMemoryHandle hThread);
 
         /// <summary>
@@ -961,7 +956,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern bool TerminateThread(SafeMemoryHandle hThread, int dwExitCode);
 
         /// <summary>
@@ -1000,7 +995,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is NULL. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern IntPtr VirtualAllocEx(SafeMemoryHandle hProcess, IntPtr lpAddress, int dwSize,
                                                    MemoryAllocationFlags flAllocationType,
                                                    MemoryProtectionFlags flProtect);
@@ -1040,7 +1035,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is 0 (zero). To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool VirtualFreeEx(SafeMemoryHandle hProcess, IntPtr lpAddress, int dwSize,
                                                 MemoryReleaseFlags dwFreeType);
@@ -1083,7 +1078,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern bool VirtualProtectEx(SafeMemoryHandle hProcess, IntPtr lpAddress, int dwSize,
                                                    MemoryProtectionFlags flNewProtect,
                                                    out MemoryProtectionFlags lpflOldProtect);
@@ -1115,7 +1110,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern int VirtualQueryEx(SafeMemoryHandle hProcess, IntPtr lpAddress,
                                                 out MemoryBasicInformation lpBuffer, int dwLength);
 
@@ -1139,7 +1134,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If dwMilliseconds is INFINITE, the function will return only when the object is signaled.
         /// </param>
         /// <returns>If the function succeeds, the return value indicates the event that caused the function to return.</returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         public static extern WaitValues WaitForSingleObject(SafeMemoryHandle hHandle, uint dwMilliseconds);
 
         /// <summary>
@@ -1170,10 +1165,21 @@ namespace Binarysharp.MemoryManagement.Native
         ///     If the function fails, the return value is zero. To get extended error information, call
         ///     <see cref="Marshal.GetLastWin32Error" />.
         /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true), SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool WriteProcessMemory(SafeMemoryHandle hProcess, IntPtr lpBaseAddress, byte[] lpBuffer,
                                                      int nSize, out IntPtr lpNumberOfBytesWritten);
+        #endregion
+
+        #region Private Methods
+
+        // These are private, for the helper above to use which handles both x32/x64 for us.
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        private static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+        #endregion
 
         /// <summary>
         ///     Determines whether the specified function exists in the specified module.

@@ -8,6 +8,7 @@ namespace Binarysharp.MemoryManagement.Helpers
     /// </summary>
     public class AttributesHelper
     {
+        #region Public Methods
         /// <summary>
         ///     Determines whether the specified item has attrib.
         /// </summary>
@@ -48,5 +49,6 @@ namespace Binarysharp.MemoryManagement.Helpers
         {
             return HasAttribute<UnmanagedFunctionPointerAttribute>(t);
         }
+        #endregion
     }
 }

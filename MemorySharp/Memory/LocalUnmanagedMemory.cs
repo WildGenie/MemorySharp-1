@@ -66,6 +66,7 @@ namespace Binarysharp.MemoryManagement.Memory
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Reads data from the unmanaged block of memory.
         /// </summary>
@@ -119,5 +120,6 @@ namespace Binarysharp.MemoryManagement.Memory
             // Marshal data from the managed object to the block of memory
             Marshal.StructureToPtr(data, Address, false);
         }
+        #endregion
     }
 }

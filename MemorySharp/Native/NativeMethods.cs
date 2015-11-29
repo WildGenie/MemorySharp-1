@@ -20,6 +20,7 @@ namespace Binarysharp.MemoryManagement.Native
     /// </summary>
     public static class NativeMethods
     {
+        #region Public Methods
         /// <summary>
         ///     Closes an open object handle.
         /// </summary>
@@ -1040,6 +1041,7 @@ namespace Binarysharp.MemoryManagement.Native
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool WriteProcessMemory(SafeMemoryHandle hProcess, IntPtr lpBaseAddress, byte[] lpBuffer,
                                                      int nSize, out IntPtr lpNumberOfBytesWritten);
+        #endregion
 
         /// <summary>
         ///     Determines whether the specified function exists in the specified module.

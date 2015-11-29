@@ -9,6 +9,7 @@ namespace Binarysharp.MemoryManagement.Helpers
     /// </summary>
     public static class XmlHelper
     {
+        #region Public Methods
         /// <summary>
         ///     Serializes the specified object and writes the XML document to the specified path.
         /// </summary>
@@ -101,5 +102,6 @@ namespace Binarysharp.MemoryManagement.Helpers
                 return (T) serializer.Deserialize(stringWriter);
             }
         }
+        #endregion
     }
 }

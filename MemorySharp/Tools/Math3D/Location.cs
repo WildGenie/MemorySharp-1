@@ -46,8 +46,8 @@ namespace Binarysharp.MemoryManagement.Tools.Math3D
         /// <param name="xml">The XML.</param>
         public Location(XElement xml)
             : this(Convert.ToSingle(xml.Attribute("X").Value),
-                Convert.ToSingle(xml.Attribute("Y").Value),
-                Convert.ToSingle(xml.Attribute("Z").Value))
+                   Convert.ToSingle(xml.Attribute("Y").Value),
+                   Convert.ToSingle(xml.Attribute("Z").Value))
         {
         }
 

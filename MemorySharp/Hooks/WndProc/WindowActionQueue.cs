@@ -30,7 +30,7 @@ namespace Binarysharp.MemoryManagement.Hooks.WndProc
         /// <summary>
         ///     Pulse one iteration of this instance's logic.
         /// </summary>
-        public void Pulse()
+        void IPulsableElement.Pulse()
         {
             if (_executionQueue == null)
                 return;
@@ -43,11 +43,12 @@ namespace Binarysharp.MemoryManagement.Hooks.WndProc
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
-        ///     Adds the action to an <see cref="Queue{Action}" /> queue, which is used execute code in the main thread of the
+        ///     Adds the action to a <see cref="Queue{Action}" /> instance, which is used execute code in the main thread of the
         ///     process the <see cref="WindowHook" /> is attached to.
         /// </summary>
-        /// <param name="action">The action.</param>
+        /// <param name="action">The <see cref="Action" /> to be executed.</param>
         /// <param name="postpone">
         ///     <para>
         ///         [Optional] If set to <c>true</c> [postpone the <see cref="Action" /> even if it can be invoked
@@ -69,5 +70,6 @@ namespace Binarysharp.MemoryManagement.Hooks.WndProc
                 _executionQueue.Enqueue(action);
             }
         }
+        #endregion
     }
 }

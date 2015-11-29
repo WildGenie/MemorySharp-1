@@ -17,6 +17,7 @@ namespace Binarysharp.MemoryManagement.Assembly.CallingConvention
     /// </summary>
     public static class CallingConventionSelector
     {
+        #region Public Methods
         /// <summary>
         ///     Gets a calling convention object according the given type.
         /// </summary>
@@ -38,5 +39,6 @@ namespace Binarysharp.MemoryManagement.Assembly.CallingConvention
                     throw new ApplicationException("Unsupported calling convention.");
             }
         }
+        #endregion
     }
 }

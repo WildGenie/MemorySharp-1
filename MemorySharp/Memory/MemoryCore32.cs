@@ -180,7 +180,7 @@ namespace Binarysharp.MemoryManagement.Memory
             // Query the memory region
             if (
                 NativeMethods.VirtualQueryEx(processHandle, baseAddress, out memoryInfo,
-                    MarshalType<MemoryBasicInformation>.Size) != 0)
+                                             MarshalType<MemoryBasicInformation>.Size) != 0)
                 return memoryInfo;
 
             // Else the information couldn't be got
@@ -207,7 +207,7 @@ namespace Binarysharp.MemoryManagement.Memory
             // The first address must be lower than the second
             if (numberFrom >= numberTo)
                 throw new ArgumentException("The starting address must be lower than the ending address.",
-                    nameof(addressFrom));
+                                            nameof(addressFrom));
 
             // Create the variable storing the result of the call of VirtualQueryEx
             int ret;
@@ -220,7 +220,7 @@ namespace Binarysharp.MemoryManagement.Memory
 
                 // Get the next memory page
                 ret = NativeMethods.VirtualQueryEx(processHandle, new IntPtr(numberFrom), out memoryInfo,
-                    MarshalType<MemoryBasicInformation>.Size);
+                                                   MarshalType<MemoryBasicInformation>.Size);
 
                 // Increment the starting address with the size of the page
                 numberFrom += memoryInfo.RegionSize;
@@ -246,7 +246,8 @@ namespace Binarysharp.MemoryManagement.Memory
 
             // Get the process info
             var ret = NativeMethods.NtQueryInformationProcess(processHandle,
-                ProcessInformationClass.ProcessBasicInformation, ref info, info.Size, IntPtr.Zero);
+                                                              ProcessInformationClass.ProcessBasicInformation, ref info,
+                                                              info.Size, IntPtr.Zero);
 
             // If the function succeeded
             if (ret == 0)

@@ -75,6 +75,7 @@ namespace Binarysharp.MemoryManagement.Hooks.WndProc
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Adds a <code>IPulseableElement</code> member to the linked list. All elements in the list will have their
         ///     <code>Pulse()</code> method called when the <see cref="UserMessage.StartUp" /> is message is invoked.
@@ -109,6 +110,7 @@ namespace Binarysharp.MemoryManagement.Hooks.WndProc
                 Pulsables.Remove(windowEngine);
             }
         }
+        #endregion
 
         // private static Lazy<Updater> LazyUpdater => new Lazy<Updater>((() => new Updater("Updater", 1000)));
     }

@@ -76,7 +76,7 @@ namespace Binarysharp.MemoryManagement.Hooks.Input
         /// <summary>
         ///     Gets a value indicating whether the element must be disposed when the Garbage Collector collects the object.
         /// </summary>
-        public bool MustBeDisposed { get; }
+        public bool MustBeDisposed { get; set; }
 
         /// <summary>
         ///     Gets a value indicating whether the keyboard hook is disposed.
@@ -123,6 +123,7 @@ namespace Binarysharp.MemoryManagement.Hooks.Input
         }
         #endregion
 
+        #region Private Methods
         /// <summary>
         ///     Registers hook with Windows API.
         /// </summary>
@@ -184,6 +185,7 @@ namespace Binarysharp.MemoryManagement.Hooks.Input
             }
             return false;
         }
+        #endregion
 
         /// <summary>
         ///     Internal callback processing function

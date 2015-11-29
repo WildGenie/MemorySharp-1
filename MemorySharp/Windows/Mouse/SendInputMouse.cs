@@ -28,21 +28,7 @@ namespace Binarysharp.MemoryManagement.Windows.Mouse
         }
         #endregion
 
-        /// <summary>
-        ///     Moves the cursor at the specified coordinate.
-        /// </summary>
-        /// <param name="x">The x-coordinate.</param>
-        /// <param name="y">The y-coordinate.</param>
-        protected override void MoveToAbsolute(int x, int y)
-        {
-            var input = CreateInput();
-            input.Mouse.DeltaX = CalculateAbsoluteCoordinateX(x);
-            input.Mouse.DeltaY = CalculateAbsoluteCoordinateY(y);
-            input.Mouse.Flags = MouseFlags.Move | MouseFlags.Absolute;
-            input.Mouse.MouseData = 0;
-            WindowCore.SendInput(input);
-        }
-
+        #region Public Methods
         /// <summary>
         ///     Presses the left button of the mouse at the current cursor position.
         /// </summary>
@@ -126,7 +112,9 @@ namespace Binarysharp.MemoryManagement.Windows.Mouse
             input.Mouse.MouseData = delta;
             WindowCore.SendInput(input);
         }
+        #endregion
 
+        #region Private Methods
         /// <summary>
         ///     Calculates the x-coordinate with the system metric.
         /// </summary>
@@ -149,6 +137,22 @@ namespace Binarysharp.MemoryManagement.Windows.Mouse
         private Input CreateInput()
         {
             return new Input(InputTypes.Mouse);
+        }
+        #endregion
+
+        /// <summary>
+        ///     Moves the cursor at the specified coordinate.
+        /// </summary>
+        /// <param name="x">The x-coordinate.</param>
+        /// <param name="y">The y-coordinate.</param>
+        protected override void MoveToAbsolute(int x, int y)
+        {
+            var input = CreateInput();
+            input.Mouse.DeltaX = CalculateAbsoluteCoordinateX(x);
+            input.Mouse.DeltaY = CalculateAbsoluteCoordinateY(y);
+            input.Mouse.Flags = MouseFlags.Move | MouseFlags.Absolute;
+            input.Mouse.MouseData = 0;
+            WindowCore.SendInput(input);
         }
     }
 }

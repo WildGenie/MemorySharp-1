@@ -60,18 +60,6 @@
       <HintPath>..\packages\Fasm.NET.1.70.03.2\lib\Fasm.NET.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MetroFramework, Version=1.3.5.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\MetroModernUI.1.3.5.0\lib\net45\MetroFramework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MetroFramework.Design, Version=1.3.5.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\MetroModernUI.1.3.5.0\lib\net45\MetroFramework.Design.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MetroFramework.Fonts, Version=1.3.5.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\MetroModernUI.1.3.5.0\lib\net45\MetroFramework.Fonts.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -80,6 +68,7 @@
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -96,6 +85,8 @@
     <Compile Include="Assembly\CallingConvention\StdcallCallingConvention.cs" />
     <Compile Include="Assembly\CallingConvention\ICallingConvention.cs" />
     <Compile Include="Assembly\CallingConvention\Enumerations.cs" />
+    <Compile Include="Helpers\IntegerExtensions.cs" />
+    <Compile Include="Internals\ByteOrder.cs" />
     <Compile Include="Edits\Detours\Detour.cs" />
     <Compile Include="Edits\Detours\DetourFactory.cs" />
     <Compile Include="Edits\MemoryEditFactory.cs" />
@@ -135,6 +126,8 @@
     <Compile Include="Internals\MarshalType.cs" />
     <Compile Include="Internals\MarshalValue.cs" />
     <Compile Include="Internals\UnsafeMarshal.cs" />
+    <Compile Include="Memory\InternalPointer.cs" />
+    <Compile Include="Memory\MemoryCopy.cs" />
     <Compile Include="MemoryPlus.cs" />
     <Compile Include="MemorySharp.cs" />
     <Compile Include="Memory\ExternalMemoryCore.cs" />
@@ -142,7 +135,6 @@
     <Compile Include="Memory\InternalMemoryCore.cs" />
     <Compile Include="Memory\LocalMemoryProtection.cs" />
     <Compile Include="Memory\MemoryCore64.cs" />
-    <Compile Include="Memory\ProxyPointer.cs" />
     <Compile Include="Memory\RemoteAllocation.cs" />
     <Compile Include="Memory\MemoryCore32.cs" />
     <Compile Include="Memory\LocalUnmanagedMemory.cs" />

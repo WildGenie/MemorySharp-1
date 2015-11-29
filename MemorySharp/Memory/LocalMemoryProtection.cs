@@ -83,12 +83,13 @@ namespace Binarysharp.MemoryManagement.Memory
         {
             // Restore the memory protection
             ExternalMemoryCore.ChangeProtection(Handle, BaseAddress, Size,
-                OldProtection);
+                                                OldProtection);
             // Avoid the finalizer 
             GC.SuppressFinalize(this);
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Returns a string that represents the current object.
         /// </summary>
@@ -97,5 +98,6 @@ namespace Binarysharp.MemoryManagement.Memory
             return
                 $"BaseAddress = 0x{BaseAddress.ToInt64():X} NewProtection = {NewProtection} OldProtection = {OldProtection}";
         }
+        #endregion
     }
 }

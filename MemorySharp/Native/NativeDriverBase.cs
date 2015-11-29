@@ -37,6 +37,7 @@ namespace Binarysharp.MemoryManagement.Native
         public abstract IMemoryCore MemoryCore { get; protected set; }
         #endregion
 
+        #region Private Methods
         /// <summary>
         ///     Determines which native driver must be used as default.
         /// </summary>
@@ -52,5 +53,6 @@ namespace Binarysharp.MemoryManagement.Native
             // Else use a 32-bit driver
             return new NativeDriver32();
         }
+        #endregion
     }
 }

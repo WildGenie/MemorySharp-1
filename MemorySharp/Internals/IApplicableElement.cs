@@ -24,6 +24,7 @@ namespace Binarysharp.MemoryManagement.Internals
         bool IsEnabled { get; }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Disables the element.
         /// </summary>
@@ -33,5 +34,6 @@ namespace Binarysharp.MemoryManagement.Internals
         ///     Enables the element.
         /// </summary>
         void Enable();
+        #endregion
     }
 }

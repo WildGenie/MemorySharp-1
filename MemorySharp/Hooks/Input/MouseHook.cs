@@ -106,7 +106,7 @@ namespace Binarysharp.MemoryManagement.Hooks.Input
         ///     Gets a value indicating whether the low level mouse hook must be disposed when the Garbage Collector collects the
         ///     object.
         /// </summary>
-        public bool MustBeDisposed { get; }
+        public bool MustBeDisposed { get; set; }
 
         /// <summary>
         ///     States if the low level mouse hook is enabled.
@@ -154,6 +154,7 @@ namespace Binarysharp.MemoryManagement.Hooks.Input
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Checks if enabled.
         /// </summary>
@@ -162,7 +163,9 @@ namespace Binarysharp.MemoryManagement.Hooks.Input
         {
             return IsEnabled;
         }
+        #endregion
 
+        #region Private Methods
         /// <summary>
         ///     Sets hook and assigns its ID for tracking
         /// </summary>
@@ -225,7 +228,7 @@ namespace Binarysharp.MemoryManagement.Hooks.Input
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr InternalSetWindowsHookEx(int idHook,
                                                               MouseHookHandler lpfn, IntPtr hMod, uint dwThreadId);
-
+        #endregion
 
         /// <summary>
         ///     Internal callback processing function.

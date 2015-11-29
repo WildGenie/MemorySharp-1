@@ -155,8 +155,8 @@ namespace Binarysharp.MemoryManagement.Tools.Math3D
         public float Length()
             =>
                 (float)
-                    Math.Abs(
-                        Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2)));
+                Math.Abs(
+                         Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2)));
 
         /// <summary>
         ///     Returns a string that represents the current object.

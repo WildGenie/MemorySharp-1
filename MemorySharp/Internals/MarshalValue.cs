@@ -22,6 +22,7 @@ namespace Binarysharp.MemoryManagement.Internals
     /// </remarks>
     public static class MarshalValue
     {
+        #region Public Methods
         /// <summary>
         ///     Marshals a given value into the remote process.
         /// </summary>
@@ -33,6 +34,7 @@ namespace Binarysharp.MemoryManagement.Internals
         {
             return new MarshalledValue<T>(memorySharp, value);
         }
+        #endregion
     }
 
     /// <summary>
@@ -96,8 +98,7 @@ namespace Binarysharp.MemoryManagement.Internals
         public void Dispose()
         {
             // Free the allocated memory
-            if (Allocated != null)
-                Allocated.Dispose();
+            Allocated?.Dispose();
             // Set the pointer to zero
             Reference = IntPtr.Zero;
             // Avoid the finalizer
@@ -105,6 +106,7 @@ namespace Binarysharp.MemoryManagement.Internals
         }
         #endregion
 
+        #region Private Methods
         /// <summary>
         ///     Marshals the value into the remote process.
         /// </summary>
@@ -147,5 +149,6 @@ namespace Binarysharp.MemoryManagement.Internals
                 }
             }
         }
+        #endregion
     }
 }

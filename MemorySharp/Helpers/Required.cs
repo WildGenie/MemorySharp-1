@@ -8,6 +8,7 @@ namespace Binarysharp.MemoryManagement.Helpers
     /// </summary>
     public static class Requires
     {
+        #region Public Methods
         /// <summary>
         ///     Requires the specified value to be non-null, and throws an ArgumentNullException if this requirement is not met.
         /// </summary>
@@ -60,5 +61,6 @@ namespace Binarysharp.MemoryManagement.Helpers
             if (member == null)
                 throw new InvalidOperationException(message);
         }
+        #endregion
     }
 }

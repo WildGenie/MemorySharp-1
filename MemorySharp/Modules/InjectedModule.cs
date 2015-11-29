@@ -89,7 +89,10 @@ namespace Binarysharp.MemoryManagement.Modules
             // Get the inject module
             if (thread.GetExitCode<IntPtr>() != IntPtr.Zero)
                 return new InjectedModule(memorySharp,
-                    memorySharp.Modules.NativeModules.First(m => m.BaseAddress == thread.GetExitCode<IntPtr>()));
+                                          memorySharp.Modules.NativeModules.First(
+                                                                                  m =>
+                                                                                  m.BaseAddress ==
+                                                                                  thread.GetExitCode<IntPtr>()));
             return null;
         }
     }

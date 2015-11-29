@@ -3,6 +3,8 @@ using System.Linq;
 using Binarysharp.MemoryManagement.Hooks.Input;
 using Binarysharp.MemoryManagement.Hooks.WndProc;
 using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Logging.Defaults;
+using Binarysharp.MemoryManagement.Logging.Interfaces;
 
 namespace Binarysharp.MemoryManagement.Hooks
 {
@@ -11,6 +13,16 @@ namespace Binarysharp.MemoryManagement.Hooks
     /// </summary>
     public class HookFactory : Manager<IHook>, IFactory
     {
+        #region Constructors, Destructors
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="HookFactory" /> class.
+        /// </summary>
+        /// <param name="logger">The <see cref="IManagedLog" /> instance to use..</param>
+        public HookFactory() : base(new DebugLog())
+        {
+        }
+        #endregion
+
         #region Public Properties, Indexers
         /// <summary>
         ///     Gets or sets the instance reference for the <see cref="MemoryManagement.MemoryPlus" /> class.
@@ -40,6 +52,7 @@ namespace Binarysharp.MemoryManagement.Hooks
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Creates the WND proc hook.
         /// </summary>
@@ -88,5 +101,6 @@ namespace Binarysharp.MemoryManagement.Hooks
             InternalItems[name] = new KeyboardHook(name, mustBeDisposed);
             return (KeyboardHook) InternalItems[name];
         }
+        #endregion
     }
 }

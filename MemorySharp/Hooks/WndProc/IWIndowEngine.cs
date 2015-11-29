@@ -6,6 +6,7 @@
     /// </summary>
     public interface IWindowEngine
     {
+        #region Public Methods
         /// <summary>
         ///     The method that is called when the <see cref="UserMessage.StartUp" /> message is sent to the
         ///     <see cref="WindowHook" /> class.
@@ -17,5 +18,6 @@
         ///     <see cref="WindowHook" /> class.
         /// </summary>
         void ShutDown();
+        #endregion
     }
 }

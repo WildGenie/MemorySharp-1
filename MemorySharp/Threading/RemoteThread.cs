@@ -101,36 +101,11 @@ namespace Binarysharp.MemoryManagement.Threading
             get
             {
                 // Check if the thread is alive
-                if (IsAlive)
+                if (!IsAlive)
                 {
-                    // Check if the thread is already suspended
-                    var isSuspended = IsSuspended;
-                    try
-                    {
-                        // Suspend the thread if it wasn't
-                        if (!isSuspended)
-                            Suspend();
-                        // Get the context
-                        return ThreadCore.GetThreadContext(Handle,
-                            ThreadContextFlags.All | ThreadContextFlags.FloatingPoint |
-                            ThreadContextFlags.DebugRegisters | ThreadContextFlags.ExtendedRegisters);
-                    }
-                    finally
-                    {
-                        // Resume the thread if it wasn't suspended
-                        if (!isSuspended)
-                            Resume();
-                    }
+                    throw new ThreadStateException(
+                        $"Couldn't set the context of the thread #{Id} because it is terminated.");
                 }
-                // The thread is closed, cannot set the context
-                throw new ThreadStateException(
-                    $"Couldn't set the context of the thread #{Id} because it is terminated.");
-            }
-            set
-            {
-                // Check if the thread is alive
-                if (!IsAlive) return;
-
                 // Check if the thread is already suspended
                 var isSuspended = IsSuspended;
                 try
@@ -138,6 +113,36 @@ namespace Binarysharp.MemoryManagement.Threading
                     // Suspend the thread if it wasn't
                     if (!isSuspended)
                         Suspend();
+                    // Get the context
+                    return ThreadCore.GetThreadContext(Handle,
+                                                       ThreadContextFlags.All | ThreadContextFlags.FloatingPoint |
+                                                       ThreadContextFlags.DebugRegisters |
+                                                       ThreadContextFlags.ExtendedRegisters);
+                }
+                finally
+                {
+                    // Resume the thread if it wasn't suspended
+                    if (!isSuspended)
+                        Resume();
+                }
+            }
+            set
+            {
+                // Check if the thread is alive
+                if (!IsAlive)
+                {
+                    return;
+                }
+
+                // Check if the thread is already suspended
+                var isSuspended = IsSuspended;
+                try
+                {
+                    // Suspend the thread if it wasn't
+                    if (!isSuspended)
+                    {
+                        Suspend();
+                    }
                     // Set the context
                     ThreadCore.SetThreadContext(Handle, value);
                 }
@@ -145,7 +150,9 @@ namespace Binarysharp.MemoryManagement.Threading
                 {
                     // Resume the thread if it wasn't suspended
                     if (!isSuspended)
+                    {
                         Resume();
+                    }
                 }
             }
         }
@@ -227,11 +234,15 @@ namespace Binarysharp.MemoryManagement.Threading
         /// </summary>
         public bool Equals(RemoteThread other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
             return ReferenceEquals(this, other) || (Id == other.Id && MemorySharp.Equals(other.MemorySharp));
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Determines whether the specified object is equal to the current object.
         /// </summary>
@@ -297,11 +308,27 @@ namespace Binarysharp.MemoryManagement.Threading
             return new IntPtr(entry.BaseLow | (entry.BaseMid << 16) | (entry.BaseHi << 24));
         }
 
+        /// <summary>
+        ///     Implements the operator ==.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        ///     The result of the operator.
+        /// </returns>
         public static bool operator ==(RemoteThread left, RemoteThread right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        ///     Implements the operator !=.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        ///     The result of the operator.
+        /// </returns>
         public static bool operator !=(RemoteThread left, RemoteThread right)
         {
             return !Equals(left, right);
@@ -344,14 +371,19 @@ namespace Binarysharp.MemoryManagement.Threading
         public void Resume()
         {
             // Check if the thread is still alive
-            if (!IsAlive) return;
+            if (!IsAlive)
+            {
+                return;
+            }
 
             // Start the thread
             ThreadCore.ResumeThread(Handle);
 
             // Start a task to clean the memory used by the parameter if we created the thread
             if (_parameter != null && !_parameterCleaner.IsCompleted)
+            {
                 _parameterCleaner.Start();
+            }
         }
 
         /// <summary>
@@ -360,12 +392,12 @@ namespace Binarysharp.MemoryManagement.Threading
         /// <returns>A new instance of the <see cref="FrozenThread" /> class. If this object is disposed, the thread is resumed.</returns>
         public FrozenThread Suspend()
         {
-            if (IsAlive)
+            if (!IsAlive)
             {
-                ThreadCore.SuspendThread(Handle);
-                return new FrozenThread(this);
+                return null;
             }
-            return null;
+            ThreadCore.SuspendThread(Handle);
+            return new FrozenThread(this);
         }
 
         /// <summary>
@@ -375,7 +407,9 @@ namespace Binarysharp.MemoryManagement.Threading
         public void Terminate(int exitCode = 0)
         {
             if (IsAlive)
+            {
                 ThreadCore.TerminateThread(Handle, exitCode);
+            }
         }
 
         /// <summary>
@@ -385,5 +419,6 @@ namespace Binarysharp.MemoryManagement.Threading
         {
             return $"Id = {Id} IsAlive = {IsAlive} IsMainThread = {IsMainThread}";
         }
+        #endregion
     }
 }

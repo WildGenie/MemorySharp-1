@@ -66,19 +66,17 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <remarks>Don't use the IDisposable pattern because the class is sealed.</remarks>
         public virtual void Dispose()
         {
-            if (!IsDisposed)
-            {
-                // Set the flag to true
-                IsDisposed = true;
-                // Release the allocated memory
-                Release();
-                // Remove this object from the collection of allocated memory
-                MemorySharp.Memory.Deallocate(this);
-                // Remove the pointer
-                BaseAddress = IntPtr.Zero;
-                // Avoid the finalizer 
-                GC.SuppressFinalize(this);
-            }
+            if (IsDisposed) return;
+            // Set the flag to true
+            IsDisposed = true;
+            // Release the allocated memory
+            Release();
+            // Remove this object from the collection of allocated memory
+            MemorySharp.Memory.Deallocate(this);
+            // Remove the pointer
+            BaseAddress = IntPtr.Zero;
+            // Avoid the finalizer 
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

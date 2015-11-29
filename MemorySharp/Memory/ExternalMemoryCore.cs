@@ -21,6 +21,7 @@ namespace Binarysharp.MemoryManagement.Memory
     /// </summary>
     public static class ExternalMemoryCore
     {
+        #region Public Methods
         /// <summary>
         ///     Reads an array of bytes in the memory form the target process.
         /// </summary>
@@ -132,7 +133,7 @@ namespace Binarysharp.MemoryManagement.Memory
 
             // Write the data to the target process
             if (UnsafeNativeMethods.WriteProcessMemory(processHandle, address, byteArray, byteArray.Length,
-                out nbBytesWritten))
+                                                       out nbBytesWritten))
             {
                 // Check whether the length of the data written is equal to the inital array
                 if (nbBytesWritten == byteArray.Length)
@@ -202,7 +203,7 @@ namespace Binarysharp.MemoryManagement.Memory
                 throw new Exception("The processHandle passed to the RemoteMemory.Allocate method was invalid.");
             // Allocate a memory page
             var ret = UnsafeNativeMethods.VirtualAllocEx(processHandle, IntPtr.Zero, size, allocationFlags,
-                protectionFlags);
+                                                         protectionFlags);
 
             // Check whether the memory page is valid
             if (ret != IntPtr.Zero)
@@ -255,7 +256,8 @@ namespace Binarysharp.MemoryManagement.Memory
 
             // Get the process info
             var ret = UnsafeNativeMethods.NtQueryInformationProcess(processHandle,
-                ProcessInformationClass.ProcessBasicInformation, ref info, info.Size, IntPtr.Zero);
+                                                                    ProcessInformationClass.ProcessBasicInformation,
+                                                                    ref info, info.Size, IntPtr.Zero);
 
             // If the function succeeded
             if (ret == 0)
@@ -339,7 +341,7 @@ namespace Binarysharp.MemoryManagement.Memory
             // Query the memory region
             if (
                 UnsafeNativeMethods.VirtualQueryEx(processHandle, baseAddress, out memoryInfo,
-                    MarshalType<MemoryBasicInformation>.Size) != 0)
+                                                   MarshalType<MemoryBasicInformation>.Size) != 0)
                 return memoryInfo;
 
             // Else the information couldn't be got
@@ -367,7 +369,7 @@ namespace Binarysharp.MemoryManagement.Memory
             // The first address must be lower than the second
             if (numberFrom >= numberTo)
                 throw new ArgumentException("The starting address must be lower than the ending address.",
-                    nameof(addressFrom));
+                                            nameof(addressFrom));
 
             // Create the variable storing the result of the call of VirtualQueryEx
             int ret;
@@ -380,7 +382,7 @@ namespace Binarysharp.MemoryManagement.Memory
 
                 // Get the next memory page
                 ret = UnsafeNativeMethods.VirtualQueryEx(processHandle, new IntPtr(numberFrom), out memoryInfo,
-                    MarshalType<MemoryBasicInformation>.Size);
+                                                         MarshalType<MemoryBasicInformation>.Size);
 
                 // Increment the starting address with the size of the page
                 numberFrom += memoryInfo.RegionSize;
@@ -390,5 +392,6 @@ namespace Binarysharp.MemoryManagement.Memory
                     yield return memoryInfo;
             } while (numberFrom < numberTo && ret != 0);
         }
+        #endregion
     }
 }

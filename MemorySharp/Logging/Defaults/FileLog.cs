@@ -40,19 +40,19 @@ namespace Binarysharp.MemoryManagement.Logging.Defaults
         ///     Gets the is disposed.
         /// </summary>
         /// <value>The is disposed.</value>
-        public bool IsDisposed { get; protected set; } = false;
+        public bool IsDisposed { get; set; } = false;
 
         /// <summary>
         ///     Gets the must be disposed.
         /// </summary>
         /// <value>The must be disposed.</value>
-        public bool MustBeDisposed { get; protected set; } = true;
+        public bool MustBeDisposed { get; set; } = true;
 
         /// <summary>
         ///     Gets the is enabled.
         /// </summary>
         /// <value>The is enabled.</value>
-        public bool IsEnabled { get; protected set; }
+        public bool IsEnabled { get; set; }
 
         /// <summary>
         ///     Gets or sets the name.
@@ -131,12 +131,13 @@ namespace Binarysharp.MemoryManagement.Logging.Defaults
             Directory.CreateDirectory(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FolderName));
             StreamWriter =
                 new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FolderName,
-                    $"{FileName}-{DateTime.Now:yyyy-MM-dd_hh-mm-ss}.txt"))
+                                              $"{FileName}-{DateTime.Now:yyyy-MM-dd_hh-mm-ss}.txt"))
                 {AutoFlush = true};
             IsEnabled = true;
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Creates the specified log instance name.
         /// </summary>
@@ -164,7 +165,9 @@ namespace Binarysharp.MemoryManagement.Logging.Defaults
             }
             return log;
         }
+        #endregion
 
+        #region Private Methods
         /// <summary>
         ///     Formats the text.
         /// </summary>
@@ -175,5 +178,6 @@ namespace Binarysharp.MemoryManagement.Logging.Defaults
         {
             return $"{"["}{type}{"]"}{"["}{DateTime.Now.ToString("HH:mm:ss")}{"]: "}{text}";
         }
+        #endregion
     }
 }

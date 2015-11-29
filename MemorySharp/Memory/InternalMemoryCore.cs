@@ -13,11 +13,10 @@ namespace Binarysharp.MemoryManagement.Memory
     public static class InternalMemoryCore
     {
         #region Fields, Private Properties
-        private static readonly IntPtr ImageBase = Process.GetCurrentProcess().MainModule.BaseAddress;
+        private static IntPtr ImageBase { get; } = Process.GetCurrentProcess().MainModule.BaseAddress;
         #endregion
 
-        private static IntPtr Rebase(this IntPtr address) => ImageBase.Add(address);
-
+        #region Public Methods
         /// <summary>
         ///     Reads the value of a specified type in the process.
         /// </summary>
@@ -31,7 +30,7 @@ namespace Binarysharp.MemoryManagement.Memory
             {
                 address = Rebase(address);
             }
-            return UnsafeMarshal<T>.PointerToStructure(address);
+            return UnsafeMarshal<T>.Read(address);
         }
 
         /// <summary>
@@ -43,7 +42,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <returns>A value.</returns>
         public static void Write<T>(IntPtr address, T value)
         {
-            UnsafeMarshal<T>.StructureToPointer(address, value);
+            UnsafeMarshal<T>.Write(address, value);
         }
 
         /// <summary>
@@ -84,7 +83,7 @@ namespace Binarysharp.MemoryManagement.Memory
             {
                 address = Rebase(address);
             }
-            var size = UnsafeMarshal<T>.Size;
+            var size = MarshalType<T>.Size;
             var ret = new T[count];
             for (var i = 0; i < count; i++)
             {
@@ -152,7 +151,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// s
         public static void WriteArray<T>(IntPtr address, T[] value)
         {
-            var size = UnsafeMarshal<T>.Size;
+            var size = MarshalType<T>.Size;
             for (var i = 0; i < value.Length; i++)
             {
                 var val = value[i];
@@ -211,5 +210,10 @@ namespace Binarysharp.MemoryManagement.Memory
         {
             return Marshal.GetDelegateForFunctionPointer(address, typeof (T)) as T;
         }
+        #endregion
+
+        #region Private Methods
+        private static IntPtr Rebase(this IntPtr address) => ImageBase.Add(address);
+        #endregion
     }
 }

@@ -38,6 +38,7 @@ namespace Binarysharp.MemoryManagement.Modules
         public string Name { get; }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Returns a string that represents the current object.
         /// </summary>
@@ -45,5 +46,6 @@ namespace Binarysharp.MemoryManagement.Modules
         {
             return $"BaseAddress = 0x{BaseAddress.ToInt64():X} Name = {Name}";
         }
+        #endregion
     }
 }

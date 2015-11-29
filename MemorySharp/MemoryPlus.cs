@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using Binarysharp.MemoryManagement.Edits.Detours;
 using Binarysharp.MemoryManagement.Edits.Patchs;
@@ -35,13 +36,14 @@ namespace Binarysharp.MemoryManagement
             Handle = new SafeMemoryHandle(ExternalMemoryCore.OpenProcess(ProcessAccessFlags.AllAccess, process.Id));
             Factories = new List<IFactory>();
             Factories.AddRange(
-                new IFactory[]
-                {
-                    Patterns = new InternalPatternFactory {MemoryPlus = this, ProcessModule = process.MainModule},
-                    Hooks = new HookFactory {MemoryPlus = this},
-                    Patches = new InternalPatchFactory {MemoryPlus = this},
-                    Detours = new DetourFactory {MemoryPlus = this}
-                });
+                               new IFactory[]
+                               {
+                                   Patterns =
+                                   new InternalPatternFactory {MemoryPlus = this, ProcessModule = process.MainModule},
+                                   Hooks = new HookFactory {MemoryPlus = this},
+                                   Patches = new InternalPatchFactory {MemoryPlus = this},
+                                   Detours = new DetourFactory {MemoryPlus = this}
+                               });
         }
         #endregion
 
@@ -107,11 +109,15 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         public bool Equals(MemoryPlus other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
             return ReferenceEquals(this, other) || Handle.Equals(other.Handle);
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Reads the value of a specified type in the remote process.
         /// </summary>
@@ -168,8 +174,7 @@ namespace Binarysharp.MemoryManagement
             // Read the array in the remote process
             for (var i = 0; i < count; i++)
             {
-                array[i] = Read<T>(address + UnsafeMarshal
-                    <T>.Size*i, isRelative);
+                array[i] = Read<T>(address + MarshalType<T>.Size*i, isRelative);
             }
             return array;
         }
@@ -197,8 +202,10 @@ namespace Binarysharp.MemoryManagement
         {
             // Check if the relative address is not greater than the main module size
             if (address.ToInt64() > MainModule.ModuleMemorySize)
+            {
                 throw new ArgumentOutOfRangeException(nameof(address),
-                    "The relative address cannot be greater than the main module size.");
+                                                      "The relative address cannot be greater than the main module size.");
+            }
             // Compute the absolute address
             return new IntPtr(ImageBase.ToInt64() + address.ToInt64());
         }
@@ -212,8 +219,10 @@ namespace Binarysharp.MemoryManagement
         {
             // Check if the absolute address is smaller than the main module base address
             if (address.ToInt64() < ImageBase.ToInt64())
+            {
                 throw new ArgumentOutOfRangeException(nameof(address),
-                    "The absolute address cannot be smaller than the main module base address.");
+                                                      "The absolute address cannot be smaller than the main module base address.");
+            }
             // Compute the relative address
             return new IntPtr(address.ToInt64() - ImageBase.ToInt64());
         }
@@ -231,8 +240,14 @@ namespace Binarysharp.MemoryManagement
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
             return obj.GetType() == GetType() && Equals((MemoryPlus) obj);
         }
 
@@ -417,6 +432,43 @@ namespace Binarysharp.MemoryManagement
 
 
         /// <summary>
+        ///     Creates a function.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="address">The address.</param>
+        /// <param name="isRelative">if set to <c>true</c> [address is relative].</param>
+        /// <returns></returns>
+        /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
+        public T RegisterDelegate<T>(IntPtr address, bool isRelative = false) where T : class
+        {
+            return Marshal.GetDelegateForFunctionPointer(isRelative ? MakeAbsolute(address) : address, typeof (T)) as T;
+        }
+
+        /// <summary>
+        ///     Gets the funtion pointer from a delegate.
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <returns></returns>
+        /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
+        public IntPtr GetFunctionPointer(Delegate d)
+        {
+            return Marshal.GetFunctionPointerForDelegate(d);
+        }
+
+        /// <summary>
+        ///     Gets the VF table entry.
+        /// </summary>
+        /// <param name="address">The address.</param>
+        /// <param name="index">The index.</param>
+        /// <returns></returns>
+        /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
+        public IntPtr GetVfTableEntry(IntPtr address, uint index)
+        {
+            var vftable = Read<IntPtr>(address);
+            return Read<IntPtr>(vftable + (int) (index*4));
+        }
+
+        /// <summary>
         ///     Implements the ==.
         /// </summary>
         /// <param name="left">The left.</param>
@@ -437,5 +489,6 @@ namespace Binarysharp.MemoryManagement
         {
             return !Equals(left, right);
         }
+        #endregion
     }
 }

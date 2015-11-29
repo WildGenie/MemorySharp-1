@@ -27,6 +27,7 @@ namespace Binarysharp.MemoryManagement.Windows.Keyboard
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Presses the specified virtual key to the window.
         /// </summary>
@@ -55,7 +56,9 @@ namespace Binarysharp.MemoryManagement.Windows.Keyboard
         {
             Window.PostMessage(WindowsMessages.Char, new UIntPtr(character), UIntPtr.Zero);
         }
+        #endregion
 
+        #region Private Methods
         /// <summary>
         ///     Makes the lParam for a key depending on several settings.
         /// </summary>
@@ -128,5 +131,6 @@ namespace Binarysharp.MemoryManagement.Windows.Keyboard
         {
             return MakeKeyParameter(key, keyUp, keyUp, 1, false, false);
         }
+        #endregion
     }
 }

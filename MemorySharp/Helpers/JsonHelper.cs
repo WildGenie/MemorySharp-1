@@ -9,6 +9,7 @@ namespace Binarysharp.MemoryManagement.Helpers
     /// </summary>
     public static class JsonHelper
     {
+        #region Public Methods
         /// <summary>
         ///     Serializes the specified object and writes the Json document to the specified path.
         /// </summary>
@@ -92,5 +93,6 @@ namespace Binarysharp.MemoryManagement.Helpers
                 return JsonConvert.DeserializeObject<T>(stringReader.ReadToEnd());
             }
         }
+        #endregion
     }
 }

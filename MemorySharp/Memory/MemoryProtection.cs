@@ -46,7 +46,7 @@ namespace Binarysharp.MemoryManagement.Memory
 
             // Change the memory protection
             OldProtection = _memorySharp.NativeDriver.MemoryCore.ChangeMemoryProtection(_memorySharp.Handle, baseAddress,
-                size, protection);
+                                                                                        size, protection);
         }
 
         /// <summary>
@@ -94,12 +94,13 @@ namespace Binarysharp.MemoryManagement.Memory
         {
             // Restore the memory protection
             _memorySharp.NativeDriver.MemoryCore.ChangeMemoryProtection(_memorySharp.Handle, BaseAddress, Size,
-                OldProtection);
+                                                                        OldProtection);
             // Avoid the finalizer 
             GC.SuppressFinalize(this);
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Returns a string that represents the current object.
         /// </summary>
@@ -108,5 +109,6 @@ namespace Binarysharp.MemoryManagement.Memory
             return
                 $"BaseAddress = 0x{BaseAddress.ToInt64():X} NewProtection = {NewProtection} OldProtection = {OldProtection}";
         }
+        #endregion
     }
 }

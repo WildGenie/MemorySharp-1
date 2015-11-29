@@ -152,6 +152,7 @@ namespace Binarysharp.MemoryManagement.Edits.Patchs
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     States if the Patch is enabled.
         /// </summary>
@@ -163,8 +164,9 @@ namespace Binarysharp.MemoryManagement.Edits.Patchs
         public bool CheckIfEnabled()
         {
             return IsInternalMemory
-                ? MemoryPlus.ReadBytes(Address, PatchBytes.Length).SequenceEqual(PatchBytes)
-                : MemorySharp.ReadBytes(Address, PatchBytes.Length).SequenceEqual(PatchBytes);
+                       ? MemoryPlus.ReadBytes(Address, PatchBytes.Length).SequenceEqual(PatchBytes)
+                       : MemorySharp.ReadBytes(Address, PatchBytes.Length).SequenceEqual(PatchBytes);
         }
+        #endregion
     }
 }

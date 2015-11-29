@@ -1,4 +1,6 @@
-﻿namespace Binarysharp.MemoryManagement.Patterns.Structs
+﻿using System.Diagnostics;
+
+namespace Binarysharp.MemoryManagement.Patterns.Structs
 {
     /// <summary>
     ///     A class that represents basic pattrn scanning properties.
@@ -9,23 +11,37 @@
         /// <summary>
         ///     Creates a new instance of <see cref="Pattern" />.
         /// </summary>
-        /// <param name="pattern">The patterns Dword formatted text pattern.</param>
+        /// <param name="dwordTextPattern">The dword pattern text containing the pattern to be scanned.</param>
+        /// <example>
+        ///     The example below will show you how a dword pattern would look for a given byte array.
+        ///     <code>
+        /// var bytes exampleBytes = new bytes[]{55,0x8B,0xEC,51,0xFF,05, 00, 00, 00, 00, 0xA2};
+        /// var patternText = "55 8b ec 51 FF 05 ?? ?? ?? ?? A1";
+        /// </code>
+        /// </example>
         /// <param name="offseToAdd">The offset to add to the result found before returning the value.</param>
-        /// <param name="isOffsetMode">If we should return the address or offset in the result if this is a xml patternscan.</param>
-        /// <param name="rebase">If the address should be rebased to a process module.</param>
-        public Pattern(string pattern, int offseToAdd, bool isOffsetMode, bool rebase)
+        /// <param name="rebaseResult">
+        ///     If the address should be rebased to the base address of the <see cref="ProcessModule" />
+        ///     the pattern data resides in.
+        /// </param>
+        public Pattern(string dwordTextPattern, int offseToAdd, bool rebaseResult)
         {
-            TextPattern = pattern;
+            TextPattern = dwordTextPattern;
             OffsetToAdd = offseToAdd;
-            IsOffsetMode = isOffsetMode;
-            RebaseAddress = rebase;
+            RebaseResult = rebaseResult;
         }
         #endregion
 
         #region Public Properties, Indexers
         /// <summary>
-        ///     The Dword format text of the pattern.
-        ///     <example>A2 5B ?? ?? ?? A2</example>
+        ///     The dword text-based pattern.
+        ///     <example>
+        ///         The example below will show you how a dword pattern would look for a given byte array.
+        ///         <code>
+        /// var bytes exampleBytes = new bytes[]{55,0x8B,0xEC,51,0xFF,05, 00, 00, 00, 00, 0xA2};
+        /// var patternText = "55 8b ec 51 FF 05 ?? ?? ?? ?? A1";
+        /// </code>
+        ///     </example>
         /// </summary>
         public string TextPattern { get; set; }
 
@@ -35,26 +51,10 @@
         public int OffsetToAdd { get; set; }
 
         /// <summary>
-        ///     If the result should be from the address or offset.
+        ///     If the address should be rebased to the base address of the <see cref="ProcessModule" /> the pattern data resides
+        ///     in.
         /// </summary>
-        public bool IsOffsetMode { get; set; }
-
-        /// <summary>
-        ///     If the address should be rebased to a process modules address or not.
-        /// </summary>
-        public bool RebaseAddress { get; set; }
-
-        /// <summary>
-        ///     Gets the mask from the text pattern in this instance.
-        /// </summary>
-        /// <returns>The mask from the pattern.</returns>
-        public string Mask => PatternCore.GetMaskFromDwordPattern(TextPattern);
-
-        /// <summary>
-        ///     Gets the <code>byte[]</code> pattern from text pattern in this instance.
-        /// </summary>
-        /// <returns>An array of bytes.</returns>
-        public byte[] PatternBytes => PatternCore.GetBytesFromDwordPattern(TextPattern);
+        public bool RebaseResult { get; set; }
         #endregion
     }
 }

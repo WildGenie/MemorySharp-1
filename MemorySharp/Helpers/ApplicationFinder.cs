@@ -32,6 +32,7 @@ namespace Binarysharp.MemoryManagement.Helpers
         public static IEnumerable<IntPtr> Windows => WindowCore.EnumAllWindows();
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Returns a new <see cref="Process" /> component, given the identifier of a process.
         /// </summary>
@@ -114,5 +115,6 @@ namespace Binarysharp.MemoryManagement.Helpers
             return
                 Windows.Where(window => WindowCore.GetWindowText(window).Contains(windowTitle)).Select(FromWindowHandle);
         }
+        #endregion
     }
 }

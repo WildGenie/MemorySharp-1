@@ -22,6 +22,7 @@ namespace Binarysharp.MemoryManagement.Threading
     /// </summary>
     public static class ThreadCore
     {
+        #region Public Methods
         /// <summary>
         ///     Creates a thread that runs in the virtual address space of another process.
         /// </summary>
@@ -44,7 +45,7 @@ namespace Binarysharp.MemoryManagement.Threading
             // Create the remote thread
             int threadId;
             var ret = NativeMethods.CreateRemoteThread(processHandle, IntPtr.Zero, 0, startAddress, parameter,
-                creationFlags, out threadId);
+                                                       creationFlags, out threadId);
 
             // If the thread is created
             if (!ret.IsClosed && !ret.IsInvalid)
@@ -160,7 +161,7 @@ namespace Binarysharp.MemoryManagement.Threading
 
             // Get the thread info
             var ret = NativeMethods.NtQueryInformationThread(threadHandle, 0, ref info,
-                MarshalType<ThreadBasicInformation>.Size, IntPtr.Zero);
+                                                             MarshalType<ThreadBasicInformation>.Size, IntPtr.Zero);
 
             // If the function succeeded
             if (ret == 0)
@@ -264,7 +265,9 @@ namespace Binarysharp.MemoryManagement.Threading
 
             // Wait for single object
             var ret = NativeMethods.WaitForSingleObject(handle,
-                timeout.HasValue ? Convert.ToUInt32(timeout.Value.TotalMilliseconds) : 0);
+                                                        timeout.HasValue
+                                                            ? Convert.ToUInt32(timeout.Value.TotalMilliseconds)
+                                                            : 0);
 
             // If the function failed
             if (ret == WaitValues.Failed)
@@ -292,5 +295,6 @@ namespace Binarysharp.MemoryManagement.Threading
 
             return ret;
         }
+        #endregion
     }
 }

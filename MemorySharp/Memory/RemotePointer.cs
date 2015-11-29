@@ -63,6 +63,7 @@ namespace Binarysharp.MemoryManagement.Memory
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Changes the protection of the n next bytes in remote process.
         /// </summary>
@@ -503,5 +504,6 @@ namespace Binarysharp.MemoryManagement.Memory
         {
             WriteString(0, text);
         }
+        #endregion
     }
 }

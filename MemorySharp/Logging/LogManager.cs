@@ -22,7 +22,7 @@ namespace Binarysharp.MemoryManagement.Logging
         /// <summary>
         ///     Prevents a default instance of the <see cref="LogManager" /> class from being created.
         /// </summary>
-        private LogManager()
+        private LogManager() : base(new DebugLog())
         {
             //  Singleton.           
         }
@@ -37,6 +37,7 @@ namespace Binarysharp.MemoryManagement.Logging
         public IManagedLog this[string updaterName] => InternalItems[updaterName];
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Logs the text to all logs in the manager as a 'info' log type.
         /// </summary>
@@ -108,6 +109,21 @@ namespace Binarysharp.MemoryManagement.Logging
         }
 
         /// <summary>
+        ///     Adds the logger.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="enableRightAway">if set to <c>true</c> [enable right away].</param>
+        public void AddLogger(string name, IManagedLog logger, bool enableRightAway)
+        {
+            InternalItems[name] = logger;
+            if (enableRightAway)
+            {
+                InternalItems[name].Enable();
+            }
+        }
+
+        /// <summary>
         ///     Logs the specified message.
         /// </summary>
         /// <param name="message">The message to be logged.</param>
@@ -132,5 +148,6 @@ namespace Binarysharp.MemoryManagement.Logging
                     throw new ArgumentOutOfRangeException();
             }
         }
+        #endregion
     }
 }

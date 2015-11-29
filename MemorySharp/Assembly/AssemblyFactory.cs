@@ -61,6 +61,7 @@ namespace Binarysharp.MemoryManagement.Assembly
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Begins a new transaction to inject and execute assembly code into the process at the specified address.
         /// </summary>
@@ -511,5 +512,6 @@ namespace Binarysharp.MemoryManagement.Assembly
         {
             return InjectAndExecuteAsync<IntPtr>(asm);
         }
+        #endregion
     }
 }

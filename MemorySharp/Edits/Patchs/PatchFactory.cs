@@ -1,5 +1,6 @@
 ﻿using System;
 using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Logging.Defaults;
 
 namespace Binarysharp.MemoryManagement.Edits.Patchs
 {
@@ -14,7 +15,7 @@ namespace Binarysharp.MemoryManagement.Edits.Patchs
         ///     Initializes a new instance of the <see cref="PatchFactory" /> class.
         /// </summary>
         /// <param name="processMemory">The process memory.</param>
-        public PatchFactory(MemorySharp processMemory)
+        public PatchFactory(MemorySharp processMemory) : base(new DebugLog())
         {
             ProcessMemory = processMemory;
         }
@@ -52,6 +53,7 @@ namespace Binarysharp.MemoryManagement.Edits.Patchs
         }
         #endregion
 
+        #region Public Methods
         /// <summary>
         ///     Creates a new <see cref="Patch" /> at the specified address.
         /// </summary>
@@ -79,5 +81,6 @@ namespace Binarysharp.MemoryManagement.Edits.Patchs
             InternalItems[name].Enable();
             return InternalItems[name];
         }
+        #endregion
     }
 }
