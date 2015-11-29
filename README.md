@@ -68,10 +68,9 @@ Some documentation of new features by example.
            // public static IntPtr ExamplePattern { get; } = (IntPtr)0x000;
            // public static IntPtr ExamplePattern2 { get; } = (IntPtr)0x000
            ```
-Injected Support added.
------------------------
+           
+* Injected Support added. Here you can hook WndProc and pass a custom engine to run your code in the main thread with.
 
-Hook WndProc and pass your own call back engine easily:
 ```csharp
      public class HookEngine : IWindowEngine
         {
