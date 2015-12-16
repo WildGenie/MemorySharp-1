@@ -1,493 +1,226 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Diagnostics;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
-using System.Text;
-using Binarysharp.MemoryManagement.Edits.Detours;
-using Binarysharp.MemoryManagement.Edits.Patchs;
-using Binarysharp.MemoryManagement.Hooks;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Common.Builders;
+using Binarysharp.MemoryManagement.Edits;
+using Binarysharp.MemoryManagement.Management;
+using Binarysharp.MemoryManagement.Marshaling;
 using Binarysharp.MemoryManagement.Memory;
 using Binarysharp.MemoryManagement.Native;
-using Binarysharp.MemoryManagement.Native.Enums;
-using Binarysharp.MemoryManagement.Patterns;
 
 namespace Binarysharp.MemoryManagement
 {
     /// <summary>
-    ///     Class for memory operations in a local process.
+    ///     Class for editing memory of a process <see cref="MemoryPlus" /> is injected into.
     /// </summary>
-    public class MemoryPlus : IDisposable, IEquatable<MemoryPlus>
+    public class MemoryPlus : MemoryBase
     {
-        #region Fields, Private Properties
-        private List<IFactory> Factories { get; }
-        #endregion
-
         #region Constructors, Destructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="MemoryPlus" /> class.
         /// </summary>
-        /// <param name="process">The process.</param>
-        public MemoryPlus(Process process)
+        /// <param name="proc">The process.</param>
+        /// <remarks>
+        ///     Created 2012-02-15
+        /// </remarks>
+        public MemoryPlus(Process proc) : base(proc)
         {
-            Native = process;
-            MainModule = process.MainModule;
-            ImageBase = process.MainModule.BaseAddress;
-            Handle = new SafeMemoryHandle(ExternalMemoryCore.OpenProcess(ProcessAccessFlags.AllAccess, process.Id));
-            Factories = new List<IFactory>();
-            Factories.AddRange(
-                               new IFactory[]
-                               {
-                                   Patterns =
-                                   new InternalPatternFactory {MemoryPlus = this, ProcessModule = process.MainModule},
-                                   Hooks = new HookFactory {MemoryPlus = this},
-                                   Patches = new InternalPatchFactory {MemoryPlus = this},
-                                   Detours = new DetourFactory {MemoryPlus = this}
-                               });
+            Factories.Add(Detours = new DetourManager(this));
+            Factories.Add(Hooks = new HookManager());
         }
         #endregion
 
         #region Public Properties, Indexers
         /// <summary>
-        ///     Gets the pattern factory.
+        ///     Gets the manager for <see cref="Detour" /> objects.
         /// </summary>
-        /// <value>
-        ///     The pattern factory.
-        /// </value>
-        public InternalPatternFactory Patterns { get; }
+        public DetourManager Detours { get; }
 
         /// <summary>
-        ///     Gets the base address of the main <see cref="ProcessModule" />.
+        ///     Gets the manager for <see cref="IHook" /> objects.
         /// </summary>
-        /// <value>
-        ///     The base address of the main <see cref="ProcessModule" />.
-        /// </value>
-        public IntPtr ImageBase { get; }
-
-        /// <summary>
-        ///     The remote process handle opened with all rights.
-        /// </summary>
-        public SafeMemoryHandle Handle { get; }
-
-        /// <summary>
-        ///     Gets the main module as a <see cref="ProcessModule" /> instance.
-        /// </summary>
-        public ProcessModule MainModule { get; }
-
-        /// <summary>
-        ///     Provide access to the opened process.
-        /// </summary>
-        public Process Native { get; }
-
-        /// <summary>
-        ///     A factory for hooks.
-        /// </summary>
-        public HookFactory Hooks { get; }
-
-        /// <summary>
-        ///     A factory for memory detours.
-        /// </summary>
-        public DetourFactory Detours { get; }
-
-        /// <summary>
-        ///     A factory for memory patches.
-        /// </summary>
-        public InternalPatchFactory Patches { get; }
-        #endregion
-
-        #region Interface Implementations
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Factories.ForEach(factory => factory.Dispose());
-        }
-
-        /// <summary>
-        ///     Returns a value indicating whether this instance is equal to a specified object.
-        /// </summary>
-        public bool Equals(MemoryPlus other)
-        {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-            return ReferenceEquals(this, other) || Handle.Equals(other.Handle);
-        }
+        public HookManager Hooks { get; }
         #endregion
 
         #region Public Methods
         /// <summary>
-        ///     Reads the value of a specified type in the remote process.
+        ///     Reads a specific number of bytes from memory.
         /// </summary>
-        /// <typeparam name="T">The type of the value.</typeparam>
-        /// <param name="address">The address where the value is read.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        /// <returns>A value.</returns>
-        public T Read<T>(IntPtr address, bool isRelative = false)
-        {
-            if (isRelative)
-            {
-                address = MakeAbsolute(address);
-            }
-            return InternalMemoryCore.Read<T>(address);
-        }
-
-        /// <summary>
-        ///     Reads the specified amount of bytes from the specified address.
-        /// </summary>
-        /// <param name="address">The address where the value is read.</param>
+        /// <param name="address">The address.</param>
         /// <param name="count">The count.</param>
         /// <param name="isRelative">if set to <c>true</c> [is relative].</param>
         /// <returns>An array of bytes.</returns>
-        public byte[] ReadBytes(IntPtr address, int count, bool isRelative = false)
+        public override unsafe byte[] ReadBytes(IntPtr address, int count, bool isRelative = false)
         {
-            return InternalMemoryCore.ReadBytes(address, count, isRelative);
-        }
+            if (isRelative)
+            {
+                address = GetAbsolute(address);
+            }
 
-
-        /// <summary>
-        ///     Reads the value of a specified type in the remote process.
-        /// </summary>
-        /// <typeparam name="T">The type of the value.</typeparam>
-        /// <param name="address">The address where the value is read.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        /// <returns>A value.</returns>
-        public T Read<T>(Enum address, bool isRelative = false)
-        {
-            return Read<T>(new IntPtr(Convert.ToInt64(address)), isRelative);
-        }
-
-        /// <summary>
-        ///     Reads an array of a specified type in the remote process.
-        /// </summary>
-        /// <typeparam name="T">The type of the values.</typeparam>
-        /// <param name="address">The address where the values is read.</param>
-        /// <param name="count">The number of cells in the array.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        /// <returns>An array.</returns>
-        public T[] Read<T>(IntPtr address, int count, bool isRelative = false)
-        {
-            // Allocate an array to store the results
-            var array = new T[count];
-            // Read the array in the remote process
+            var ret = new byte[count];
+            var ptr = (byte*) address;
             for (var i = 0; i < count; i++)
             {
-                array[i] = Read<T>(address + MarshalType<T>.Size*i, isRelative);
+                ret[i] = ptr[i];
             }
-            return array;
+            return ret;
         }
 
         /// <summary>
-        ///     Reads an array of a specified type in the remote process.
+        ///     Writes a set of bytes to memory.
         /// </summary>
-        /// <typeparam name="T">The type of the values.</typeparam>
-        /// <param name="address">The address where the values is read.</param>
-        /// <param name="count">The number of cells in the array.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        /// <returns>An array.</returns>
-        public T[] Read<T>(Enum address, int count, bool isRelative = false)
+        /// <param name="address">The address.</param>
+        /// <param name="bytes">The bytes.</param>
+        /// <param name="isRelative">if set to <c>true</c> [is relative].</param>
+        /// <returns>
+        ///     Number of bytes written.
+        /// </returns>
+        public override int WriteBytes(IntPtr address, byte[] bytes, bool isRelative = false)
         {
-            return Read<T>(new IntPtr(Convert.ToInt64(address)), count, isRelative);
+            using (
+                new MemoryProtection(this, isRelative ? GetAbsolute(address) : address,
+                    MarshalType<byte>.Size*bytes.Length))
+                unsafe
+                {
+                    var ptr = (byte*) address;
+                    for (var i = 0; i < bytes.Length; i++)
+                    {
+                        ptr[i] = bytes[i];
+                    }
+                }
+            return bytes.Length;
         }
 
-
-        /// <summary>
-        ///     Makes an absolute address from a relative one based on the main module.
-        /// </summary>
-        /// <param name="address">The relative address.</param>
-        /// <returns>The absolute address.</returns>
-        public IntPtr MakeAbsolute(IntPtr address)
+        /// <summary> Reads a value from the specified address in memory. </summary>
+        /// <remarks> Created 3/24/2012. </remarks>
+        /// <typeparam name="T"> Generic type parameter. </typeparam>
+        /// <param name="address"> The address. </param>
+        /// <param name="isRelative"> (optional) the relative. </param>
+        /// <returns> . </returns>
+        public override T Read<T>(IntPtr address, bool isRelative = false)
         {
-            // Check if the relative address is not greater than the main module size
-            if (address.ToInt64() > MainModule.ModuleMemorySize)
+            if (isRelative)
             {
-                throw new ArgumentOutOfRangeException(nameof(address),
-                                                      "The relative address cannot be greater than the main module size.");
+                address = GetAbsolute(address);
             }
-            // Compute the absolute address
-            return new IntPtr(ImageBase.ToInt64() + address.ToInt64());
+            return InternalRead<T>(address);
         }
 
-        /// <summary>
-        ///     Makes a relative address from an absolute one based on the main module.
-        /// </summary>
-        /// <param name="address">The absolute address.</param>
-        /// <returns>The relative address.</returns>
-        public IntPtr MakeRelative(IntPtr address)
+        /// <summary> Writes a value specified to the address in memory. </summary>
+        /// <remarks> Created 3/24/2012. </remarks>
+        /// <typeparam name="T"> Generic type parameter. </typeparam>
+        /// <param name="address"> The address. </param>
+        /// <param name="value"> The value. </param>
+        /// <param name="isRelative"> (optional) the relative. </param>
+        /// <returns> true if it succeeds, false if it fails. </returns>
+        public override void Write<T>(IntPtr address, T value, bool isRelative = false)
         {
-            // Check if the absolute address is smaller than the main module base address
-            if (address.ToInt64() < ImageBase.ToInt64())
+            if (isRelative)
             {
-                throw new ArgumentOutOfRangeException(nameof(address),
-                                                      "The absolute address cannot be smaller than the main module base address.");
+                address = GetAbsolute(address);
             }
-            // Compute the relative address
-            return new IntPtr(address.ToInt64() - ImageBase.ToInt64());
+
+            Marshal.StructureToPtr(value, address, false);
         }
+        #endregion
 
+        #region Private Methods
         /// <summary>
-        ///     Serves as a hash function for a particular type.
-        /// </summary>
-        public override int GetHashCode()
-        {
-            return Handle.GetHashCode();
-        }
-
-        /// <summary>
-        ///     Determines whether the specified object is equal to the current object.
-        /// </summary>
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            return obj.GetType() == GetType() && Equals((MemoryPlus) obj);
-        }
-
-        /// <summary>
-        ///     Write an array of bytes in the remote process.
-        /// </summary>
-        /// <param name="address">The address where the array is written.</param>
-        /// <param name="byteArray">The array of bytes to write.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void WriteBytes(IntPtr address, byte[] byteArray, bool isRelative = false)
-        {
-            // Change the protection of the memory to allow writable
-            InternalMemoryCore.WriteBytes(address, byteArray, isRelative);
-        }
-
-        /// <summary>
-        ///     Reads a string with a specified encoding in the remote process.
-        /// </summary>
-        /// <param name="address">The address where the string is read.</param>
-        /// <param name="encoding">The encoding used.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        /// <param name="maxLength">
-        ///     [Optional] The number of maximum bytes to read. The string is automatically cropped at this end
-        ///     ('\0' char).
-        /// </param>
-        /// <returns>The string.</returns>
-        public string ReadString(IntPtr address, Encoding encoding, bool isRelative = false, int maxLength = 512)
-        {
-            // Read the string
-            var data = encoding.GetString(ReadBytes(address, maxLength, isRelative));
-            // Search the end of the string
-            var end = data.IndexOf('\0');
-            // Crop the string with this end
-            return data.Substring(0, end);
-        }
-
-        /// <summary>
-        ///     Reads a string with a specified encoding in the remote process.
-        /// </summary>
-        /// <param name="address">The address where the string is read.</param>
-        /// <param name="encoding">The encoding used.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        /// <param name="maxLength">
-        ///     [Optional] The number of maximum bytes to read. The string is automatically cropped at this end
-        ///     ('\0' char).
-        /// </param>
-        /// <returns>The string.</returns>
-        public string ReadString(Enum address, Encoding encoding, bool isRelative = false, int maxLength = 512)
-        {
-            return ReadString(new IntPtr(Convert.ToInt64(address)), encoding, isRelative, maxLength);
-        }
-
-        /// <summary>
-        ///     Reads a string using the encoding UTF8 in the remote process.
-        /// </summary>
-        /// <param name="address">The address where the string is read.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        /// <param name="maxLength">
-        ///     [Optional] The number of maximum bytes to read. The string is automatically cropped at this end
-        ///     ('\0' char).
-        /// </param>
-        /// <returns>The string.</returns>
-        public string ReadString(IntPtr address, bool isRelative = false, int maxLength = 512)
-        {
-            return ReadString(address, Encoding.UTF8, isRelative, maxLength);
-        }
-
-        /// <summary>
-        ///     Reads a string using the encoding UTF8 in the remote process.
-        /// </summary>
-        /// <param name="address">The address where the string is read.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        /// <param name="maxLength">
-        ///     [Optional] The number of maximum bytes to read. The string is automatically cropped at this end
-        ///     ('\0' char).
-        /// </param>
-        /// <returns>The string.</returns>
-        public string ReadString(Enum address, bool isRelative = false, int maxLength = 512)
-        {
-            return ReadString(new IntPtr(Convert.ToInt64(address)), isRelative, maxLength);
-        }
-
-        /// <summary>
-        ///     Writes the values of a specified type in the remote process.
-        /// </summary>
-        /// <typeparam name="T">The type of the value.</typeparam>
-        /// <param name="address">The address where the value is written.</param>
-        /// <param name="value">The value to write.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void Write<T>(IntPtr address, T value, bool isRelative = false)
-        {
-            WriteBytes(address, MarshalType<T>.ObjectToByteArray(value), isRelative);
-        }
-
-        /// <summary>
-        ///     Writes the values of a specified type in the remote process.
-        /// </summary>
-        /// <typeparam name="T">The type of the value.</typeparam>
-        /// <param name="address">The address where the value is written.</param>
-        /// <param name="value">The value to write.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void Write<T>(Enum address, T value, bool isRelative = false)
-        {
-            Write(new IntPtr(Convert.ToInt64(address)), value, isRelative);
-        }
-
-        /// <summary>
-        ///     Writes an array of a specified type in the remote process.
-        /// </summary>
-        /// <typeparam name="T">The type of the values.</typeparam>
-        /// <param name="address">The address where the values is written.</param>
-        /// <param name="array">The array to write.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void Write<T>(IntPtr address, T[] array, bool isRelative = false)
-        {
-            // Write the array in the remote process
-            for (var i = 0; i < array.Length; i++)
-            {
-                Write(address + MarshalType<T>.Size*i, array[i], isRelative);
-            }
-        }
-
-
-        /// <summary>
-        ///     Writes an array of a specified type in the remote process.
-        /// </summary>
-        /// <typeparam name="T">The type of the values.</typeparam>
-        /// <param name="address">The address where the values is written.</param>
-        /// <param name="array">The array to write.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void Write<T>(Enum address, T[] array, bool isRelative = false)
-        {
-            Write(new IntPtr(Convert.ToInt64(address)), array, isRelative);
-        }
-
-        /// <summary>
-        ///     Writes a string with a specified encoding in the remote process.
-        /// </summary>
-        /// <param name="address">The address where the string is written.</param>
-        /// <param name="text">The text to write.</param>
-        /// <param name="encoding">The encoding used.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void WriteString(IntPtr address, string text, Encoding encoding, bool isRelative = false)
-        {
-            // Write the text
-            WriteBytes(address, encoding.GetBytes(text + '\0'), isRelative);
-        }
-
-        /// <summary>
-        ///     Writes a string with a specified encoding in the remote process.
-        /// </summary>
-        /// <param name="address">The address where the string is written.</param>
-        /// <param name="text">The text to write.</param>
-        /// <param name="encoding">The encoding used.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void WriteString(Enum address, string text, Encoding encoding, bool isRelative = false)
-        {
-            WriteString(new IntPtr(Convert.ToInt64(address)), text, encoding, isRelative);
-        }
-
-        /// <summary>
-        ///     Writes a string using the encoding UTF8 in the remote process.
-        /// </summary>
-        /// <param name="address">The address where the string is written.</param>
-        /// <param name="text">The text to write.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void WriteString(IntPtr address, string text, bool isRelative = false)
-        {
-            WriteString(address, text, Encoding.UTF8, isRelative);
-        }
-
-        /// <summary>
-        ///     Writes a string using the encoding UTF8 in the remote process.
-        /// </summary>
-        /// <param name="address">The address where the string is written.</param>
-        /// <param name="text">The text to write.</param>
-        /// <param name="isRelative">[Optional] State if the address is relative to the main module.</param>
-        public void WriteString(Enum address, string text, bool isRelative = false)
-        {
-            WriteString(new IntPtr(Convert.ToInt64(address)), text, isRelative);
-        }
-
-
-        /// <summary>
-        ///     Creates a function.
+        ///     Static method to read addresses while <see cref="MemoryPlus" /> injected into this instances process.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="address">The address.</param>
-        /// <param name="isRelative">if set to <c>true</c> [address is relative].</param>
         /// <returns></returns>
-        /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
-        public T RegisterDelegate<T>(IntPtr address, bool isRelative = false) where T : class
+        /// <exception cref="System.InvalidOperationException">Cannot retrieve a value at address 0</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException"></exception>
+        [HandleProcessCorruptedStateExceptions]
+        private static unsafe T InternalRead<T>(IntPtr address)
         {
-            return Marshal.GetDelegateForFunctionPointer(isRelative ? MakeAbsolute(address) : address, typeof (T)) as T;
-        }
+            try
+            {
+                // TODO: Optimize this more. The boxing/unboxing required tends to slow this down.
+                // It may be worth it to simply use memcpy to avoid it, but I doubt thats going to give any noticeable increase in speed.
+                if (address == IntPtr.Zero)
+                {
+                    throw new InvalidOperationException("Cannot retrieve a value at address 0");
+                }
 
-        /// <summary>
-        ///     Gets the funtion pointer from a delegate.
-        /// </summary>
-        /// <param name="d">The d.</param>
-        /// <returns></returns>
-        /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
-        public IntPtr GetFunctionPointer(Delegate d)
-        {
-            return Marshal.GetFunctionPointerForDelegate(d);
-        }
+                object ret;
+                switch (MarshalCache<T>.TypeCode)
+                {
+                    case TypeCode.Object:
 
-        /// <summary>
-        ///     Gets the VF table entry.
-        /// </summary>
-        /// <param name="address">The address.</param>
-        /// <param name="index">The index.</param>
-        /// <returns></returns>
-        /// <remarks>Created 2012-01-16 20:40 by Nesox.</remarks>
-        public IntPtr GetVfTableEntry(IntPtr address, uint index)
-        {
-            var vftable = Read<IntPtr>(address);
-            return Read<IntPtr>(vftable + (int) (index*4));
-        }
+                        if (MarshalCache<T>.RealType == typeof (IntPtr))
+                        {
+                            return (T) (object) *(IntPtr*) address;
+                        }
 
-        /// <summary>
-        ///     Implements the ==.
-        /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>The result of the operator.</returns>
-        public static bool operator ==(MemoryPlus left, MemoryPlus right)
-        {
-            return Equals(left, right);
-        }
+                        // If the type doesn't require an explicit Marshal call, then ignore it and memcpy the fuckin thing.
+                        if (!MarshalCache<T>.TypeRequiresMarshal)
+                        {
+                            var o = default(T);
+                            var ptr = MarshalCache<T>.GetUnsafePtr(ref o);
 
-        /// <summary>
-        ///     Implements the !=.
-        /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>The result of the operator.</returns>
-        public static bool operator !=(MemoryPlus left, MemoryPlus right)
-        {
-            return !Equals(left, right);
+                            NativeMethods.MoveMemory(ptr, (void*) address, MarshalCache<T>.Size);
+
+                            return o;
+                        }
+
+                        // All System.Object's require marshaling!
+                        ret = Marshal.PtrToStructure(address, typeof (T));
+                        break;
+                    case TypeCode.Boolean:
+                        ret = *(byte*) address != 0;
+                        break;
+                    case TypeCode.Char:
+                        ret = *(char*) address;
+                        break;
+                    case TypeCode.SByte:
+                        ret = *(sbyte*) address;
+                        break;
+                    case TypeCode.Byte:
+                        ret = *(byte*) address;
+                        break;
+                    case TypeCode.Int16:
+                        ret = *(short*) address;
+                        break;
+                    case TypeCode.UInt16:
+                        ret = *(ushort*) address;
+                        break;
+                    case TypeCode.Int32:
+                        ret = *(int*) address;
+                        break;
+                    case TypeCode.UInt32:
+                        ret = *(uint*) address;
+                        break;
+                    case TypeCode.Int64:
+                        ret = *(long*) address;
+                        break;
+                    case TypeCode.UInt64:
+                        ret = *(ulong*) address;
+                        break;
+                    case TypeCode.Single:
+                        ret = *(float*) address;
+                        break;
+                    case TypeCode.Double:
+                        ret = *(double*) address;
+                        break;
+                    case TypeCode.Decimal:
+                        // Probably safe to remove this. I'm unaware of anything that actually uses "decimal" that would require memory reading...
+                        ret = *(decimal*) address;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                return (T) ret;
+            }
+            catch (AccessViolationException ex)
+            {
+                Trace.WriteLine("Access Violation on " + address + " with type " + typeof (T).Name + Environment.NewLine +
+                    ex);
+                return default(T);
+            }
         }
         #endregion
     }

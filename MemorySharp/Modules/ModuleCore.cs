@@ -33,8 +33,8 @@ namespace Binarysharp.MemoryManagement.Modules
             // Get the module
             var module =
                 Process.GetCurrentProcess()
-                       .Modules.Cast<ProcessModule>()
-                       .FirstOrDefault(m => m.ModuleName.ToLower() == moduleName.ToLower());
+                    .Modules.Cast<ProcessModule>()
+                    .FirstOrDefault(m => m.ModuleName.ToLower() == moduleName.ToLower());
 
             // Check whether there is a module loaded with this name
             if (module == null)
@@ -72,8 +72,8 @@ namespace Binarysharp.MemoryManagement.Modules
             // Get the module
             var module =
                 Process.GetCurrentProcess()
-                       .Modules.Cast<ProcessModule>()
-                       .FirstOrDefault(m => m.ModuleName.ToLower() == libraryName.ToLower());
+                    .Modules.Cast<ProcessModule>()
+                    .FirstOrDefault(m => m.ModuleName.ToLower() == libraryName.ToLower());
 
             // Check whether there is a library loaded with this name
             if (module == null)

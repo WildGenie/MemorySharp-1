@@ -18,10 +18,6 @@ namespace Binarysharp.MemoryManagement.Windows.Keyboard
     public class MessageKeyboard : BaseKeyboard
     {
         #region Constructors, Destructors
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="MessageKeyboard" /> class.
-        /// </summary>
-        /// <param name="window">The reference of the <see cref="RemoteWindow" /> object.</param>
         public MessageKeyboard(RemoteWindow window) : base(window)
         {
         }

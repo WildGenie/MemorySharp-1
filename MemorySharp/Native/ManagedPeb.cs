@@ -23,10 +23,8 @@ namespace Binarysharp.MemoryManagement.Native
         ///     Initializes a new instance of the <see cref="ManagedPeb" /> class.
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
-        internal ManagedPeb(MemorySharp memorySharp)
-            : base(
-                memorySharp,
-                memorySharp.NativeDriver.MemoryCore.QueryInformationProcess(memorySharp.Handle).PebBaseAddress)
+        /// <param name="address">The location of the peb.</param>
+        internal ManagedPeb(MemorySharp memorySharp, IntPtr address) : base(memorySharp, address)
         {
         }
         #endregion
@@ -798,6 +796,20 @@ namespace Binarysharp.MemoryManagement.Native
         {
             get { return Read<IntPtr>(PebStructure.MinimumStackCommit); }
             set { Write(PebStructure.MinimumStackCommit, value); }
+        }
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        ///     Finds the Process Environment Block address of a specified process.
+        /// </summary>
+        /// <param name="processHandle">A handle of the process.</param>
+        /// <returns>
+        ///     A <see cref="IntPtr" /> pointer of the PEB.
+        /// </returns>
+        public static IntPtr FindPeb(SafeMemoryHandle processHandle)
+        {
+            return MemoryCore.NtQueryInformationProcess(processHandle).PebBaseAddress;
         }
         #endregion
     }

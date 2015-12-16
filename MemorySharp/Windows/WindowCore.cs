@@ -13,11 +13,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using Binarysharp.MemoryManagement.Helpers;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Common.Helpers;
+using Binarysharp.MemoryManagement.Marshaling;
 using Binarysharp.MemoryManagement.Native;
 using Binarysharp.MemoryManagement.Native.Enums;
-using Binarysharp.MemoryManagement.Native.Structures;
+using Binarysharp.MemoryManagement.Native.Structs;
 
 namespace Binarysharp.MemoryManagement.Windows
 {
@@ -35,7 +35,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static string GetClassName(IntPtr windowHandle)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // Get the window class name
             var stringBuilder = new StringBuilder(char.MaxValue);
@@ -81,7 +81,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static string GetWindowText(IntPtr windowHandle)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // Get the size of the window's title
             var capacity = NativeMethods.GetWindowTextLength(windowHandle);
@@ -108,7 +108,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static WindowPlacement GetWindowPlacement(IntPtr windowHandle)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // Allocate a WindowPlacement structure
             WindowPlacement placement;
@@ -129,7 +129,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static int GetWindowProcessId(IntPtr windowHandle)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // Get the process id
             int processId;
@@ -146,7 +146,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static int GetWindowThreadId(IntPtr windowHandle)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // Get the thread id
             int trash;
@@ -186,10 +186,10 @@ namespace Binarysharp.MemoryManagement.Windows
             var list = new List<IntPtr>();
             // Create the callback
             EnumWindowsProc callback = delegate(IntPtr windowHandle, IntPtr lParam)
-                                       {
-                                           list.Add(windowHandle);
-                                           return true;
-                                       };
+            {
+                list.Add(windowHandle);
+                return true;
+            };
             // Enumerate all windows
             NativeMethods.EnumChildWindows(parentHandle, callback, IntPtr.Zero);
 
@@ -221,7 +221,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static bool FlashWindow(IntPtr windowHandle)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // Flash the window
             return NativeMethods.FlashWindow(windowHandle, true);
@@ -237,17 +237,17 @@ namespace Binarysharp.MemoryManagement.Windows
         public static void FlashWindowEx(IntPtr windowHandle, FlashWindowFlags flags, uint count, TimeSpan timeout)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // Create the data structure
             var flashInfo = new FlashInfo
-                            {
-                                Size = Marshal.SizeOf(typeof (FlashInfo)),
-                                Hwnd = windowHandle,
-                                Flags = flags,
-                                Count = count,
-                                Timeout = Convert.ToInt32(timeout.TotalMilliseconds)
-                            };
+            {
+                Size = Marshal.SizeOf(typeof (FlashInfo)),
+                Hwnd = windowHandle,
+                Flags = flags,
+                Count = count,
+                Timeout = Convert.ToInt32(timeout.TotalMilliseconds)
+            };
 
             // Flash the window
             NativeMethods.FlashWindowEx(ref flashInfo);
@@ -335,7 +335,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static void PostMessage(IntPtr windowHandle, uint message, UIntPtr wParam, UIntPtr lParam)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // Post the message
             if (!NativeMethods.PostMessage(windowHandle, message, wParam, lParam))
@@ -401,7 +401,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static IntPtr SendMessage(IntPtr windowHandle, uint message, UIntPtr wParam, IntPtr lParam)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // Send the message
             return NativeMethods.SendMessage(windowHandle, message, wParam, lParam);
@@ -434,7 +434,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static void SetForegroundWindow(IntPtr windowHandle)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // If the window is already activated, do nothing
             if (GetForegroundWindow() == windowHandle)
@@ -459,7 +459,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static void SetWindowPlacement(IntPtr windowHandle, int left, int top, int height, int width)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // Get a WindowPlacement structure of the current window
             var placement = GetWindowPlacement(windowHandle);
@@ -485,7 +485,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static void SetWindowPlacement(IntPtr windowHandle, WindowPlacement placement)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // If the debugger is attached and the state of the window is ShowDefault, there's an issue where the window disappears
             if (Debugger.IsAttached && placement.ShowCmd == WindowStates.ShowNormal)
@@ -504,7 +504,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static void SetWindowText(IntPtr windowHandle, string title)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // Set the text of the window's title bar
             if (!NativeMethods.SetWindowText(windowHandle, title))
@@ -523,7 +523,7 @@ namespace Binarysharp.MemoryManagement.Windows
         public static bool ShowWindow(IntPtr windowHandle, WindowStates state)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(windowHandle, "windowHandle");
+            HandleManipulationHelper.ValidateAsArgument(windowHandle, "windowHandle");
 
             // Change the state of the window
             return NativeMethods.ShowWindow(windowHandle, state);

@@ -8,7 +8,7 @@
 */
 
 using System;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Common.Builders;
 using Binarysharp.MemoryManagement.Native.Enums;
 
 namespace Binarysharp.MemoryManagement.Memory
@@ -26,11 +26,10 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <param name="size">The size of the allocated memory.</param>
         /// <param name="protection">The protection of the allocated memory.</param>
         /// <param name="mustBeDisposed">The allocated memory will be released when the finalizer collects the object.</param>
-        internal RemoteAllocation(MemorySharp memorySharp, int size,
-                                  MemoryProtectionFlags protection = MemoryProtectionFlags.ExecuteReadWrite,
-                                  bool mustBeDisposed = true)
-            : base(memorySharp, memorySharp.NativeDriver.MemoryCore.AllocateMemory(memorySharp.Handle, size, protection)
-                )
+        internal RemoteAllocation(MemoryBase memorySharp, int size,
+            MemoryProtectionFlags protection = MemoryProtectionFlags.ExecuteReadWrite,
+            bool mustBeDisposed = true)
+            : base(memorySharp, MemoryCore.Allocate(memorySharp.Handle, size, protection))
         {
             // Set local vars
             MustBeDisposed = mustBeDisposed;
@@ -66,17 +65,19 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <remarks>Don't use the IDisposable pattern because the class is sealed.</remarks>
         public virtual void Dispose()
         {
-            if (IsDisposed) return;
-            // Set the flag to true
-            IsDisposed = true;
-            // Release the allocated memory
-            Release();
-            // Remove this object from the collection of allocated memory
-            MemorySharp.Memory.Deallocate(this);
-            // Remove the pointer
-            BaseAddress = IntPtr.Zero;
-            // Avoid the finalizer 
-            GC.SuppressFinalize(this);
+            if (!IsDisposed)
+            {
+                // Set the flag to true
+                IsDisposed = true;
+                // Release the allocated memory
+                Release();
+                // Remove this object from the collection of allocated memory
+                MemorySharp.Memory.Deallocate(this);
+                // Remove the pointer
+                BaseAddress = IntPtr.Zero;
+                // Avoid the finalizer 
+                GC.SuppressFinalize(this);
+            }
         }
         #endregion
     }

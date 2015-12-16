@@ -8,9 +8,8 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using System.Threading.Tasks;
-using Binarysharp.MemoryManagement.Assembly.CallingConvention;
 using Binarysharp.MemoryManagement.Native.Enums;
 
 namespace Binarysharp.MemoryManagement.Memory
@@ -26,7 +25,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemoryManagement.MemorySharp" /> object.</param>
         /// <param name="address">The location where the pointer points in the remote process.</param>
-        public RemotePointer(MemorySharp memorySharp, IntPtr address)
+        public RemotePointer(MemoryBase memorySharp, IntPtr address)
         {
             // Save the parameters
             MemorySharp = memorySharp;
@@ -43,12 +42,12 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <summary>
         ///     Gets if the <see cref="RemotePointer" /> is valid.
         /// </summary>
-        public virtual bool IsValid => MemorySharp.IsRunning && BaseAddress != IntPtr.Zero;
+        public virtual bool IsValid => !MemorySharp.Process.HasExited && BaseAddress != IntPtr.Zero;
 
         /// <summary>
         ///     The reference of the <see cref="MemoryManagement.MemorySharp" /> object.
         /// </summary>
-        public MemorySharp MemorySharp { get; protected set; }
+        public MemoryBase MemorySharp { get; protected set; }
         #endregion
 
         #region Interface Implementations
@@ -59,7 +58,7 @@ namespace Binarysharp.MemoryManagement.Memory
         {
             if (ReferenceEquals(null, other)) return false;
             return ReferenceEquals(this, other) ||
-                   (BaseAddress.Equals(other.BaseAddress) && MemorySharp.Equals(other.MemorySharp));
+                (BaseAddress.Equals(other.BaseAddress) && MemorySharp.Equals(other.MemorySharp));
         }
         #endregion
 
@@ -72,8 +71,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <param name="mustBeDisposed">The resource will be automatically disposed when the finalizer collects the object.</param>
         /// <returns>A new instance of the <see cref="MemoryProtection" /> class.</returns>
         public MemoryProtection ChangeProtection(int size,
-                                                 MemoryProtectionFlags protection =
-                                                     MemoryProtectionFlags.ExecuteReadWrite, bool mustBeDisposed = true)
+            MemoryProtectionFlags protection = MemoryProtectionFlags.ExecuteReadWrite, bool mustBeDisposed = true)
         {
             return new MemoryProtection(MemorySharp, BaseAddress, size, protection, mustBeDisposed);
         }
@@ -88,157 +86,37 @@ namespace Binarysharp.MemoryManagement.Memory
             return obj.GetType() == GetType() && Equals((RemotePointer) obj);
         }
 
-        /// <summary>
-        ///     Executes the assembly code in the remote process.
-        /// </summary>
-        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
-        public T Execute<T>()
-        {
-            return MemorySharp.Assembly.Execute<T>(BaseAddress);
-        }
-
-        /// <summary>
-        ///     Executes the assembly code in the remote process.
-        /// </summary>
-        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
-        public IntPtr Execute()
-        {
-            return Execute<IntPtr>();
-        }
-
-        /// <summary>
-        ///     Executes the assembly code in the remote process.
-        /// </summary>
-        /// <param name="parameter">The parameter used to execute the assembly code.</param>
-        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
-        public T Execute<T>(dynamic parameter)
-        {
-            return MemorySharp.Assembly.Execute<T>(BaseAddress, parameter);
-        }
-
-        /// <summary>
-        ///     Executes the assembly code in the remote process.
-        /// </summary>
-        /// <param name="parameter">The parameter used to execute the assembly code.</param>
-        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
-        public IntPtr Execute(dynamic parameter)
-        {
-            return Execute<IntPtr>(parameter);
-        }
-
-        /// <summary>
-        ///     Executes the assembly code in the remote process.
-        /// </summary>
-        /// <param name="callingConvention">The calling convention used to execute the assembly code with the parameters.</param>
-        /// <param name="parameters">An array of parameters used to execute the assembly code.</param>
-        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
-        public T Execute<T>(CallingConventions callingConvention, params dynamic[] parameters)
-        {
-            return MemorySharp.Assembly.Execute<T>(BaseAddress, callingConvention, parameters);
-        }
-
-        /// <summary>
-        ///     Executes the assembly code in the remote process.
-        /// </summary>
-        /// <param name="callingConvention">The calling convention used to execute the assembly code with the parameters.</param>
-        /// <param name="parameters">An array of parameters used to execute the assembly code.</param>
-        /// <returns>The return value is the exit code of the thread created to execute the assembly code.</returns>
-        public IntPtr Execute(CallingConventions callingConvention, params dynamic[] parameters)
-        {
-            return Execute<IntPtr>(callingConvention, parameters);
-        }
-
-        /// <summary>
-        ///     Executes asynchronously the assembly code in the remote process.
-        /// </summary>
-        /// <returns>
-        ///     The return value is an asynchronous operation that return the exit code of the thread created to execute the
-        ///     assembly code.
-        /// </returns>
-        public Task<T> ExecuteAsync<T>()
-        {
-            return MemorySharp.Assembly.ExecuteAsync<T>(BaseAddress);
-        }
-
-        /// <summary>
-        ///     Executes asynchronously the assembly code in the remote process.
-        /// </summary>
-        /// <returns>
-        ///     The return value is an asynchronous operation that return the exit code of the thread created to execute the
-        ///     assembly code.
-        /// </returns>
-        public Task<IntPtr> ExecuteAsync()
-        {
-            return ExecuteAsync<IntPtr>();
-        }
-
-        /// <summary>
-        ///     Executes asynchronously the assembly code located in the remote process at the specified address.
-        /// </summary>
-        /// <param name="parameter">The parameter used to execute the assembly code.</param>
-        /// <returns>
-        ///     The return value is an asynchronous operation that return the exit code of the thread created to execute the
-        ///     assembly code.
-        /// </returns>
-        public Task<T> ExecuteAsync<T>(dynamic parameter)
-        {
-            return MemorySharp.Assembly.ExecuteAsync<T>(BaseAddress, parameter);
-        }
-
-        /// <summary>
-        ///     Executes asynchronously the assembly code located in the remote process at the specified address.
-        /// </summary>
-        /// <param name="parameter">The parameter used to execute the assembly code.</param>
-        /// <returns>
-        ///     The return value is an asynchronous operation that return the exit code of the thread created to execute the
-        ///     assembly code.
-        /// </returns>
-        public Task<IntPtr> ExecuteAsync(dynamic parameter)
-        {
-            return ExecuteAsync<IntPtr>(parameter);
-        }
-
-        /// <summary>
-        ///     Executes asynchronously the assembly code located in the remote process at the specified address.
-        /// </summary>
-        /// <param name="callingConvention">The calling convention used to execute the assembly code with the parameters.</param>
-        /// <param name="parameters">An array of parameters used to execute the assembly code.</param>
-        /// <returns>
-        ///     The return value is an asynchronous operation that return the exit code of the thread created to execute the
-        ///     assembly code.
-        /// </returns>
-        public Task<T> ExecuteAsync<T>(CallingConventions callingConvention, params dynamic[] parameters)
-        {
-            return MemorySharp.Assembly.ExecuteAsync<T>(BaseAddress, callingConvention, parameters);
-        }
-
-        /// <summary>
-        ///     Executes asynchronously the assembly code located in the remote process at the specified address.
-        /// </summary>
-        /// <param name="callingConvention">The calling convention used to execute the assembly code with the parameters.</param>
-        /// <param name="parameters">An array of parameters used to execute the assembly code.</param>
-        /// <returns>
-        ///     The return value is an asynchronous operation that return the exit code of the thread created to execute the
-        ///     assembly code.
-        /// </returns>
-        public Task<IntPtr> ExecuteAsync(CallingConventions callingConvention, params dynamic[] parameters)
-        {
-            return ExecuteAsync<IntPtr>(callingConvention, parameters);
-        }
 
         /// <summary>
         ///     Serves as a hash function for a particular type.
         /// </summary>
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             return BaseAddress.GetHashCode() ^ MemorySharp.GetHashCode();
         }
 
+        /// <summary>
+        ///     Implements the operator ==.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        ///     The result of the operator.
+        /// </returns>
         public static bool operator ==(RemotePointer left, RemotePointer right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        ///     Implements the operator !=.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>
+        ///     The result of the operator.
+        /// </returns>
         public static bool operator !=(RemotePointer left, RemotePointer right)
         {
             return !Equals(left, right);
@@ -252,7 +130,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <returns>A value.</returns>
         public T Read<T>(int offset)
         {
-            return MemorySharp.Read<T>(BaseAddress + offset, false);
+            return MemorySharp.Read<T>(BaseAddress + offset);
         }
 
         /// <summary>
@@ -285,7 +163,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <returns>An array.</returns>
         public T[] Read<T>(int offset, int count)
         {
-            return MemorySharp.Read<T>(BaseAddress + offset, count, false);
+            return MemorySharp.Read<T>(BaseAddress + offset, count);
         }
 
         /// <summary>
@@ -312,7 +190,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <returns>The string.</returns>
         public string ReadString(int offset, Encoding encoding, int maxLength = 512)
         {
-            return MemorySharp.ReadString(BaseAddress + offset, encoding, false, maxLength);
+            return MemorySharp.ReadString(BaseAddress + offset, encoding, maxLength);
         }
 
         /// <summary>
@@ -344,33 +222,6 @@ namespace Binarysharp.MemoryManagement.Memory
             return ReadString(0, encoding, maxLength);
         }
 
-        /// <summary>
-        ///     Reads a string using the encoding UTF8 in the remote process.
-        /// </summary>
-        /// <param name="offset">The offset where the string is read from the pointer.</param>
-        /// <param name="maxLength">
-        ///     [Optional] The number of maximum bytes to read. The string is automatically cropped at this end
-        ///     ('\0' char).
-        /// </param>
-        /// <returns>The string.</returns>
-        public string ReadString(int offset, int maxLength = 512)
-        {
-            return MemorySharp.ReadString(BaseAddress + offset, false, maxLength);
-        }
-
-        /// <summary>
-        ///     Reads a string using the encoding UTF8 in the remote process.
-        /// </summary>
-        /// <param name="offset">The offset where the string is read from the pointer.</param>
-        /// <param name="maxLength">
-        ///     [Optional] The number of maximum bytes to read. The string is automatically cropped at this end
-        ///     ('\0' char).
-        /// </param>
-        /// <returns>The string.</returns>
-        public string ReadString(Enum offset, int maxLength = 512)
-        {
-            return ReadString(Convert.ToInt32(offset), maxLength);
-        }
 
         /// <summary>
         ///     Returns a string that represents the current object.
@@ -388,7 +239,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <param name="value">The value to write.</param>
         public void Write<T>(int offset, T value)
         {
-            MemorySharp.Write(BaseAddress + offset, value, false);
+            MemorySharp.Write(BaseAddress + offset, value);
         }
 
         /// <summary>
@@ -420,7 +271,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <param name="array">The array to write.</param>
         public void Write<T>(int offset, T[] array)
         {
-            MemorySharp.Write(BaseAddress + offset, array, false);
+            MemorySharp.Write(BaseAddress + offset, array);
         }
 
         /// <summary>
@@ -452,7 +303,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <param name="encoding">The encoding used.</param>
         public void WriteString(int offset, string text, Encoding encoding)
         {
-            MemorySharp.WriteString(BaseAddress + offset, text, encoding, false);
+            MemorySharp.WriteString(BaseAddress + offset, text, encoding);
         }
 
         /// <summary>
@@ -474,35 +325,6 @@ namespace Binarysharp.MemoryManagement.Memory
         public void WriteString(string text, Encoding encoding)
         {
             WriteString(0, text, encoding);
-        }
-
-        /// <summary>
-        ///     Writes a string using the encoding UTF8 in the remote process.
-        /// </summary>
-        /// <param name="offset">The offset where the string is written from the pointer.</param>
-        /// <param name="text">The text to write.</param>
-        public void WriteString(int offset, string text)
-        {
-            MemorySharp.WriteString(BaseAddress + offset, text, false);
-        }
-
-        /// <summary>
-        ///     Writes a string using the encoding UTF8 in the remote process.
-        /// </summary>
-        /// <param name="offset">The offset where the string is written from the pointer.</param>
-        /// <param name="text">The text to write.</param>
-        public void WriteString(Enum offset, string text)
-        {
-            WriteString(Convert.ToInt32(offset), text);
-        }
-
-        /// <summary>
-        ///     Writes a string using the encoding UTF8 in the remote process.
-        /// </summary>
-        /// <param name="text">The text to write.</param>
-        public void WriteString(string text)
-        {
-            WriteString(0, text);
         }
         #endregion
     }

@@ -10,7 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Common.Builders;
 using Binarysharp.MemoryManagement.Native.Enums;
 
 namespace Binarysharp.MemoryManagement.Memory
@@ -29,7 +29,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <summary>
         ///     The reference of the <see cref="MemorySharp" /> object.
         /// </summary>
-        protected readonly MemorySharp MemorySharp;
+        protected readonly MemoryBase MemorySharp;
         #endregion
 
         #region Constructors, Destructors
@@ -37,7 +37,7 @@ namespace Binarysharp.MemoryManagement.Memory
         ///     Initializes a new instance of the <see cref="MemoryFactory" /> class.
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
-        internal MemoryFactory(MemorySharp memorySharp)
+        internal MemoryFactory(MemoryBase memorySharp)
         {
             // Save the parameter
             MemorySharp = memorySharp;
@@ -67,11 +67,14 @@ namespace Binarysharp.MemoryManagement.Memory
         {
             get
             {
-                var adresseTo = IntPtr.Size == 4 ? new IntPtr(0x7fffffff) : new IntPtr(0x7fffffffffffffff);
+#if x64
+                var adresseTo = new IntPtr(0x7fffffffffffffff);
+#else
+                var adresseTo = new IntPtr(0x7fffffff);
+#endif
                 return
-                    MemorySharp.NativeDriver.MemoryCore.QueryInformationMemory(MemorySharp.Handle, IntPtr.Zero,
-                                                                               adresseTo)
-                               .Select(page => new RemoteRegion(MemorySharp, page.BaseAddress));
+                    MemoryCore.Query(MemorySharp.Handle, IntPtr.Zero, adresseTo)
+                        .Select(page => new RemoteRegion(MemorySharp, page.BaseAddress));
             }
         }
         #endregion
@@ -101,8 +104,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <param name="mustBeDisposed">The allocated memory will be released when the finalizer collects the object.</param>
         /// <returns>A new instance of the <see cref="RemoteAllocation" /> class.</returns>
         public RemoteAllocation Allocate(int size,
-                                         MemoryProtectionFlags protection = MemoryProtectionFlags.ExecuteReadWrite,
-                                         bool mustBeDisposed = true)
+            MemoryProtectionFlags protection = MemoryProtectionFlags.ExecuteReadWrite, bool mustBeDisposed = true)
         {
             // Allocate a memory space
             var memory = new RemoteAllocation(MemorySharp, size, protection, mustBeDisposed);

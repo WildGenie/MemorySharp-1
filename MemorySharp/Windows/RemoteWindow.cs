@@ -12,9 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Binarysharp.MemoryManagement.Native;
 using Binarysharp.MemoryManagement.Native.Enums;
-using Binarysharp.MemoryManagement.Native.Structures;
+using Binarysharp.MemoryManagement.Native.Structs;
 using Binarysharp.MemoryManagement.Threading;
-using Binarysharp.MemoryManagement.Tools.Math3D;
 using Binarysharp.MemoryManagement.Windows.Keyboard;
 using Binarysharp.MemoryManagement.Windows.Mouse;
 
@@ -29,7 +28,7 @@ namespace Binarysharp.MemoryManagement.Windows
         /// <summary>
         ///     The reference of the <see cref="MemoryManagement.MemorySharp" /> object.
         /// </summary>
-        protected readonly MemorySharp MemorySharp;
+        protected readonly MemoryBase MemorySharp;
         #endregion
 
         #region Constructors, Destructors
@@ -38,7 +37,7 @@ namespace Binarysharp.MemoryManagement.Windows
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemoryManagement.MemorySharp" /> object.</param>
         /// <param name="handle">The handle of a window.</param>
-        internal RemoteWindow(MemorySharp memorySharp, IntPtr handle)
+        internal RemoteWindow(MemoryBase memorySharp, IntPtr handle)
         {
             // Save the parameters
             MemorySharp = memorySharp;
@@ -196,14 +195,8 @@ namespace Binarysharp.MemoryManagement.Windows
         /// </summary>
         public bool Equals(RemoteWindow other)
         {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
             return Equals(MemorySharp, other.MemorySharp) && Handle.Equals(other.Handle);
         }
         #endregion
@@ -230,15 +223,10 @@ namespace Binarysharp.MemoryManagement.Windows
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            return obj.GetType() == GetType() && Equals((RemoteWindow) obj);
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((RemoteWindow) obj);
         }
 
         /// <summary>
@@ -258,19 +246,6 @@ namespace Binarysharp.MemoryManagement.Windows
         public void Flash(uint count, TimeSpan timeout, FlashWindowFlags flags = FlashWindowFlags.All)
         {
             WindowCore.FlashWindowEx(Handle, flags, count, timeout);
-        }
-
-        /// <summary>
-        ///     Takes a <see cref="Vector3" /> which represents a 3D point inside of the <see cref="RemoteWindow" /> instance, and
-        ///     translates it into a <see cref="Vector2" /> that contains the x-y cordinates of the 3D point as a real clickable
-        ///     location for the client.
-        /// </summary>
-        /// <param name="matrix">The matrix.</param>
-        /// <param name="vector3">The vector3.</param>
-        /// <returns></returns>
-        public Vector2 WorldToScreen(Matrix matrix, Vector3 vector3)
-        {
-            return matrix.WorldToScreen(new Vector2(Width, Height), vector3);
         }
 
         /// <summary>

@@ -89,16 +89,16 @@ namespace Binarysharp.MemoryManagement.Windows.Keyboard
             PressedKeys.Add(tuple);
             // Start a new task to press the key at the specified interval
             Task.Run(async () =>
-                           {
-                               // While the key must be pressed
-                               while (PressedKeys.Contains(tuple))
-                               {
-                                   // Press the key
-                                   Press(key);
-                                   // Wait the interval
-                                   await Task.Delay(interval);
-                               }
-                           });
+            {
+                // While the key must be pressed
+                while (PressedKeys.Contains(tuple))
+                {
+                    // Press the key
+                    Press(key);
+                    // Wait the interval
+                    await Task.Delay(interval);
+                }
+            });
         }
 
         /// <summary>

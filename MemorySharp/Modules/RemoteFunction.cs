@@ -18,13 +18,7 @@ namespace Binarysharp.MemoryManagement.Modules
     public class RemoteFunction : RemotePointer
     {
         #region Constructors, Destructors
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="RemoteFunction" /> class.
-        /// </summary>
-        /// <param name="memorySharp">The instance of the <see cref="MemorySharp" /> class to use for this instance.</param>
-        /// <param name="address">The address the function is located inside of the modules memory.</param>
-        /// <param name="functionName">Name of the function.</param>
-        public RemoteFunction(MemorySharp memorySharp, IntPtr address, string functionName) : base(memorySharp, address)
+        public RemoteFunction(MemoryBase memorySharp, IntPtr address, string functionName) : base(memorySharp, address)
         {
             // Save the parameter
             Name = functionName;

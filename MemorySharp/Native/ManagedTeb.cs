@@ -25,7 +25,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
         /// <param name="address">The location of the teb.</param>
-        internal ManagedTeb(MemorySharp memorySharp, IntPtr address) : base(memorySharp, address)
+        internal ManagedTeb(MemoryBase memorySharp, IntPtr address) : base(memorySharp, address)
         {
         }
         #endregion

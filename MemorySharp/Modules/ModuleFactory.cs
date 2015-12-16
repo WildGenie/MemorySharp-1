@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Common.Builders;
 using Binarysharp.MemoryManagement.Memory;
 
 namespace Binarysharp.MemoryManagement.Modules
@@ -31,7 +31,7 @@ namespace Binarysharp.MemoryManagement.Modules
         /// <summary>
         ///     The reference of the <see cref="MemoryManagement.MemorySharp" /> object.
         /// </summary>
-        protected readonly MemorySharp MemorySharp;
+        protected readonly MemoryBase MemorySharp;
         #endregion
 
         #region Constructors, Destructors
@@ -39,7 +39,7 @@ namespace Binarysharp.MemoryManagement.Modules
         ///     Initializes a new instance of the <see cref="ModuleFactory" /> class.
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemoryManagement.MemorySharp" /> object.</param>
-        internal ModuleFactory(MemorySharp memorySharp)
+        internal ModuleFactory(MemoryBase memorySharp)
         {
             // Save the parameter
             MemorySharp = memorySharp;
@@ -65,7 +65,7 @@ namespace Binarysharp.MemoryManagement.Modules
         /// <summary>
         ///     Gets the main module for the remote process.
         /// </summary>
-        public RemoteModule MainModule => FetchModule(MemorySharp.Native.MainModule);
+        public RemoteModule MainModule => FetchModule(MemorySharp.Process.MainModule);
 
         /// <summary>
         ///     Gets the modules that have been loaded in the remote process.
@@ -75,7 +75,7 @@ namespace Binarysharp.MemoryManagement.Modules
         /// <summary>
         ///     Gets the native modules that have been loaded in the remote process.
         /// </summary>
-        internal IEnumerable<ProcessModule> NativeModules => MemorySharp.Native.Modules.Cast<ProcessModule>();
+        internal IEnumerable<ProcessModule> NativeModules => MemorySharp.Process.Modules.Cast<ProcessModule>();
 
         /// <summary>
         ///     Gets a pointer from the remote process.

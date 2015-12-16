@@ -10,7 +10,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Common.Builders;
 
 namespace Binarysharp.MemoryManagement.Modules
 {
@@ -26,7 +26,7 @@ namespace Binarysharp.MemoryManagement.Modules
         /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
         /// <param name="module">The native <see cref="ProcessModule" /> object corresponding to the injected module.</param>
         /// <param name="mustBeDisposed">The module will be ejected when the finalizer collects the object.</param>
-        internal InjectedModule(MemorySharp memorySharp, ProcessModule module, bool mustBeDisposed = true)
+        internal InjectedModule(MemoryBase memorySharp, ProcessModule module, bool mustBeDisposed = true)
             : base(memorySharp, module)
         {
             // Save the parameter
@@ -82,17 +82,14 @@ namespace Binarysharp.MemoryManagement.Modules
         ///     (an .exe file).
         /// </param>
         /// <returns>A new instance of the <see cref="InjectedModule" />class.</returns>
-        internal static InjectedModule InternalInject(MemorySharp memorySharp, string path)
+        internal static InjectedModule InternalInject(MemoryBase memorySharp, string path)
         {
             // Call LoadLibraryA remotely
             var thread = memorySharp.Threads.CreateAndJoin(memorySharp["kernel32"]["LoadLibraryA"].BaseAddress, path);
             // Get the inject module
             if (thread.GetExitCode<IntPtr>() != IntPtr.Zero)
                 return new InjectedModule(memorySharp,
-                                          memorySharp.Modules.NativeModules.First(
-                                                                                  m =>
-                                                                                  m.BaseAddress ==
-                                                                                  thread.GetExitCode<IntPtr>()));
+                    memorySharp.Modules.NativeModules.First(m => m.BaseAddress == thread.GetExitCode<IntPtr>()));
             return null;
         }
     }

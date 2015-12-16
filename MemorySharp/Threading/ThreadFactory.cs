@@ -11,7 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Common.Builders;
+using Binarysharp.MemoryManagement.Marshaling;
 using Binarysharp.MemoryManagement.Native.Enums;
 
 namespace Binarysharp.MemoryManagement.Threading
@@ -25,7 +26,7 @@ namespace Binarysharp.MemoryManagement.Threading
         /// <summary>
         ///     The reference of the <see cref="MemorySharp" /> object.
         /// </summary>
-        protected readonly MemorySharp MemorySharp;
+        protected readonly MemoryBase MemorySharp;
         #endregion
 
         #region Constructors, Destructors
@@ -33,7 +34,7 @@ namespace Binarysharp.MemoryManagement.Threading
         ///     Initializes a new instance of the <see cref="ThreadFactory" /> class.
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
-        internal ThreadFactory(MemorySharp memorySharp)
+        internal ThreadFactory(MemoryBase memorySharp)
         {
             // Save the parameter
             MemorySharp = memorySharp;
@@ -49,9 +50,7 @@ namespace Binarysharp.MemoryManagement.Threading
             get
             {
                 return new RemoteThread(MemorySharp,
-                                        NativeThreads.Aggregate(
-                                                                (current, next) =>
-                                                                next.StartTime < current.StartTime ? next : current));
+                    NativeThreads.Aggregate((current, next) => next.StartTime < current.StartTime ? next : current));
             }
         }
 
@@ -63,9 +62,9 @@ namespace Binarysharp.MemoryManagement.Threading
             get
             {
                 // Refresh the process info
-                MemorySharp.Native.Refresh();
+                MemorySharp.Process.Refresh();
                 // Enumerates all threads
-                return MemorySharp.Native.Threads.Cast<ProcessThread>();
+                return MemorySharp.Process.Threads.Cast<ProcessThread>();
             }
         }
 
@@ -116,14 +115,12 @@ namespace Binarysharp.MemoryManagement.Threading
 
             //Create the thread
             var ret = ThreadCore.NtQueryInformationThread(
-                                                          ThreadCore.CreateRemoteThread(MemorySharp.Handle, address,
-                                                                                        marshalledParameter.Reference,
-                                                                                        ThreadCreationFlags.Suspended));
+                ThreadCore.CreateRemoteThread(MemorySharp.Handle, address, marshalledParameter.Reference,
+                    ThreadCreationFlags.Suspended));
 
             // Find the managed object corresponding to this thread
             var result = new RemoteThread(MemorySharp,
-                                          MemorySharp.Threads.NativeThreads.First(t => t.Id == ret.ThreadId),
-                                          marshalledParameter);
+                MemorySharp.Threads.NativeThreads.First(t => t.Id == ret.ThreadId), marshalledParameter);
 
             // If the thread must be started
             if (isStarted)
@@ -144,13 +141,11 @@ namespace Binarysharp.MemoryManagement.Threading
         {
             //Create the thread
             var ret = ThreadCore.NtQueryInformationThread(
-                                                          ThreadCore.CreateRemoteThread(MemorySharp.Handle, address,
-                                                                                        IntPtr.Zero,
-                                                                                        ThreadCreationFlags.Suspended));
+                ThreadCore.CreateRemoteThread(MemorySharp.Handle, address, IntPtr.Zero, ThreadCreationFlags.Suspended));
 
             // Find the managed object corresponding to this thread
             var result = new RemoteThread(MemorySharp,
-                                          MemorySharp.Threads.NativeThreads.First(t => t.Id == ret.ThreadId));
+                MemorySharp.Threads.NativeThreads.First(t => t.Id == ret.ThreadId));
 
             // If the thread must be started
             if (isStarted)

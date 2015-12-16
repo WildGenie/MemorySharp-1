@@ -1213,14 +1213,7 @@ namespace Binarysharp.MemoryManagement.Native.Enums
         /// </summary>
         WtsSessionChange = 0x02B1,
 
-        /// <summary>
-        ///     The tablet firsts
-        /// </summary>
         TabletFirst = 0x02c0,
-
-        /// <summary>
-        ///     The tablet last
-        /// </summary>
         TabletLast = 0x02df,
 
         /// <summary>

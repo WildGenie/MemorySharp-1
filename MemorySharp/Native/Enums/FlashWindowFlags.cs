@@ -50,71 +50,68 @@ namespace Binarysharp.MemoryManagement.Native.Enums
         /// </summary>
         Tray = 0x2
     }
-    #endregion
+    #endregion FlashWindowFlags
 
     #region InputTypes
-    #endregion
+    #endregion InputTypes
 
     #region KeyboardFlags
-    #endregion
+    #endregion KeyboardFlags
 
     #region Keys
-    #endregion
+    #endregion Keys
 
     #region MemoryAllocationFlags
-    #endregion
+    #endregion MemoryAllocationFlags
 
     #region MemoryProtectionFlags
-    #endregion
+    #endregion MemoryProtectionFlags
 
     #region MemoryReleaseFlags
-    #endregion
+    #endregion MemoryReleaseFlags
 
     #region MemoryStateFlags
-    #endregion
+    #endregion MemoryStateFlags
 
     #region MemoryTypeFlags
-    #endregion
+    #endregion MemoryTypeFlags
 
     #region MouseFlags
-    #endregion
+    #endregion MouseFlags
 
     #region PebStructure
-    #endregion
+    #endregion PebStructure
 
     #region ProcessAccessFlags
-    #endregion
-
-    #region ProcessArchitectures
-    #endregion
+    #endregion ProcessAccessFlags
 
     #region ProcessInformationClass
-    #endregion
+    #endregion ProcessInformationClass
 
     #region SystemMetrics
-    #endregion
+    #endregion SystemMetrics
 
     #region TebStructure
-    #endregion
+    #endregion TebStructure
 
     #region ThreadAccessFlags
-    #endregion
+    #endregion ThreadAccessFlags
 
     #region ThreadContextFlags
-    #endregion
+    #endregion ThreadContextFlags
 
     #region ThreadCreationFlags
-    #endregion
+    #endregion ThreadCreationFlags
 
     #region TranslationTypes
-    #endregion
+    #endregion TranslationTypes
 
     #region WaitReturnValues
-    #endregion
+    #endregion WaitReturnValues
 
     #region WindowsMessages
-    #endregion
+    #endregion WindowsMessages
 
     #region WindowStates
-    #endregion
+    #endregion WindowStates
 }

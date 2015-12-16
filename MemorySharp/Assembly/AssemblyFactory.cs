@@ -12,7 +12,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Binarysharp.MemoryManagement.Assembly.Assembler;
 using Binarysharp.MemoryManagement.Assembly.CallingConvention;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Common.Builders;
+using Binarysharp.MemoryManagement.Marshaling;
 using Binarysharp.MemoryManagement.Memory;
 using Binarysharp.MemoryManagement.Threading;
 
@@ -27,7 +28,7 @@ namespace Binarysharp.MemoryManagement.Assembly
         /// <summary>
         ///     The reference of the <see cref="MemorySharp" /> object.
         /// </summary>
-        protected readonly MemorySharp MemorySharp;
+        protected readonly MemoryBase MemorySharp;
         #endregion
 
         #region Constructors, Destructors
@@ -35,7 +36,7 @@ namespace Binarysharp.MemoryManagement.Assembly
         ///     Initializes a new instance of the <see cref="AssemblyFactory" /> class.
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
-        internal AssemblyFactory(MemorySharp memorySharp)
+        internal AssemblyFactory(MemoryBase memorySharp)
         {
             // Save the parameter
             MemorySharp = memorySharp;
@@ -261,7 +262,7 @@ namespace Binarysharp.MemoryManagement.Assembly
         ///     assembly code.
         /// </returns>
         public Task<IntPtr> ExecuteAsync(IntPtr address, CallingConventions callingConvention,
-                                         params dynamic[] parameters)
+            params dynamic[] parameters)
         {
             return ExecuteAsync<IntPtr>(address, callingConvention, parameters);
         }

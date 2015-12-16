@@ -9,9 +9,10 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using Binarysharp.MemoryManagement.Native.Enums;
-using Binarysharp.MemoryManagement.Native.Structures;
+using Binarysharp.MemoryManagement.Native.Structs;
 
 namespace Binarysharp.MemoryManagement.Native
 {
@@ -21,6 +22,105 @@ namespace Binarysharp.MemoryManagement.Native
     public static class NativeMethods
     {
         #region Public Methods
+        /// <summary>
+        ///     Moves the memory.
+        /// </summary>
+        /// <param name="dest">The dest.</param>
+        /// <param name="src">The source.</param>
+        /// <param name="size">The size.</param>
+        [DllImport("Kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = false)]
+        public static extern unsafe void MoveMemory(void* dest, void* src, int size);
+
+        /// <summary>
+        ///     Retrieves a module processHandle for the specified module. The module must have been loaded by the calling process.
+        /// </summary>
+        /// <param name="moduleName">
+        ///     <para>
+        ///         The name of the loaded module (either a .dll or .exe file). If the file name extension is omitted, the default
+        ///         library extension .dll is appended.
+        ///         The file name string can include a trailing point character (.) to indicate that the module name has no
+        ///         extension.
+        ///         The string does not have to specify a path. When specifying a path, be sure to use backslashes (\), not forward
+        ///         slashes (/).
+        ///         The name is compared (case independently) to the names of modules currently mapped into the address space of
+        ///         the calling process.
+        ///     </para>
+        ///     <para>
+        ///         If this parameter is NULL, GetModuleHandle returns a processHandle to the file used to create the calling
+        ///         process
+        ///         (.exe file).
+        ///     </para>
+        /// </param>
+        /// <returns>
+        ///     If the function succeeds, the return value is a processHandle to the specified module.
+        ///     If the function fails, the return value is NULL. To get extended error information, call
+        ///     <see cref="Marshal.GetLastWin32Error" />.
+        /// </returns>
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto), SuppressUnmanagedCodeSecurity]
+        public static extern IntPtr GetModuleHandle(string moduleName);
+
+        /// <summary>
+        ///     Unhooks the windows hook ex.
+        /// </summary>
+        /// <param name="hhk">The HHK.</param>
+        /// <returns>System.Boolean.</returns>
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true), SuppressUnmanagedCodeSecurity]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        /// <summary>
+        ///     Calls the next hook ex.
+        /// </summary>
+        /// <param name="hhk">The HHK.</param>
+        /// <param name="nCode">The n code.</param>
+        /// <param name="wParam">The w parameter.</param>
+        /// <param name="lParam">The l parameter.</param>
+        /// <returns>System.IntPtr.</returns>
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true), SuppressUnmanagedCodeSecurity]
+        public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        /// <summary>
+        ///     Passes message information to the specified window procedure..
+        /// </summary>
+        /// <param name="lpPrevWndFunc">
+        ///     The previous window procedure. If this value is obtained by calling the GetWindowLong
+        ///     function with the nIndex parameter set to GWL_WNDPROC or DWL_DLGPROC, it is actually either the address of a window
+        ///     or dialog box procedure, or a special internal value meaningful only to CallWindowProc
+        /// </param>
+        /// <param name="hWnd">A Process Handle to the window procedure to receive the message.</param>
+        /// <param name="msg">The message.</param>
+        /// <param name="wParam">
+        ///     Additional message-specific information. The contents of this parameter depend on the value of the
+        ///     Msg parameter.
+        /// </param>
+        /// <param name="lParam">
+        ///     Additional message-specific information. The contents of this parameter depend on the value of the
+        ///     Msg parameter.
+        /// </param>
+        /// <returns>Type: LRESULT</returns>
+        [DllImport("user32.dll")]
+        public static extern int CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, int msg, int wParam, int lParam);
+
+        /// <summary>
+        ///     Changes an attribute of the specified window. The function also sets the 32-bit (long) value at the specified
+        ///     offset into the extra window memory.
+        ///     <remarks>This is a helper function in this case, which supports x32 and x64 versions of this pinvoke.</remarks>
+        /// </summary>
+        /// <param name="hWnd">A processHandle to the window and, indirectly, the class to which the window belongs.</param>
+        /// <param name="nIndex">
+        ///     The zero-based offset to the value to be set. Valid values are in the range zero through the
+        ///     number of bytes of extra window memory, minus the size of an integer. To set any other value, specify one of the
+        ///     following values.
+        /// </param>
+        /// <param name="dwNewLong">The replacement value.</param>
+        /// <returns>Type: LONG</returns>
+        public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+        {
+            return IntPtr.Size == 8
+                ? SetWindowLongPtr64(hWnd, nIndex, dwNewLong)
+                : new IntPtr(SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32()));
+        }
+
         /// <summary>
         ///     Closes an open object handle.
         /// </summary>
@@ -76,9 +176,8 @@ namespace Binarysharp.MemoryManagement.Native
         /// </returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern SafeMemoryHandle CreateRemoteThread(SafeMemoryHandle hProcess, IntPtr lpThreadAttributes,
-                                                                 uint dwStackSize, IntPtr lpStartAddress,
-                                                                 IntPtr lpParameter, ThreadCreationFlags dwCreationFlags,
-                                                                 out int lpThreadId);
+            uint dwStackSize, IntPtr lpStartAddress,
+            IntPtr lpParameter, ThreadCreationFlags dwCreationFlags, out int lpThreadId);
 
         /// <summary>
         ///     Frees the loaded dynamic-link library (DLL) module and, if necessary, decrements its reference count.
@@ -149,33 +248,6 @@ namespace Binarysharp.MemoryManagement.Native
         /// </returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool GetExitCodeThread(SafeMemoryHandle hThread, out IntPtr lpExitCode);
-
-        /// <summary>
-        ///     Retrieves a module handle for the specified module. The module must have been loaded by the calling process.
-        /// </summary>
-        /// <param name="moduleName">
-        ///     <para>
-        ///         The name of the loaded module (either a .dll or .exe file). If the file name extension is omitted, the default
-        ///         library extension .dll is appended.
-        ///         The file name string can include a trailing point character (.) to indicate that the module name has no
-        ///         extension.
-        ///         The string does not have to specify a path. When specifying a path, be sure to use backslashes (\), not forward
-        ///         slashes (/).
-        ///         The name is compared (case independently) to the names of modules currently mapped into the address space of
-        ///         the calling process.
-        ///     </para>
-        ///     <para>
-        ///         If this parameter is NULL, GetModuleHandle returns a handle to the file used to create the calling process
-        ///         (.exe file).
-        ///     </para>
-        /// </param>
-        /// <returns>
-        ///     If the function succeeds, the return value is a handle to the specified module.
-        ///     If the function fails, the return value is NULL. To get extended error information, call
-        ///     <see cref="Marshal.GetLastWin32Error" />.
-        /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern IntPtr GetModuleHandle(string moduleName);
 
         /// <summary>
         ///     Retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
@@ -276,7 +348,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// </returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool GetThreadSelectorEntry(SafeMemoryHandle hThread, uint dwSelector,
-                                                         out LdtEntry lpSelectorEntry);
+            out LdtEntry lpSelectorEntry);
 
         /// <summary>
         ///     Retrieves the thread identifier of the specified thread.
@@ -295,6 +367,14 @@ namespace Binarysharp.MemoryManagement.Native
         public static extern int GetThreadId(SafeMemoryHandle hThread);
 
         /// <summary>
+        ///     Gets the thread identifier.
+        /// </summary>
+        /// <param name="hThread">The h thread.</param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern int GetThreadId(IntPtr hThread);
+
+        /// <summary>
         ///     Retrieves the show state and the restored, minimized, and maximized positions of the specified window.
         /// </summary>
         /// <param name="hWnd">A handle to the window.</param>
@@ -310,6 +390,15 @@ namespace Binarysharp.MemoryManagement.Native
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowPlacement(IntPtr hWnd, out WindowPlacement lpwndpl);
+
+        /// <summary>
+        ///     Gets the window long.
+        /// </summary>
+        /// <param name="hWnd">The h WND.</param>
+        /// <param name="nIndex">Index of the n.</param>
+        /// <returns></returns>
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
 
         /// <summary>
         ///     Copies the text of the specified window's title bar (if it has one) into a buffer. If the specified window is a
@@ -420,30 +509,6 @@ namespace Binarysharp.MemoryManagement.Native
         public static extern bool FlashWindowEx(ref FlashInfo pwfi);
 
         /// <summary>
-        ///     Determines whether the specified process is running under WOW64.
-        ///     WOW64 is the x86 emulator that allows 32-bit Windows-based applications to run seamlessly on 64-bit Windows.
-        /// </summary>
-        /// <param name="process">
-        ///     A handle to the process.
-        ///     The handle must have the <see cref="ProcessAccessFlags.QueryInformation" /> or
-        ///     <see cref="ProcessAccessFlags.QueryLimitedInformation" /> access right.
-        /// </param>
-        /// <param name="wow64Process">
-        ///     A pointer to a value that is set to TRUE if the process is running under WOW64.
-        ///     If the process is running under 32-bit Windows, the value is set to FALSE.
-        ///     If the process is a 64-bit application running under 64-bit Windows, the value is also set to FALSE.
-        /// </param>
-        /// <returns>
-        ///     If the function succeeds, the return value is nonzero.
-        ///     If the function fails, the return value is zero. To get extended error information, call
-        ///     <see cref="Marshal.GetLastWin32Error" />.
-        /// </returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool IsWow64Process(IntPtr process,
-                                                 [Out, MarshalAs(UnmanagedType.Bool)] out bool wow64Process);
-
-        /// <summary>
         ///     Loads the specified module into the address space of the calling process. The specified module may cause other
         ///     modules to be loaded.
         /// </summary>
@@ -511,9 +576,8 @@ namespace Binarysharp.MemoryManagement.Native
         /// <returns>Returns an NTSTATUS success or error code. (STATUS_SUCCESS = 0x0).</returns>
         [DllImport("ntdll.dll")]
         public static extern int NtQueryInformationProcess(SafeMemoryHandle processHandle,
-                                                           ProcessInformationClass infoclass,
-                                                           ref ProcessBasicInformation processinfo, int length,
-                                                           IntPtr bytesread);
+            ProcessInformationClass infoclass,
+            ref ProcessBasicInformation processinfo, int length, IntPtr bytesread);
 
         /// <summary>
         ///     Retrieves information about the specified thread.
@@ -549,8 +613,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// <returns>Returns an NTSTATUS success or error code. (STATUS_SUCCESS = 0x0).</returns>
         [DllImport("ntdll.dll")]
         public static extern uint NtQueryInformationThread(SafeMemoryHandle hwnd, uint infoclass,
-                                                           ref ThreadBasicInformation threadinfo, int length,
-                                                           IntPtr bytesread);
+            ref ThreadBasicInformation threadinfo, int length, IntPtr bytesread);
 
         /// <summary>
         ///     Opens an existing local process object.
@@ -573,8 +636,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// </returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern SafeMemoryHandle OpenProcess(ProcessAccessFlags dwDesiredAccess,
-                                                          [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
-                                                          int dwProcessId);
+            [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwProcessId);
 
         /// <summary>
         ///     Opens an existing thread object.
@@ -597,8 +659,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// </returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern SafeMemoryHandle OpenThread(ThreadAccessFlags dwDesiredAccess,
-                                                         [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
-                                                         int dwThreadId);
+            [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwThreadId);
 
         /// <summary>
         ///     Places (posts) a message in the message queue associated with the thread that created the specified window and
@@ -653,7 +714,7 @@ namespace Binarysharp.MemoryManagement.Native
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ReadProcessMemory(SafeMemoryHandle hProcess, IntPtr lpBaseAddress,
-                                                    [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
+            [Out] byte[] lpBuffer, int dwSize, out int lpNumberOfBytesRead);
 
         /// <summary>
         ///     Decrements a thread's suspend count. When the suspend count is decremented to zero, the execution of the thread is
@@ -693,7 +754,7 @@ namespace Binarysharp.MemoryManagement.Native
         ///     caused by UIPI blocking.
         /// </returns>
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern int SendInput(int nInputs, Input[] pInputs, int cbSize);
+        public extern static int SendInput(int nInputs, Input[] pInputs, int cbSize);
 
         /// <summary>
         ///     Sends the specified message to a window or windows.
@@ -748,7 +809,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// </returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetThreadContext(SafeMemoryHandle hThread,
-                                                   [MarshalAs(UnmanagedType.Struct)] ref ThreadContext lpContext);
+            [MarshalAs(UnmanagedType.Struct)] ref ThreadContext lpContext);
 
         /// <summary>
         ///     Sets the show state and the restored, minimized, and maximized positions of the specified window.
@@ -874,8 +935,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// </returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr VirtualAllocEx(SafeMemoryHandle hProcess, IntPtr lpAddress, int dwSize,
-                                                   MemoryAllocationFlags flAllocationType,
-                                                   MemoryProtectionFlags flProtect);
+            MemoryAllocationFlags flAllocationType, MemoryProtectionFlags flProtect);
 
         /// <summary>
         ///     Releases, decommits, or releases and decommits a region of memory within the virtual address space of a specified
@@ -913,7 +973,7 @@ namespace Binarysharp.MemoryManagement.Native
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool VirtualFreeEx(SafeMemoryHandle hProcess, IntPtr lpAddress, int dwSize,
-                                                MemoryReleaseFlags dwFreeType);
+            MemoryReleaseFlags dwFreeType);
 
         /// <summary>
         ///     Changes the protection on a region of committed pages in the virtual address space of a specified process.
@@ -954,8 +1014,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// </returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool VirtualProtectEx(SafeMemoryHandle hProcess, IntPtr lpAddress, int dwSize,
-                                                   MemoryProtectionFlags flNewProtect,
-                                                   out MemoryProtectionFlags lpflOldProtect);
+            MemoryProtectionFlags flNewProtect, out MemoryProtectionFlags lpflOldProtect);
 
         /// <summary>
         ///     Retrieves information about a range of pages within the virtual address space of a specified process.
@@ -985,7 +1044,7 @@ namespace Binarysharp.MemoryManagement.Native
         /// </returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern int VirtualQueryEx(SafeMemoryHandle hProcess, IntPtr lpAddress,
-                                                out MemoryBasicInformation lpBuffer, int dwLength);
+            out MemoryBasicInformation lpBuffer, int dwLength);
 
         /// <summary>
         ///     Waits until the specified object is in the signaled state or the time-out interval elapses.
@@ -1040,25 +1099,17 @@ namespace Binarysharp.MemoryManagement.Native
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool WriteProcessMemory(SafeMemoryHandle hProcess, IntPtr lpBaseAddress, byte[] lpBuffer,
-                                                     int nSize, out IntPtr lpNumberOfBytesWritten);
+            int nSize, out int lpNumberOfBytesWritten);
         #endregion
 
-        /// <summary>
-        ///     Determines whether the specified function exists in the specified module.
-        /// </summary>
-        /// <param name="moduleName">The name of the module.</param>
-        /// <param name="functionName">The name of the function</param>
-        /// <returns>The return value indicates whether the function exists in the module.</returns>
-        /// <remarks>This is an internal function from Microsoft.</remarks>
-        internal static bool DoesWin32MethodExist(string moduleName, string functionName)
-        {
-            var moduleHandle = GetModuleHandle(moduleName);
-            if (moduleHandle == IntPtr.Zero)
-            {
-                return false;
-            }
-            return GetProcAddress(moduleHandle, functionName) != IntPtr.Zero;
-        }
+        #region Private Methods
+        // These are private, for the helper above to use which handles both x32/x64 for us.
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        private static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+        #endregion
     }
 
     #region Delegate EnumWindowsProc

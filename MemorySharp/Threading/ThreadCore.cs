@@ -9,11 +9,11 @@
 
 using System;
 using System.ComponentModel;
-using Binarysharp.MemoryManagement.Helpers;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Common.Helpers;
+using Binarysharp.MemoryManagement.Marshaling;
 using Binarysharp.MemoryManagement.Native;
 using Binarysharp.MemoryManagement.Native.Enums;
-using Binarysharp.MemoryManagement.Native.Structures;
+using Binarysharp.MemoryManagement.Native.Structs;
 
 namespace Binarysharp.MemoryManagement.Threading
 {
@@ -35,17 +35,16 @@ namespace Binarysharp.MemoryManagement.Threading
         /// <param name="creationFlags">The flags that control the creation of the thread.</param>
         /// <returns>A handle to the new thread.</returns>
         public static SafeMemoryHandle CreateRemoteThread(SafeMemoryHandle processHandle, IntPtr startAddress,
-                                                          IntPtr parameter,
-                                                          ThreadCreationFlags creationFlags = ThreadCreationFlags.Run)
+            IntPtr parameter, ThreadCreationFlags creationFlags = ThreadCreationFlags.Run)
         {
             // Check if the handles are valid
-            HandleManipulator.ValidateAsArgument(processHandle, "processHandle");
-            HandleManipulator.ValidateAsArgument(startAddress, "startAddress");
+            HandleManipulationHelper.ValidateAsArgument(processHandle, "processHandle");
+            HandleManipulationHelper.ValidateAsArgument(startAddress, "startAddress");
 
             // Create the remote thread
             int threadId;
             var ret = NativeMethods.CreateRemoteThread(processHandle, IntPtr.Zero, 0, startAddress, parameter,
-                                                       creationFlags, out threadId);
+                creationFlags, out threadId);
 
             // If the thread is created
             if (!ret.IsClosed && !ret.IsInvalid)
@@ -66,7 +65,7 @@ namespace Binarysharp.MemoryManagement.Threading
         public static IntPtr? GetExitCodeThread(SafeMemoryHandle threadHandle)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(threadHandle, "threadHandle");
+            HandleManipulationHelper.ValidateAsArgument(threadHandle, "threadHandle");
 
             // Create the variable storing the output exit code
             IntPtr exitCode;
@@ -89,10 +88,10 @@ namespace Binarysharp.MemoryManagement.Threading
         /// <param name="contextFlags">Determines which registers are returned or set.</param>
         /// <returns>A <see cref="ThreadContext" /> structure that receives the appropriate context of the specified thread.</returns>
         public static ThreadContext GetThreadContext(SafeMemoryHandle threadHandle,
-                                                     ThreadContextFlags contextFlags = ThreadContextFlags.Full)
+            ThreadContextFlags contextFlags = ThreadContextFlags.Full)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(threadHandle, "threadHandle");
+            HandleManipulationHelper.ValidateAsArgument(threadHandle, "threadHandle");
 
             // Allocate a thread context structure
             var context = new ThreadContext {ContextFlags = contextFlags};
@@ -116,7 +115,7 @@ namespace Binarysharp.MemoryManagement.Threading
         public static LdtEntry GetThreadSelectorEntry(SafeMemoryHandle threadHandle, uint selector)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(threadHandle, "threadHandle");
+            HandleManipulationHelper.ValidateAsArgument(threadHandle, "threadHandle");
 
             // Get the selector entry
             LdtEntry entry;
@@ -154,22 +153,21 @@ namespace Binarysharp.MemoryManagement.Threading
         public static ThreadBasicInformation NtQueryInformationThread(SafeMemoryHandle threadHandle)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(threadHandle, "threadHandle");
+            HandleManipulationHelper.ValidateAsArgument(threadHandle, "threadHandle");
 
             // Create a structure to store thread info
             var info = new ThreadBasicInformation();
 
             // Get the thread info
             var ret = NativeMethods.NtQueryInformationThread(threadHandle, 0, ref info,
-                                                             MarshalType<ThreadBasicInformation>.Size, IntPtr.Zero);
+                MarshalType<ThreadBasicInformation>.Size, IntPtr.Zero);
 
             // If the function succeeded
             if (ret == 0)
                 return info;
 
             // Else, couldn't get the thread info, throws an exception
-            throw new ApplicationException(
-                $"Couldn't get the information from the thread, error code '{ret}'.");
+            throw new ApplicationException($"Couldn't get the information from the thread, error code '{ret}'.");
         }
 
         /// <summary>
@@ -181,7 +179,7 @@ namespace Binarysharp.MemoryManagement.Threading
         public static uint ResumeThread(SafeMemoryHandle threadHandle)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(threadHandle, "threadHandle");
+            HandleManipulationHelper.ValidateAsArgument(threadHandle, "threadHandle");
 
             // Resume the thread
             var ret = NativeMethods.ResumeThread(threadHandle);
@@ -204,7 +202,7 @@ namespace Binarysharp.MemoryManagement.Threading
         public static void SetThreadContext(SafeMemoryHandle threadHandle, ThreadContext context)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(threadHandle, "threadHandle");
+            HandleManipulationHelper.ValidateAsArgument(threadHandle, "threadHandle");
 
             // Set the thread context
             if (!NativeMethods.SetThreadContext(threadHandle, ref context))
@@ -219,7 +217,7 @@ namespace Binarysharp.MemoryManagement.Threading
         public static uint SuspendThread(SafeMemoryHandle threadHandle)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(threadHandle, "threadHandle");
+            HandleManipulationHelper.ValidateAsArgument(threadHandle, "threadHandle");
 
             // Suspend the thread
             var ret = NativeMethods.SuspendThread(threadHandle);
@@ -239,7 +237,7 @@ namespace Binarysharp.MemoryManagement.Threading
         public static void TerminateThread(SafeMemoryHandle threadHandle, int exitCode)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(threadHandle, "threadHandle");
+            HandleManipulationHelper.ValidateAsArgument(threadHandle, "threadHandle");
 
             // Terminate the thread
             var ret = NativeMethods.TerminateThread(threadHandle, exitCode);
@@ -261,13 +259,11 @@ namespace Binarysharp.MemoryManagement.Threading
         public static WaitValues WaitForSingleObject(SafeMemoryHandle handle, TimeSpan? timeout)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(handle, "handle");
+            HandleManipulationHelper.ValidateAsArgument(handle, "handle");
 
             // Wait for single object
             var ret = NativeMethods.WaitForSingleObject(handle,
-                                                        timeout.HasValue
-                                                            ? Convert.ToUInt32(timeout.Value.TotalMilliseconds)
-                                                            : 0);
+                timeout.HasValue ? Convert.ToUInt32(timeout.Value.TotalMilliseconds) : 0);
 
             // If the function failed
             if (ret == WaitValues.Failed)
@@ -284,7 +280,7 @@ namespace Binarysharp.MemoryManagement.Threading
         public static WaitValues WaitForSingleObject(SafeMemoryHandle handle)
         {
             // Check if the handle is valid
-            HandleManipulator.ValidateAsArgument(handle, "handle");
+            HandleManipulationHelper.ValidateAsArgument(handle, "handle");
 
             // Wait for single object
             var ret = NativeMethods.WaitForSingleObject(handle, 0xFFFFFFFF);

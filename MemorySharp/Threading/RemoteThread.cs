@@ -13,10 +13,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Marshaling;
 using Binarysharp.MemoryManagement.Native;
 using Binarysharp.MemoryManagement.Native.Enums;
-using Binarysharp.MemoryManagement.Native.Structures;
+using Binarysharp.MemoryManagement.Native.Structs;
 using ThreadState = System.Diagnostics.ThreadState;
 
 namespace Binarysharp.MemoryManagement.Threading
@@ -40,7 +40,7 @@ namespace Binarysharp.MemoryManagement.Threading
         /// <summary>
         ///     The reference of the <see cref="MemoryManagement.MemorySharp" /> object.
         /// </summary>
-        protected readonly MemorySharp MemorySharp;
+        protected readonly MemoryBase MemorySharp;
         #endregion
 
         #region Constructors, Destructors
@@ -49,7 +49,7 @@ namespace Binarysharp.MemoryManagement.Threading
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemoryManagement.MemorySharp" /> object.</param>
         /// <param name="thread">The native <see cref="ProcessThread" /> object.</param>
-        internal RemoteThread(MemorySharp memorySharp, ProcessThread thread)
+        internal RemoteThread(MemoryBase memorySharp, ProcessThread thread)
         {
             // Save the parameters
             MemorySharp = memorySharp;
@@ -68,17 +68,17 @@ namespace Binarysharp.MemoryManagement.Threading
         /// <param name="memorySharp">The reference of the <see cref="MemoryManagement.MemorySharp" /> object.</param>
         /// <param name="thread">The native <see cref="ProcessThread" /> object.</param>
         /// <param name="parameter">The parameter passed to the thread when it was created.</param>
-        internal RemoteThread(MemorySharp memorySharp, ProcessThread thread, IMarshalledValue parameter = null)
+        internal RemoteThread(MemoryBase memorySharp, ProcessThread thread, IMarshalledValue parameter = null)
             : this(memorySharp, thread)
         {
             // Save the parameter
             _parameter = parameter;
             // Create the task
             _parameterCleaner = new Task(() =>
-                                         {
-                                             Join();
-                                             _parameter.Dispose();
-                                         });
+            {
+                Join();
+                _parameter.Dispose();
+            });
         }
 
         /// <summary>
@@ -101,38 +101,34 @@ namespace Binarysharp.MemoryManagement.Threading
             get
             {
                 // Check if the thread is alive
-                if (!IsAlive)
+                if (IsAlive)
                 {
-                    throw new ThreadStateException(
-                        $"Couldn't set the context of the thread #{Id} because it is terminated.");
+                    // Check if the thread is already suspended
+                    var isSuspended = IsSuspended;
+                    try
+                    {
+                        // Suspend the thread if it wasn't
+                        if (!isSuspended)
+                            Suspend();
+                        // Get the context
+                        return ThreadCore.GetThreadContext(Handle,
+                            ThreadContextFlags.All | ThreadContextFlags.FloatingPoint |
+                                ThreadContextFlags.DebugRegisters | ThreadContextFlags.ExtendedRegisters);
+                    }
+                    finally
+                    {
+                        // Resume the thread if it wasn't suspended
+                        if (!isSuspended)
+                            Resume();
+                    }
                 }
-                // Check if the thread is already suspended
-                var isSuspended = IsSuspended;
-                try
-                {
-                    // Suspend the thread if it wasn't
-                    if (!isSuspended)
-                        Suspend();
-                    // Get the context
-                    return ThreadCore.GetThreadContext(Handle,
-                                                       ThreadContextFlags.All | ThreadContextFlags.FloatingPoint |
-                                                       ThreadContextFlags.DebugRegisters |
-                                                       ThreadContextFlags.ExtendedRegisters);
-                }
-                finally
-                {
-                    // Resume the thread if it wasn't suspended
-                    if (!isSuspended)
-                        Resume();
-                }
+                // The thread is closed, cannot set the context
+                throw new ThreadStateException($"Couldn't set the context of the thread #{Id} because it is terminated.");
             }
             set
             {
                 // Check if the thread is alive
-                if (!IsAlive)
-                {
-                    return;
-                }
+                if (!IsAlive) return;
 
                 // Check if the thread is already suspended
                 var isSuspended = IsSuspended;
@@ -140,9 +136,7 @@ namespace Binarysharp.MemoryManagement.Threading
                 {
                     // Suspend the thread if it wasn't
                     if (!isSuspended)
-                    {
                         Suspend();
-                    }
                     // Set the context
                     ThreadCore.SetThreadContext(Handle, value);
                 }
@@ -150,9 +144,7 @@ namespace Binarysharp.MemoryManagement.Threading
                 {
                     // Resume the thread if it wasn't suspended
                     if (!isSuspended)
-                    {
                         Resume();
-                    }
                 }
             }
         }
@@ -188,7 +180,7 @@ namespace Binarysharp.MemoryManagement.Threading
                 Refresh();
                 // Return if the thread is suspended
                 return Native != null && Native.ThreadState == ThreadState.Wait &&
-                       Native.WaitReason == ThreadWaitReason.Suspended;
+                    Native.WaitReason == ThreadWaitReason.Suspended;
             }
         }
 
@@ -234,10 +226,7 @@ namespace Binarysharp.MemoryManagement.Threading
         /// </summary>
         public bool Equals(RemoteThread other)
         {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
+            if (ReferenceEquals(null, other)) return false;
             return ReferenceEquals(this, other) || (Id == other.Id && MemorySharp.Equals(other.MemorySharp));
         }
         #endregion
@@ -342,7 +331,7 @@ namespace Binarysharp.MemoryManagement.Threading
             if (Native == null)
                 return;
             // Refresh the process info
-            MemorySharp.Native.Refresh();
+            MemorySharp.Process.Refresh();
             // Get new info about the thread
             Native = MemorySharp.Threads.NativeThreads.FirstOrDefault(t => t.Id == Native.Id);
         }
@@ -371,10 +360,7 @@ namespace Binarysharp.MemoryManagement.Threading
         public void Resume()
         {
             // Check if the thread is still alive
-            if (!IsAlive)
-            {
-                return;
-            }
+            if (!IsAlive) return;
 
             // Start the thread
             ThreadCore.ResumeThread(Handle);
@@ -407,9 +393,7 @@ namespace Binarysharp.MemoryManagement.Threading
         public void Terminate(int exitCode = 0)
         {
             if (IsAlive)
-            {
                 ThreadCore.TerminateThread(Handle, exitCode);
-            }
         }
 
         /// <summary>

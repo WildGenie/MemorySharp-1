@@ -10,7 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Common.Builders;
 
 namespace Binarysharp.MemoryManagement.Windows
 {
@@ -21,20 +21,20 @@ namespace Binarysharp.MemoryManagement.Windows
     {
         #region Fields, Private Properties
         /// <summary>
-        ///     The reference of the <see cref="MemorySharp" /> object.
+        ///     The reference of the <see cref="MemoryManagement.MemorySharp" /> object.
         /// </summary>
-        private readonly MemorySharp _memorySharp;
+        private MemoryBase MemorySharp { get; }
         #endregion
 
         #region Constructors, Destructors
         /// <summary>
         ///     Initializes a new instance of the <see cref="WindowFactory" /> class.
         /// </summary>
-        /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
-        internal WindowFactory(MemorySharp memorySharp)
+        /// <param name="memorySharp">The reference of the <see cref="MemoryManagement.MemorySharp" /> object.</param>
+        internal WindowFactory(MemoryBase memorySharp)
         {
             // Save the parameter
-            _memorySharp = memorySharp;
+            MemorySharp = memorySharp;
         }
         #endregion
 
@@ -44,24 +44,24 @@ namespace Binarysharp.MemoryManagement.Windows
         /// </summary>
         public IEnumerable<RemoteWindow> ChildWindows
         {
-            get { return ChildWindowHandles.Select(handle => new RemoteWindow(_memorySharp, handle)); }
+            get { return ChildWindowHandles.Select(handle => new RemoteWindow(MemorySharp, handle)); }
         }
 
         /// <summary>
         ///     Gets all the child window handles that belong to the application.
         /// </summary>
         internal IEnumerable<IntPtr> ChildWindowHandles
-            => WindowCore.EnumChildWindows(_memorySharp.Native.MainWindowHandle);
+            => WindowCore.EnumChildWindows(MemorySharp.Process.MainWindowHandle);
 
         /// <summary>
         ///     Gets the main window of the application.
         /// </summary>
-        public RemoteWindow MainWindow => new RemoteWindow(_memorySharp, MainWindowHandle);
+        public RemoteWindow MainWindow => new RemoteWindow(MemorySharp, MainWindowHandle);
 
         /// <summary>
         ///     Gets the main window handle of the application.
         /// </summary>
-        public IntPtr MainWindowHandle => _memorySharp.Native.MainWindowHandle;
+        public IntPtr MainWindowHandle => MemorySharp.Process.MainWindowHandle;
 
         /// <summary>
         ///     Gets all the windows that have the same specified title.
@@ -75,7 +75,7 @@ namespace Binarysharp.MemoryManagement.Windows
         /// </summary>
         public IEnumerable<RemoteWindow> RemoteWindows
         {
-            get { return WindowHandles.Select(handle => new RemoteWindow(_memorySharp, handle)); }
+            get { return WindowHandles.Select(handle => new RemoteWindow(MemorySharp, handle)); }
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace Binarysharp.MemoryManagement.Windows
         {
             return WindowHandles
                 .Where(handle => WindowCore.GetClassName(handle) == className)
-                .Select(handle => new RemoteWindow(_memorySharp, handle));
+                .Select(handle => new RemoteWindow(MemorySharp, handle));
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Binarysharp.MemoryManagement.Windows
         {
             return WindowHandles
                 .Where(handle => WindowCore.GetWindowText(handle) == windowTitle)
-                .Select(handle => new RemoteWindow(_memorySharp, handle));
+                .Select(handle => new RemoteWindow(MemorySharp, handle));
         }
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace Binarysharp.MemoryManagement.Windows
         {
             return WindowHandles
                 .Where(handle => WindowCore.GetWindowText(handle).Contains(windowTitle))
-                .Select(handle => new RemoteWindow(_memorySharp, handle));
+                .Select(handle => new RemoteWindow(MemorySharp, handle));
         }
         #endregion
     }

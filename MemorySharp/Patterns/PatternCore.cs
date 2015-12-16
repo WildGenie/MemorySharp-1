@@ -2,10 +2,11 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using Binarysharp.MemoryManagement.Helpers;
-using Binarysharp.MemoryManagement.Logging.Defaults;
+using Binarysharp.MemoryManagement.Common.Builders;
+using Binarysharp.MemoryManagement.Common.Extensions;
+using Binarysharp.MemoryManagement.Common.Helpers;
 using Binarysharp.MemoryManagement.Memory;
-using Binarysharp.MemoryManagement.Patterns.Structs;
+using Binarysharp.MemoryManagement.Native;
 
 namespace Binarysharp.MemoryManagement.Patterns
 {
@@ -14,16 +15,11 @@ namespace Binarysharp.MemoryManagement.Patterns
     /// </summary>
     public static class PatternCore
     {
-        #region Fields, Private Properties
-        private static FileLog FileLog { get; } = FileLog.Create("PatternScanResultLogger", "PatternLogs", "PatternLog",
-                                                                 false, true);
-        #endregion
-
         #region Public Methods
         /// <summary>
         ///     Performs a pattern scan.
         /// </summary>
-        /// <param name="process">The process the <see cref="ProcessModule" /> containing the data resides in.</param>
+        /// <param name="processHandle">The process the <see cref="ProcessModule" /> containing the data resides in.</param>
         /// <param name="processModule">The <see cref="ProcessModule" /> that contains the pattern data resides in.</param>
         /// <param name="data">The array of bytes containing the data to search for matches in.</param>
         /// <param name="mask">
@@ -42,21 +38,22 @@ namespace Binarysharp.MemoryManagement.Patterns
         ///     between pattern data that is relevant, and pattern data that should be ignored. The default value is 'x'.
         /// </param>
         /// <param name="pattern">The byte array that contains the pattern of bytes we're looking for.</param>
-        /// <returns>A new <see cref="ScanResult" /> instance.</returns>
-        public static ScanResult Find(Process process, ProcessModule processModule, byte[] data, byte[] pattern,
-                                      string mask, int offsetToAdd, bool reBase, char wildCardChar = 'x')
+        /// <returns>A new <see cref="PatternScanResult" /> instance.</returns>
+        public static PatternScanResult Find(SafeMemoryHandle processHandle, ProcessModule processModule, byte[] data,
+            byte[] pattern,
+            string mask, int offsetToAdd, bool reBase, char wildCardChar = 'x')
         {
             for (var offset = 0; offset < data.Length; offset++)
             {
                 if (mask.Where((m, b) => m == 'x' && pattern[b] != data[b + offset]).Any()) continue;
-                var found = ExternalMemoryCore.Read<IntPtr>(process.Handle,
-                                                            processModule.BaseAddress + offset + offsetToAdd);
-                var result = new ScanResult
-                             {
-                                 OriginalAddress = found,
-                                 Address = reBase ? found : found.Subtract(processModule.BaseAddress),
-                                 Offset = (IntPtr) offset
-                             };
+                var found = MemoryCore.Read<IntPtr>(processHandle,
+                    processModule.BaseAddress + offset + offsetToAdd);
+                var result = new PatternScanResult
+                {
+                    OriginalAddress = found,
+                    Address = reBase ? found : found.Subtract(processModule.BaseAddress),
+                    Offset = (IntPtr) offset
+                };
                 return result;
             }
             // If this is reached, the pattern was not found.
@@ -116,7 +113,7 @@ namespace Binarysharp.MemoryManagement.Patterns
         /// <returns>A <see cref="SerializablePattern" /> array.</returns>
         public static SerializablePattern[] LoadXmlPatternFile(string nameOrPath)
         {
-            return XmlHelper.ImportFromFile<SerializablePattern[]>(nameOrPath);
+            return XmlHelper.ImportFromXmlFile<SerializablePattern[]>(nameOrPath);
         }
 
 
@@ -127,7 +124,7 @@ namespace Binarysharp.MemoryManagement.Patterns
         /// <returns>A <see cref="SerializablePattern" /> array.</returns>
         public static SerializablePattern[] LoadJsonPatternFile(string nameOrPath)
         {
-            return JsonHelper.ImportFromFile<SerializablePattern[]>(nameOrPath);
+            return XmlHelper.ImportFromXmlFile<SerializablePattern[]>(nameOrPath);
         }
 
         /// <summary>
@@ -139,7 +136,7 @@ namespace Binarysharp.MemoryManagement.Patterns
         /// <param name="matchChar">Char that is no wildcard.</param>
         /// <returns>A <see cref="string" /> containing the mask to use for the given array of bytes that make up the pattern.</returns>
         public static string MaskFromPattern(byte[] pattern, byte wildcardByte = 0, char wildcardChar = '?',
-                                             char matchChar = 'x')
+            char matchChar = 'x')
         {
             var chr = new char[pattern.Length];
             for (var i = 0; i < chr.Length; i++)
@@ -152,17 +149,18 @@ namespace Binarysharp.MemoryManagement.Patterns
         /// <summary>
         ///     Logs the pattern scan result to a text file as a useable pattern format for C#.
         /// </summary>
+        /// <param name="log">The <see cref="ILog" /> member to use to log the result.</param>
         /// <param name="name">Name that represents the address.ed.</param>
         /// <param name="address">The address found from the pattern scan.</param>
-        public static void LogFoundAddressToFile(string name, IntPtr address)
+        public static void LogFoundAddressToFile(ILog log, string name, IntPtr address)
         {
             try
             {
-                FileLog.LogNormal(FormatAddressForFileLog(name, address));
+                log.Write(FormatAddressForFileLog(name, address));
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                log.Write(e.ToString());
             }
         }
 

@@ -8,7 +8,7 @@
 */
 
 using System;
-using Binarysharp.MemoryManagement.Helpers;
+using Binarysharp.MemoryManagement.Common;
 
 namespace Binarysharp.MemoryManagement.Assembly.CallingConvention
 {

@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using Binarysharp.MemoryManagement.Memory;
 using Binarysharp.MemoryManagement.Native;
+using Binarysharp.MemoryManagement.Patterns;
 
 namespace Binarysharp.MemoryManagement.Modules
 {
@@ -27,6 +28,8 @@ namespace Binarysharp.MemoryManagement.Modules
         /// </summary>
         internal static readonly IDictionary<Tuple<string, SafeMemoryHandle>, RemoteFunction> CachedFunctions =
             new Dictionary<Tuple<string, SafeMemoryHandle>, RemoteFunction>();
+
+        private Lazy<byte[]> LazyData { get; }
         #endregion
 
         #region Constructors, Destructors
@@ -35,10 +38,13 @@ namespace Binarysharp.MemoryManagement.Modules
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
         /// <param name="module">The native <see cref="ProcessModule" /> object corresponding to this module.</param>
-        internal RemoteModule(MemorySharp memorySharp, ProcessModule module) : base(memorySharp, module.BaseAddress)
+        internal RemoteModule(MemoryBase memorySharp, ProcessModule module) : base(memorySharp, module.BaseAddress)
         {
             // Save the parameter
             Native = module;
+            LazyData =
+                new Lazy<byte[]>(
+                    () => MemoryCore.ReadBytes(memorySharp.Handle, module.BaseAddress, module.ModuleMemorySize));
         }
         #endregion
 
@@ -46,7 +52,7 @@ namespace Binarysharp.MemoryManagement.Modules
         /// <summary>
         ///     State if this is the main module of the remote process.
         /// </summary>
-        public bool IsMainModule => MemorySharp.Native.MainModule.BaseAddress == BaseAddress;
+        public bool IsMainModule => MemorySharp.Process.MainModule.BaseAddress == BaseAddress;
 
         /// <summary>
         ///     Gets if the <see cref="RemoteModule" /> is valid.
@@ -56,10 +62,18 @@ namespace Binarysharp.MemoryManagement.Modules
             get
             {
                 return base.IsValid &&
-                       MemorySharp.Native.Modules.Cast<ProcessModule>()
-                                  .Any(m => m.BaseAddress == BaseAddress && m.ModuleName == Name);
+                    MemorySharp.Process.Modules.Cast<ProcessModule>()
+                        .Any(m => m.BaseAddress == BaseAddress && m.ModuleName == Name);
             }
         }
+
+        /// <summary>
+        ///     Gets the modules data as an array of bytes.
+        /// </summary>
+        /// <value>
+        ///     The modules data as a <see cref="byte" /> array.
+        /// </value>
+        public byte[] Data => LazyData.Value;
 
         /// <summary>
         ///     The name of the module.
@@ -91,14 +105,104 @@ namespace Binarysharp.MemoryManagement.Modules
 
         #region Public Methods
         /// <summary>
-        ///     Ejects the loaded dynamic-link library (DLL) module.
+        ///     Performs a pattern scan from a <see cref="SerializablePattern" /> struct.
         /// </summary>
-        public void Eject()
+        /// <param name="pattern">The <see cref="SerializablePattern" /> instance to use.</param>
+        /// <returns>A new <see cref="PatternScanResult" /> instance.</returns>
+        public PatternScanResult FindPattern(SerializablePattern pattern)
         {
-            // Eject the module
-            MemorySharp.Modules.Eject(this);
-            // Remove the pointer
-            BaseAddress = IntPtr.Zero;
+            return FindPattern(pattern.TextPattern, pattern.OffsetToAdd, pattern.RebaseResult);
+        }
+
+        /// <summary>
+        ///     Performs a pattern scan from a <see cref="Pattern" /> struct.
+        /// </summary>
+        /// m>
+        /// <param name="pattern">The <see cref="Pattern" /> instance to use.</param>
+        /// <returns>A new <see cref="PatternScanResult" /> instance.</returns>
+        public PatternScanResult FindPattern(Pattern pattern)
+        {
+            return FindPattern(pattern.TextPattern, pattern.OffsetToAdd, pattern.RebaseResult);
+        }
+
+        /// <summary>
+        ///     Preform a pattern scan from a dword string based pattern.
+        /// </summary>
+        /// m>
+        /// <param name="patternText">
+        ///     The dword string based pattern text containing the pattern to try and find matches against.
+        ///     <example>
+        ///         <code>
+        /// var bytes = new byte[]{55,45,00,00,55} ;
+        /// var mask = "xx??x";
+        /// </code>
+        ///     </example>
+        /// </param>
+        /// <param name="offsetToAdd">The offset to add to the offset result found from the pattern.</param>
+        /// <param name="reBase">If the address should be rebased to this <see cref="RemoteModule" /> Instance's base address.</param>
+        /// <returns>A new <see cref="PatternScanResult" /> instance.</returns>
+        public PatternScanResult FindPattern(string patternText, int offsetToAdd, bool reBase)
+        {
+            var bytes = PatternCore.GetBytesFromDwordPattern(patternText);
+            return FindPattern(bytes, offsetToAdd, reBase);
+        }
+
+        /// <summary>
+        ///     Preform a pattern scan from a byte[] array pattern.
+        /// </summary>
+        /// <param name="pattern">The byte array that contains the pattern of bytes we're looking for.</param>
+        /// <param name="offsetToAdd">The offset to add to the offset result found from the pattern.</param>
+        /// <param name="rebaseResult">
+        ///     If the final address result should be rebased to the base address of the
+        ///     <see cref="ProcessModule" /> the pattern data resides in.
+        /// </param>
+        /// <returns>A new <see cref="PatternScanResult" /> instance.</returns>
+        public PatternScanResult FindPattern(byte[] pattern, int offsetToAdd, bool rebaseResult)
+        {
+            var mask = PatternCore.MaskFromPattern(pattern);
+            return FindPattern(pattern, mask, offsetToAdd, rebaseResult);
+        }
+
+        /// <summary>
+        ///     Performs a pattern scan.
+        /// </summary>
+        /// <param name="pattern">The byte array that contains the pattern of bytes we're looking for.</param>
+        /// <param name="mask">
+        ///     The mask that defines the byte pattern we are searching for.
+        ///     <example>
+        ///         <code>
+        /// var bytes = new byte[]{55,45,00,00,55} ;
+        /// var mask = "xx??x";
+        /// </code>
+        ///     </example>
+        /// </param>
+        /// <param name="offsetToAdd">The offset to add to the offset result found from the pattern.</param>
+        /// <param name="rebaseResult">
+        ///     If the final address result should be rebased to the base address of the
+        ///     <see cref="ProcessModule" /> the pattern data resides in.
+        /// </param>
+        /// <returns>A new <see cref="PatternScanResult" /> instance.</returns>
+        public PatternScanResult FindPattern(byte[] pattern, string mask, int offsetToAdd, bool rebaseResult)
+        {
+            for (var offset = 0; offset < Data.Length; offset++)
+            {
+                if (mask.Where((m, b) => m == 'x' && pattern[b] != Data[b + offset]).Any())
+                {
+                    continue;
+                }
+
+                var found = MemorySharp.Read<IntPtr>(BaseAddress + offset + offsetToAdd);
+
+                var result = new PatternScanResult
+                {
+                    OriginalAddress = found,
+                    Address = rebaseResult ? found : IntPtr.Subtract(found, (int) BaseAddress),
+                    Offset = (IntPtr) offset
+                };
+
+                return result;
+            }
+            throw new Exception("Could not find the pattern.");
         }
 
         /// <summary>
@@ -122,8 +226,8 @@ namespace Binarysharp.MemoryManagement.Modules
             // Check if the local process has this module loaded
             var localModule =
                 Process.GetCurrentProcess()
-                       .Modules.Cast<ProcessModule>()
-                       .FirstOrDefault(m => m.FileName.ToLower() == Path.ToLower());
+                    .Modules.Cast<ProcessModule>()
+                    .FirstOrDefault(m => string.Equals(m.FileName, Path, StringComparison.CurrentCultureIgnoreCase));
             var isManuallyLoaded = false;
 
             try
@@ -137,11 +241,11 @@ namespace Binarysharp.MemoryManagement.Modules
 
                 // Get the offset of the function
                 var offset = ModuleCore.GetProcAddress(localModule, functionName).ToInt64() -
-                             localModule.BaseAddress.ToInt64();
+                    localModule.BaseAddress.ToInt64();
 
                 // Rebase the function with the remote module
                 var function = new RemoteFunction(MemorySharp, new IntPtr(Native.BaseAddress.ToInt64() + offset),
-                                                  functionName);
+                    functionName);
 
                 // Store the function in the cache
                 CachedFunctions.Add(tuple, function);
@@ -171,7 +275,7 @@ namespace Binarysharp.MemoryManagement.Modules
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
         /// <param name="module">The module to eject.</param>
-        internal static void InternalEject(MemorySharp memorySharp, RemoteModule module)
+        internal static void InternalEject(MemoryBase memorySharp, RemoteModule module)
         {
             // Call FreeLibrary remotely
             memorySharp.Threads.CreateAndJoin(memorySharp["kernel32"]["FreeLibrary"].BaseAddress, module.BaseAddress);

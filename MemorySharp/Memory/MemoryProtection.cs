@@ -21,7 +21,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <summary>
         ///     The reference of the <see cref="MemorySharp" /> object.
         /// </summary>
-        private readonly MemorySharp _memorySharp;
+        private readonly MemoryBase _memorySharp;
         #endregion
 
         #region Constructors, Destructors
@@ -33,9 +33,9 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <param name="size">The size of the memory to change.</param>
         /// <param name="protection">The new protection to apply.</param>
         /// <param name="mustBeDisposed">The resource will be automatically disposed when the finalizer collects the object.</param>
-        public MemoryProtection(MemorySharp memorySharp, IntPtr baseAddress, int size,
-                                MemoryProtectionFlags protection = MemoryProtectionFlags.ExecuteReadWrite,
-                                bool mustBeDisposed = true)
+        public MemoryProtection(MemoryBase memorySharp, IntPtr baseAddress, int size,
+            MemoryProtectionFlags protection = MemoryProtectionFlags.ExecuteReadWrite,
+            bool mustBeDisposed = true)
         {
             // Save the parameters
             _memorySharp = memorySharp;
@@ -45,8 +45,7 @@ namespace Binarysharp.MemoryManagement.Memory
             MustBeDisposed = mustBeDisposed;
 
             // Change the memory protection
-            OldProtection = _memorySharp.NativeDriver.MemoryCore.ChangeMemoryProtection(_memorySharp.Handle, baseAddress,
-                                                                                        size, protection);
+            OldProtection = MemoryCore.ChangeProtection(_memorySharp.Handle, baseAddress, size, protection);
         }
 
         /// <summary>
@@ -93,8 +92,7 @@ namespace Binarysharp.MemoryManagement.Memory
         public virtual void Dispose()
         {
             // Restore the memory protection
-            _memorySharp.NativeDriver.MemoryCore.ChangeMemoryProtection(_memorySharp.Handle, BaseAddress, Size,
-                                                                        OldProtection);
+            MemoryCore.ChangeProtection(_memorySharp.Handle, BaseAddress, Size, OldProtection);
             // Avoid the finalizer 
             GC.SuppressFinalize(this);
         }

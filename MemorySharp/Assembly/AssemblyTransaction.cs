@@ -9,7 +9,7 @@
 
 using System;
 using System.Text;
-using Binarysharp.MemoryManagement.Internals;
+using Binarysharp.MemoryManagement.Marshaling;
 
 namespace Binarysharp.MemoryManagement.Assembly
 {
@@ -23,7 +23,7 @@ namespace Binarysharp.MemoryManagement.Assembly
         /// <summary>
         ///     The reference of the <see cref="MemorySharp" /> object.
         /// </summary>
-        protected readonly MemorySharp MemorySharp;
+        protected readonly MemoryBase MemorySharp;
 
         /// <summary>
         ///     The exit code of the thread created to execute the assembly code.
@@ -43,7 +43,7 @@ namespace Binarysharp.MemoryManagement.Assembly
         /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
         /// <param name="address">The address where the assembly code is injected.</param>
         /// <param name="autoExecute">Indicates whether the assembly code is executed once the object is disposed.</param>
-        public AssemblyTransaction(MemorySharp memorySharp, IntPtr address, bool autoExecute)
+        public AssemblyTransaction(MemoryBase memorySharp, IntPtr address, bool autoExecute)
         {
             // Save the parameters
             MemorySharp = memorySharp;
@@ -58,7 +58,7 @@ namespace Binarysharp.MemoryManagement.Assembly
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
         /// <param name="autoExecute">Indicates whether the assembly code is executed once the object is disposed.</param>
-        public AssemblyTransaction(MemorySharp memorySharp, bool autoExecute)
+        public AssemblyTransaction(MemoryBase memorySharp, bool autoExecute)
             : this(memorySharp, IntPtr.Zero, autoExecute)
         {
         }

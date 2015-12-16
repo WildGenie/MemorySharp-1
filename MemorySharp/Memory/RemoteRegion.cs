@@ -9,7 +9,7 @@
 
 using System;
 using Binarysharp.MemoryManagement.Native.Enums;
-using Binarysharp.MemoryManagement.Native.Structures;
+using Binarysharp.MemoryManagement.Native.Structs;
 
 namespace Binarysharp.MemoryManagement.Memory
 {
@@ -24,7 +24,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// </summary>
         /// <param name="memorySharp">The reference of the <see cref="MemorySharp" /> object.</param>
         /// <param name="baseAddress">The base address of the memory region.</param>
-        internal RemoteRegion(MemorySharp memorySharp, IntPtr baseAddress) : base(memorySharp, baseAddress)
+        internal RemoteRegion(MemoryBase memorySharp, IntPtr baseAddress) : base(memorySharp, baseAddress)
         {
         }
         #endregion
@@ -33,8 +33,7 @@ namespace Binarysharp.MemoryManagement.Memory
         /// <summary>
         ///     Contains information about the memory.
         /// </summary>
-        public MemoryBasicInformation Information
-            => MemorySharp.NativeDriver.MemoryCore.QueryInformationMemory(MemorySharp.Handle, BaseAddress);
+        public MemoryBasicInformation Information => MemoryCore.Query(MemorySharp.Handle, BaseAddress);
 
         /// <summary>
         ///     Gets if the <see cref="RemoteRegion" /> is valid.
@@ -50,7 +49,7 @@ namespace Binarysharp.MemoryManagement.Memory
         {
             if (ReferenceEquals(null, other)) return false;
             return ReferenceEquals(this, other) ||
-                   (BaseAddress.Equals(other.BaseAddress) && MemorySharp.Equals(other.MemorySharp) &&
+                (BaseAddress.Equals(other.BaseAddress) && MemorySharp.Equals(other.MemorySharp) &&
                     Information.RegionSize.Equals(other.Information.RegionSize));
         }
         #endregion
@@ -102,7 +101,7 @@ namespace Binarysharp.MemoryManagement.Memory
         public void Release()
         {
             // Release the memory
-            MemorySharp.NativeDriver.MemoryCore.FreeMemory(MemorySharp.Handle, BaseAddress);
+            MemoryCore.Free(MemorySharp.Handle, BaseAddress);
             // Remove the pointer
             BaseAddress = IntPtr.Zero;
         }
