@@ -14,242 +14,194 @@ One main feature added was support for people running injected code. A basic Wnd
 Some documentation of new features by example.
 -----------------------------
 
-* Executing internal game functions using assembly injection and CreateRemoteThread with ease with MemorySharps assembly wrappers and the ``` RemoteCall``` class.
+**Examples of added features**
+--------------------------
+
+Pattern scanning.
+----------------
+
+ 
 ```csharp
-          public static class ExampleCalls
-          {
-            // This will assemble the asm code needed, alloc/inject it in the remote process, then execute it using                  
-            // CreateRemoteThread.
-            // This is a simple no parameter function called.
-            public static IntPtr LocalPlayerPointer => MemorySharp.Execute<IntPtr>(GetLocalPlayerPointer);
-            
-            // Calling functions with parameters are also possible/easy thanks to ZenLulz wrappers.
-            public static void TryMoveToLocation(Vector2 vector2Location)
-            {
-                MemorySharp.Execute(MoveToLocation, vector2Location.X, vector2Location.Y);
-            }                         
+                // Our memory sharp instance for the pattern scanning examples below.
+                var sharp = new MemorySharp(FromProcessName("ProcessName").First());
 
-            // Private values.
-            private static MemorySharp MemorySharp { get; } = new MemorySharp(FromProcessName("GameProcessName").First());
+                // Standard pattern scan from byte/mask pattern and log the scan result 
+                // values to all valid log instances. 
 
-            // A function we will pretends is a cdecl function with no params and returns an IntPtr to the local player object.
-            private static RemoteCallParams GetLocalPlayerPointer { get; } = new RemoteCallParams
-            {
-                Address = (IntPtr)0x500,
-                CallingConvention = CallingConventions.Cdecl
-            };
+                var scanResult1 = sharp.Patterns.Find(new byte[] {4, 4, 00, 0xC}, "XX?X", 4, false);
+                LogManager.Instance.LogInfo(scanResult1.Address + " " + scanResult1.Offset + " " +
+                                            scanResult1.OriginalAddress);
 
-            // A function we will pretends is a cdecl function with some params to take to move the char some where. 
-            private static RemoteCallParams MoveToLocation{ get; } = new RemoteCallParams
-            {
-                Address = (IntPtr)0x500,
-                CallingConvention = CallingConventions.Cdecl
-            };
-        }
+                ______________
 
+                // Dword text-based pattern scan from and log the scan result values to 
+                // all valid log instances.
+
+                var scanResult2 = sharp.Patterns.Find("55 8b ec 51 FF 05 ?? ?? ?? ?? A1", 0xC, false);
+                LogManager.Instance.LogInfo(scanResult2.Address + " " + scanResult2.Offset + " " +
+                                            scanResult2.OriginalAddress);
+                ______________
+
+                // byte[] array based pattern scan from and log the scan result values 
+                // to all valid log instances.
+
+                var scanResult3 = sharp.Patterns.Find(new byte[] {4, 4, 00, 0xC}, 0xC, false);
+                LogManager.Instance.LogInfo(scanResult3.Address + " " + scanResult3.Offset + " " +
+                                            scanResult3.OriginalAddress);
+
+                ______________
+
+                // Now we will use files to add pattern scan results to a Dictionary.
+                // Our patterns to create our json file with.
+
+                var pattern = new SerializablePattern
+                              {
+                                  Description = "ExamplePattern",
+                                  TextPattern = "55 8b ec 51 FF 05 ?? ?? ?? ?? A1",
+                                  OffsetToAdd = 0,
+                                  RebaseResult = false,
+                                  Comments = "This comment is useful when the pattern is stored in a xml or json file."
+                              };
+
+                var pattern2 = new SerializablePattern
+                               {
+                                   Description = "ExamplePattern2",
+                                   TextPattern = "55 8b ?? a1 ?? ?? ?? ?? 56 57 8d ?? ?? ??",
+                                   OffsetToAdd = 0,
+                                   RebaseResult = false,
+                                   Comments = "This comment is useful when the pattern is stored in a xml or json file."
+                               };
+
+                // Save the objects to a json file as an array so 
+                // they can be serialized later.
+
+                JsonHelper.ExportToFile(new[] {pattern, pattern2}, "Patterns.json");
+
+                // Now in your app folder, there should be a Patterns.json file. 
+                // We can scan our results for this pattern from this file from now on.
+
+                // This is the dictonary instance we will add the results to.
+
+                var patternResults = new Dictionary<string, IntPtr>();
+                sharp.Patterns.CollectJsonScanResults("Patterns.json", patternResults);
+
+                // Now print the pointers found from the pattern scan, 
+                // using the description of the pattern as the key.
+                Console.WriteLine(patternResults["ExamplePattern"].ToString("X"));
+                Console.WriteLine(patternResults["ExamplePattern2"].ToString("X"));
+
+                // You can also save all the results to a text file 
+                // in a format you can copy and paste into a class for 
+                // static pointers instances.
+
+                // The text file produced should contain the following:
+                // public static IntPtr ExamplePattern { get; } = (IntPtr)0x000;
+                // public static IntPtr ExamplePattern2 { get; } = (IntPtr)0x000
+           
 ```
-* Pattern scanning examples.
 
-**Pattern Scan xml/json file examples:**
-
-Json:
-```Json
-     {
-        "Description": "GameState",
-        "TextPattern": "80 3d ?? ?? ?? ?? ?? 74 ?? 50 b9 ?? ?? ?? ?? e8 ?? ?? ?? ?? 85 c0 74 ?? 8b 40 08 83 f8 02 74 ?? 83 f8 01 75 ?? b0 01 c3 32 c0 c3",
-        "OffsetToAdd": 2,
-        "IsOffsetMode": false,
-        "RebaseAddress": false,
-        "Comments": null
-      },
-      {
-        "Description": "LocalPlayer",
-        "TextPattern": "80 3d ?? ?? ?? ?? ?? 74 ?? 50 b9 ?? ?? ?? ?? e8 ?? ?? ?? ?? 85 c0 74 ?? 8b 40 08 83 f8 02 74 ?? 83 f8 01 75 ?? b0 01 c3 32 c0 c3",
-        "OffsetToAdd": 4,
-        "IsOffsetMode": false,
-        "RebaseAddress": false,
-        "Comments": null
-      }
-```
-Xml:
-```XML
-    ?xml version="1.0" encoding="utf-16"?>
-    <ArrayOfSerializablePattern xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-      <SerializablePattern>
-        <Description>GameState</Description>
-        <TextPattern>80 3d ?? ?? ?? ?? ?? 74 ?? 50 b9 ?? ?? ?? ?? e8 ?? ?? ?? ?? 85 c0 74 ?? 8b 40 08 83 f8 02 74 ?? 83 f8 01 75 ?? b0 01 c3 32 c0 c3</TextPattern>
-        <OffsetToAdd>2</OffsetToAdd>
-        <IsOffsetMode>false</IsOffsetMode>
-        <RebaseAddress>false</RebaseAddress>
-      </SerializablePattern>
-      <SerializablePattern>
-        <Description>LocalPlayer</Description>
-        <TextPattern>80 3d ?? ?? ?? ?? ?? 74 ?? 50 b9 ?? ?? ?? ?? e8 ?? ?? ?? ?? 85 c0 74 ?? 8b 40 08 83 f8 02 74 ?? 83 f8 01 75 ?? b0 01 c3 32 c0 c3</TextPattern>
-        <OffsetToAdd>2</OffsetToAdd>
-        <IsOffsetMode>false</IsOffsetMode>
-        <RebaseAddress>false</RebaseAddress>
-      </SerializablePattern>
-    </ArrayOfSerializablePattern>
-```
-
-**Using the patterns and pattern files:**
-  
+Injected code support - Hook WndProc and execute your custom engines code in the main thread.
+------------------------------------------------------------------------
 ```csharp
-      public static class PatternScanExamples
+    public static class HookExample
+    {
+        private static IWindowEngine _windowEngine;
+        private static WindowHook WindowHook { get; set; }
+
+        public static void Attach()
         {
-            // Collect an entire pattern file json or xml to any dictionary using the IDictionary interface.
-            public static Dictionary<string, IntPtr> GetPointerDictionary()
-            {
-                var sharp = new MemorySharp(ApplicationFinder.FromProcessName("GameProcessNames").First());
-                var results = new Dictionary<string, IntPtr>();
-                sharp.Patterns.CollectJsonScanResults("Patterns.json", results);
-                return results;
-            }
-
-            // More standard byte-mask pattern.
-            public static void PrintByteMaskScanResult()
-            {
-                var sharp = new MemorySharp(ApplicationFinder.FromProcessName("GameProcessNames").First());
-                var result = sharp.Patterns.Find(new byte[] { 0X1C, 0X2C, 0X3C, 00, 00, 00, 0X7C, 0x8C, 0x9C }, "xxx???xxx", 0xC, false, false);
-                Console.WriteLine(result.Address.ToString("X"));
-                Console.WriteLine(result.OriginalAddress.ToString("X"));
-            }
-            // Print a text based pattern scan result.
-            public static void PrintTextPatternScanResult()
-            {
-                var sharp = new MemorySharp(ApplicationFinder.FromProcessName("GameProcessNames").First());
-                var textBasedPattern =
-                    "80 3d ?? ?? ?? ?? ?? 74 ?? 50 b9 ?? ?? ?? ?? e8 ?? ?? ?? ?? 85 c0 74 ?? 8b 40 08 83 f8 02 74 ?? 83 f8 01 75 ?? b0 01 c3 32 c0 c3";
-                // Add 0xC to the found pattern offset, the result is a full address not an offset style pattern, and the address should not be rebased for the scan result.
-                var scanResult = sharp.Patterns.Find(textBasedPattern, 0xC, false, false);
-                Console.WriteLine(scanResult.Address.ToString("X"));
-                Console.WriteLine(scanResult.OriginalAddress.ToString("X"));
-            }
-
-            // Create a file log of scanned patterns address results in neat formats.
-            public static void GeneratePointerFile()
-            {
-                var sharp = new MemorySharp(ApplicationFinder.FromProcessName("GameProcessNames").First());
-                // Log formatted pointers ready for C# code use to a text file using the data in the xml pattern file.
-                sharp.Patterns.LogScanResultsToFile("Patterns.xml", PatternFileType.Xml);
-                // This does the same as above, but for json.
-                sharp.Patterns.LogScanResultsToFile("Patterns.json", PatternFileType.Json);
-                // Now the applications folder should contain a log with all the addresses found from scans. Format:
-                // public IntPtr [Description] {get;} = (IntPtr)0x00;
-            }
+            // This is our custom engine we pass to the window hook class as a ref.
+            // Create the engine. There is some default engines and call backs 
+            // supplied to look at or use.
+            _windowEngine = new HookEngine();
+            // 0x500 should be the handle to the window being hooked. 
+            // Should often just be the MainWindowHandle of the process.
+            WindowHook = new WindowHook(new IntPtr(0x500), "WndProcHook", ref _windowEngine);
+            WindowHook.Enable();
+            // This should invoke our HookEngine start up method to run, 
+            // printing a console message.
+            WindowHook.SendUserMessage(UserMessage.StartUp);
         }
 
-```
-Injected Support added.
------------------------
-
-Hook WndProc and pass your own call back engine easily:
-```csharp
-     public class HookEngine : IWindowEngine
+        private class HookEngine : IWindowEngine
         {
             public void StartUp() => WriteLine(@"Hi from process: " + GetCurrentProcess().ProcessName);
             public void ShutDown() => WriteLine(@"Bye from process: " + GetCurrentProcess().ProcessName);
         }
-    
-        public static class HookExample
-        {
-            private static IWindowEngine _windowEngine;
-            private static WindowHook WindowHook { get; set; }
-            public static void Attach()
+    }
+```
+
+Basic three dimensional math structures and extension methods.
+--------------------------------------------------------------
+```csharp
+     // Use extenstion methods to get world to get distances
+     // And world to screen values.
+     public static float DistanceTo(Vector2 vector2One, Vector2 vector2Two)
             {
-                // This is our custom engine we pass to the window hook class as a ref.
-                _windowEngine = new HookEngine();
-                // 0x500 should be the handle to the window being hooked. Should often just be the MainWindowHandle of the process.
-                WindowHook = new WindowHook(new IntPtr(0x500),"WndProcHook",ref _windowEngine);
-                WindowHook.Enable();
-                // This should invoke our HookEngine start up method to run, printing a console message.
-                WindowHook.SendUserMessage(UserMessage.StartUp);
+                return vector2One.DistanceTo(vector2Two);
+            }
+
+            public static Vector2 GetWorldToScreen(Matrix viewMatrix, Vector2 vector2, Vector3 vector3)
+            {
+                return viewMatrix.WorldToScreen(vector2, vector3);
             }
 ```
-Using IntPtr Extensions for internal reading.
----------------------------------------------
+
+Executing functions inside of a process from external code made slightly easier than before.
+------------------------------------------------------------------------
 ```csharp
-    public static class InjectedDelegatesReadWriteExamples
-        {
-            private static GetObjectLocation InternalGetObjectLocation { get; set; }
-
-            // Read/Write memory with IntPtr extensions while injected.
-            public static void PrintAndWriteAddresS()
-            {
-                var pointer = new IntPtr(0x500).Read<IntPtr>();
-                Console.WriteLine(pointer.ToString("X"));
-                // Write to it.
-                pointer.WriteBytes(new byte[] {1, 2, 3});
-                pointer.WriteString("Hi", Encoding.UTF8);
-                pointer.Write("Use a type of object here, not a string. Use write string for that.");
-            }
-
-            // Use delegates with extensions easier. This is the delegate.
-            [UnmanagedFunctionPointer(CallingConvention.ThisCall)]
-            private delegate void GetObjectLocation(IntPtr objectPointer, out Vector3 location3D);
-            // Register it.
-            public static void RegisterGetObjectLocationDelegate() => InternalGetObjectLocation = new IntPtr(0x500).ToDelegate<GetObjectLocation>();
-            // Using it.
-            public static Vector3 MyLocation
-            {
-                get
-                {
-                    Vector3 myVector3;
-                    InternalGetObjectLocation(new IntPtr(0x500), out myVector3);
-                    return myVector3;
-                }
-            }
-        }
+   var remoteCall = new RemoteCallParams
+                                 {
+                                     Address = new IntPtr(0x500),
+                                     CallingConvention = CallingConventions.Cdecl
+                                 };
+                var sharp = new MemorySharp(FromProcessName("ProcessName").First());
+                // Execute the function at 0x500, as a cdecl function with 1 param,
+                // the player id  
+                // int __cdecl  ExampleFunction(int playerId);
+                // Lets just say the function returns a value, like the 
+                // life of a player. 
+                // We will jsut use 500 as the player id here.
+                var playersLife = sharp.Execute<int>(remoteCall, 500);
+                Console.WriteLine(playersLife);
 ```
-Tools, logging, updaters, misc features added examples.
----------------------------------------------
 
-* Updaters (thanks to Zatt @ unknowncheats and aganonki as well from there).
-
-
+Updater classes - Threaded updater.
+-----------------------------------
 ```csharp
-    // Credits: Zatt @ unknowncheats.me
-    public class MyUpdaterExample
+        // Using the class below is as simple as:
+        var updaterExample = new MyUpdaterExample("Example", 2500);
+        updaterExample.OnUpdate += UpdaterExample_OnUpdate;
+        updaterExample.Enable();
+		// Handle update events.
+        private static void UpdaterExample_OnUpdate(object sender, ThreadedUpdater.DeltaEventArgs e)
+            {
+                WriteLine(@"Detected the update event.");
+            }
+
+    // The updater used above.
+    public class MyUpdaterExample : ThreadedUpdater
     {
-        // 2500 Interval updater.
-        private static ThreadedUpdater Updater { get; } = new ThreadedUpdater("ExampleConsoleWriter", 2500);
-        
-       public static void StartUpdating()
-            {
-                Updater.Enable();
-                // Console should get lines every 2500 ms now.
-                Thread.Sleep(5000);
-                // Turn it off now.
-                Updater.Disable();
-            }
-
-            private void Updater_OnUpdate(object sender, ThreadedUpdater.DeltaEventArgs e)
-            {
-               Console.WriteLine("Hi, we were called.");
-            }
+        // Inherits from the threaded updater class.
+        public MyUpdaterExample(string name, int updateRateMs) : base(name, updateRateMs)
+        {
         }
-```
-3D Math (Credits: Zatt).
-------------------------
-* WorldToScreen
- 
-```csharp
-        public static Vector2 GetWorldToScreen(Matrix viewMatrix, Vector2 vector2, Vector3 vector3)
-            {
-               return viewMatrix.WorldToScreen(vector2, vector3);
-            }
-```   
-      
- 
- * Distance to.            
-```csharp
-public static float DistanceTo(Vector2 vector2One, Vector2 vector2Two)
- {
-  return vector2One.DistanceTo(vector2Two);
- }
-```
+
+        public override void OnUpdateEvent(DeltaEventArgs e)
+        {
+            WriteLine(@"Hi. Doing stuff here.");
+            // Raise the OnUpdate event.
+            base.OnUpdateEvent(e);
+        }
+
+        private void UpdaterExample_OnUpdate(object sender, DeltaEventArgs e)
+        {
+            WriteLine(@"Detected the update event.");
+        }
+    }
 
 
+```
 Credits for MemorySharp - Note: All credits for the base of this library go to Jämes Ménétrey aka ZenLulz. 
 ------------------------------------------------------------------------
 
